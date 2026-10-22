@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import qrGenerator from 'qrcode-generator';
 import { deflateSync } from 'node:zlib';
-const origin='https://menu.cafe-menu.workers.dev';
+const origin=process.env.PUBLIC_URL || process.env.PUBLIC_MENU_ORIGIN || 'http://localhost:5100';
 const url=origin+'/menu/fe7f873f-acd2-483b-8258-a06528a2a8f7';
 const qr=qrGenerator(0,'H'); qr.addData(url,'Byte'); qr.make();
 fs.writeFileSync('URBAN-LIVE-QR.svg',qr.createSvgTag({cellSize:8,margin:32,scalable:true}));

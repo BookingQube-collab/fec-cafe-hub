@@ -38,7 +38,6 @@ export function mountMenuLibrary(app: Express) {
         const source = await tx.select({ item: menuItems, category: categories }).from(menuItems).innerJoin(categories, eq(menuItems.categoryId, categories.id))
           .where(and(eq(categories.restaurantId, cafe.id), input.itemIds ? inArray(menuItems.id, input.itemIds) : undefined)).orderBy(asc(categories.order), asc(menuItems.order));
         if (input.itemIds && source.length !== input.itemIds.length) throw new Error('Choose items from this café');
-        if (process.env.CAFE_RUNTIME === 'workers' && source.length > 1) throw new Error('Save library items one at a time');
         const variants = source.length ? await tx.select().from(menuItemPriceVariants).where(inArray(menuItemPriceVariants.menuItemId, source.map(s => s.item.id))).orderBy(asc(menuItemPriceVariants.order)) : [];
         for (const { item, category } of source) {
           const [existing] = await tx.select().from(globalMenuItems).where(eq(globalMenuItems.sourceItemId, item.id));
@@ -60,7 +59,7 @@ export function mountMenuLibrary(app: Express) {
       res.json(result);
     } catch (e) {
       await Promise.all(copies.map(url => media.removeCopiedObject(url)));
-      if (e instanceof Error && ['Choose items from this café','Save library items one at a time'].includes(e.message)) return res.status(400).json({ message: e.message });
+      if (e instanceof Error && e.message === 'Choose items from this café') return res.status(400).json({ message: e.message });
       next(e);
     }
   });
@@ -74,7 +73,6 @@ export function mountMenuLibrary(app: Express) {
         // Serialize imports into a café so simultaneous clicks cannot create duplicates.
         const [cafe] = await tx.select().from(restaurants).where(eq(restaurants.id, input.restaurantId)).for('update');
         if (!cafe || (req.user.role !== 'super_admin' && cafe.userId !== req.user.id)) return { error: 'Choose a café you manage', status: 403 };
-        if (process.env.CAFE_RUNTIME === 'workers' && input.itemIds.length > 1) return { error: 'Add library items one at a time', status: 400 };
         const templates = await tx.select().from(globalMenuItems).where(and(inArray(globalMenuItems.id, input.itemIds), eq(globalMenuItems.archived, false))).orderBy(asc(globalMenuItems.categoryTitle), asc(globalMenuItems.name));
         if (templates.length !== input.itemIds.length) return { error: 'Some library items are no longer available. Refresh and try again.', status: 400 };
         if (!input.acceptCurrencyDifference && templates.some(i => i.currency !== cafe.currency)) return { error: `Confirm copying prices into ${cafe.currency}. Currency conversion is not automatic.`, status: 400 };

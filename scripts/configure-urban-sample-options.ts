@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
 import { menuModifierGroupsSchema, type MenuModifierGroup, type MenuItem, type PriceVariant, type Category } from '../shared/schema';
 
-const staff = 'https://staff.cafe-menu.workers.dev', guest = 'https://menu.cafe-menu.workers.dev';
+const staff = process.env.MANAGEMENT_ORIGIN || process.env.PUBLIC_URL || 'http://localhost:5100', guest = process.env.PUBLIC_URL || process.env.PUBLIC_MENU_ORIGIN || 'http://localhost:5100';
 const urban = 'fe7f873f-acd2-483b-8258-a06528a2a8f7';
 const names = ['Marguareita', 'Classic Hot Dog', 'Latte'];
 type Menu = { restaurant: { id: string; currency: string }; items: MenuItem[]; variants: PriceVariant[]; categories: Category[] };

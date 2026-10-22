@@ -5,7 +5,7 @@ import { cafeThemeStyle } from '@/lib/cafeTheme';
 import { PUBLIC_MENU_ORIGIN } from '@shared/menuIdentity';
 type Cafe = { id: string; name: string; theme: string; cuisineType: string | null; logoUrl: string | null };
 export default function Home() {
-  const publicOnly = window.location.origin === PUBLIC_MENU_ORIGIN;
+  const publicOnly = Boolean(PUBLIC_MENU_ORIGIN && window.location.origin === PUBLIC_MENU_ORIGIN);
   const { data: cafes, isLoading, isError } = useQuery<Cafe[]>({queryKey:['/api/cafes']});
   return <div style={cafeThemeStyle()} className="min-h-screen bg-background text-foreground">
     <header className="mx-auto max-w-6xl flex items-center justify-between px-6 py-7 border-b"><Link href="/" className="font-semibold text-xl flex items-center gap-3"><Coffee className="text-primary" /> Café Collection</Link>{!publicOnly && <Link href="/login" className="text-sm font-medium">Manager login ↗</Link>}</header>

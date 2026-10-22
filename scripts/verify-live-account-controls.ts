@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import assert from 'node:assert/strict';
-const origin='https://staff.cafe-menu.workers.dev';
+const origin=process.env.MANAGEMENT_ORIGIN || process.env.PUBLIC_URL || 'http://localhost:5100';
 const sessions: string[]=[];
 async function request(method:string,path:string,body?:unknown,cookie='',expected=200){
   const r=await fetch(origin+path,{method,headers:{Origin:origin,'Content-Type':'application/json',Cookie:cookie},...(body===undefined?{}:{body:JSON.stringify(body)}),signal:AbortSignal.timeout(45000)});

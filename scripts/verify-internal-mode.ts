@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { permanentMenuUrl } from '../shared/menuIdentity';
-const origin = process.argv.includes('--local') ? 'http://localhost:5100' : 'https://staff.cafe-menu.workers.dev';
+const origin = process.env.MANAGEMENT_ORIGIN || process.env.PUBLIC_URL || 'http://localhost:5100';
 const sessions: string[] = [];
 const checks: string[] = [];
 async function request(method: string, path: string, body?: unknown, cookie = '', expected = 200) {

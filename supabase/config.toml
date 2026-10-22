@@ -1,6 +1,4 @@
 project_id = "cafe-menu"
 
-[functions.cafe-passwords]
-verify_jwt = false
-# This private service verifies a separate 256-bit bearer secret before parsing
-# any password. It never uses browser keys or exposes an anonymous hash endpoint.
+# Password hashing runs in the Node/Express process with bcrypt.
+# No Supabase Edge Functions are required for this app.

@@ -11,14 +11,9 @@
     "test": "tsx scripts/verify-menu-modifiers.ts && tsx scripts/verify-menu-language.ts && tsx scripts/verify-menu-search.ts && tsx scripts/verify-menu-discovery.ts && tsx scripts/verify-menu-refresh.ts && node scripts/verify-photo-assets.mjs && node scripts/verify-setup.mjs",
     "setup": "tsx scripts/setup.ts",
     "db:generate": "drizzle-kit generate",
-    "cloud:configure": "node scripts/configure-cloud.mjs",
-    "cloud:build": "vite build && wrangler deploy --dry-run --outdir dist/worker",
-    "cloud:test": "tsx scripts/verify-workers.ts",
-    "cloud:migrate": "node scripts/migrate-supabase.mjs",
-    "cloud:deploy": "node scripts/deploy-cloud.mjs",
-    "ci:build": "node scripts/ci-build.mjs",
-    "deploy:menu": "wrangler deploy --config wrangler.jsonc",
-    "deploy:staff": "wrangler deploy --config wrangler.staff.jsonc"
+    "db:configure": "node scripts/configure-supabase.mjs",
+    "db:migrate": "node scripts/migrate-supabase.mjs",
+    "ci:build": "node scripts/ci-build.mjs"
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.5.8",
@@ -57,9 +52,9 @@
     "zod-validation-error": "^3.4.0"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^5.20261009.1",
     "@electric-sql/pglite-socket": "^0.2.11",
     "@tailwindcss/typography": "^0.5.15",
+    "@types/bcrypt": "^6.0.0",
     "@types/express": "4.17.21",
     "@types/express-session": "^1.18.0",
     "@types/node": "20.16.11",
@@ -78,9 +73,7 @@
     "tailwindcss-animate": "^1.0.7",
     "tsx": "^4.20.5",
     "typescript": "5.6.3",
-    "vite": "^6.4.3",
-    "wrangler": "^4.149.0",
-    "@types/bcrypt": "^6.0.0"
+    "vite": "^6.4.3"
   },
   "overrides": {
     "postcss-selector-parser": "^7.1.6",

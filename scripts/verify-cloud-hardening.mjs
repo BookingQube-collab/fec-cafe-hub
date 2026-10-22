@@ -19,9 +19,9 @@ try {
   const bucket=(await client.query("SELECT public,file_size_limit,allowed_mime_types FROM storage.buckets WHERE id='cafe-media'")).rows[0];
   assert.ok(bucket);assert.equal(bucket.public,false);assert.equal(Number(bucket.file_size_limit),5242880);
   assert.deepEqual([...bucket.allowed_mime_types].sort(),['image/png','image/jpeg','image/gif','image/webp','video/mp4'].sort());
-  assert.ok(process.env.SESSION_SECRET.length>=48);assert.match(process.env.PASSWORD_SERVICE_SECRET,/^[a-f0-9]{64}$/);
-  const report={at:new Date().toISOString(),project:process.env.SUPABASE_PROJECT_REF,tables:rows,privateBucket:true,mediaSizeLimit:5242880,secretFormatValid:true,readOnlyAudit:true};
+  assert.ok(process.env.SESSION_SECRET.length>=48);
+  const report={at:new Date().toISOString(),project:process.env.SUPABASE_PROJECT_REF,tables:rows,privateBucket:true,mediaSizeLimit:5242880,sessionSecretValid:true,readOnlyAudit:true};
   await fs.writeFile('data/hardening-database-verification.json',JSON.stringify(report,null,2));
-  console.log('PASS: all 11 cafe tables enforce RLS and deny anon/authenticated direct access; photo bucket is private with bounded MIME/size; secret formats are valid.');
+  console.log('PASS: all 11 cafe tables enforce RLS and deny anon/authenticated direct access; photo bucket is private with bounded MIME/size; session secret format is valid.');
 } catch(error) { console.error('Cloud hardening verification failed',{type:error.name,code:error.code,message:error instanceof assert.AssertionError?error.message:'Check provider connectivity and the private report.'});process.exitCode=1; }
 finally {await client.end().catch(()=>{});}

@@ -5,7 +5,7 @@ import { db } from './db';
 import { storage } from './storage';
 import { isAuthenticated, isSuperAdmin } from './localAuth';
 import { accessAudit, type AuthUser, type Restaurant, type User } from '@shared/schema';
-import { deferRequestTask } from './workerContext';
+import { deferRequestTask } from './requestTasks';
 
 declare module 'express-session' {
   interface SessionData { userId: string; cafeId?: string }

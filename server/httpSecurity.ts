@@ -1,5 +1,4 @@
 import type { Express, RequestHandler } from 'express';
-import { distributedRateLimit } from './distributedRateLimit';
 import { securityHeaders } from './securityHeaders';
 
 // Browser mutations must originate from this app. CLI clients without browser
@@ -27,12 +26,11 @@ let rateLimitScope = 0;
 // account bucket; IP limits still apply to prevent many-account abuse.
 export function rateLimit(limit: number, windowMs: number, key: (req: any) => string, skipSuccessful = false): RequestHandler {
   const scope = `${++rateLimitScope}:${limit}:${windowMs}`;
-  if (process.env.CAFE_RUNTIME === 'workers') return distributedRateLimit(scope, limit, windowMs, key, skipSuccessful);
   const buckets = new Map<string, Bucket>();
   const cleanup = setInterval(() => { const now = Date.now(); buckets.forEach((b,k) => { if (b.reset <= now) buckets.delete(k); }); }, Math.min(windowMs, 60000));
   cleanup.unref();
   return (req, res, next) => {
-    const now = Date.now(), id = key(req);
+    const now = Date.now(), id = `${scope}:${key(req)}`;
     let bucket = buckets.get(id);
     if (!bucket || bucket.reset <= now) {
       if (buckets.size >= 10000) return res.status(429).set('Retry-After', '60').json({ message: 'Too many requests. Try again shortly.' });

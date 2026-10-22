@@ -2,7 +2,7 @@ import fs from 'node:fs/promises';
 import assert from 'node:assert/strict';
 import path from 'node:path';
 
-const origins = ['https://menu.cafe-menu.workers.dev', 'https://staff.cafe-menu.workers.dev'];
+const origins = [process.env.PUBLIC_URL || 'http://localhost:5100', process.env.MANAGEMENT_ORIGIN || process.env.PUBLIC_URL || 'http://localhost:5100'].filter((v,i,a)=>a.indexOf(v)===i);
 const cafe = 'fe7f873f-acd2-483b-8258-a06528a2a8f7';
 const [publicVersion, staffVersion] = process.argv.slice(2);
 for (const version of [publicVersion, staffVersion]) {

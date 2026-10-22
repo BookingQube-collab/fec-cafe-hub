@@ -16,4 +16,4 @@ Managers can import only into their own café and remove only their own template
 
 The database migration is `migrations/0001_certain_lionheart.sql`. It runs on normal application startup. Include the entire `data/database` and `data/uploads` folders when backing up the application; the café JSON export contains a café's menu only.
 
-Validation: `npm run check`, `npm run cloud:build`, and `npm run cloud:test`. The isolated integration suite verifies library publishing, import permissions, independent copies, modifier groups, hidden import defaults and media ownership without creating QA records in live cafés.
+Validation: `npm run check`, `npm run build`, and `npm test`. Library publishing, import permissions, independent copies, modifier groups, and media ownership are covered by the Node test scripts without creating QA records in live cafés.

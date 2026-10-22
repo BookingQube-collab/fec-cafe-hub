@@ -28,4 +28,4 @@ The access history records the actual actor, role, affected café, operation, re
 
 Migration: `migrations/0002_clammy_magneto.sql`, applied at startup. Back up the entire database/uploads folders for a complete system backup.
 
-Verification: `npm run check`, `npm run cloud:build`, and `npm run cloud:test`. The integration suite uses a fresh isolated database and mocked photo/password services to verify allowed and denied access, tenant isolation, hidden-menu privacy, café access, stale edits, media ownership, account lifecycle and session revocation. It does not require real café credentials or change live data.
+Verification: `npm run check`, `npm run build`, and `npm test`. Use live-audit scripts against a running Node server when needed. Do not require real café credentials in unit checks.

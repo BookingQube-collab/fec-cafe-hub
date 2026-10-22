@@ -1,6 +1,6 @@
 # System hardening — 11 October 2026
 
-The application runs on two dedicated Cloudflare Workers: customer menus at `https://menu.cafe-menu.workers.dev` and management at `https://staff.cafe-menu.workers.dev`. The audit below dated 9 October is historical; its localhost-only, per-process rate-limit and embedded-database deployment limits do not describe the current cloud installation.
+**Current runtime (updated):** Node.js / Express with Supabase Postgres and Storage. Cloudflare Workers are no longer used. The October audit below remains useful for security controls; Worker-specific deployment notes are historical.
 
 ## Corrections in this pass
 

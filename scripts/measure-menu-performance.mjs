@@ -8,7 +8,7 @@ const email = saved.match(/Email: (.+)/)[1].trim();
 const password = saved.match(/Password: (.+)/)[1].trim();
 const id = 'fe7f873f-acd2-483b-8258-a06528a2a8f7';
 const results = [];
-for (const origin of ['http://localhost:5100', 'https://staff.cafe-menu.workers.dev']) {
+for (const origin of [process.env.PUBLIC_URL || 'http://localhost:5100'].filter((v,i,a)=>a.indexOf(v)===i)) {
   const response = await fetch(origin + '/api/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password }) });
   if (!response.ok) throw new Error(`Sign-in failed (${response.status})`);
   const cookie = response.headers.getSetCookie().map(value => value.split(';')[0]).join('; ');
@@ -30,7 +30,7 @@ for (const origin of ['http://localhost:5100', 'https://staff.cafe-menu.workers.
   try {
     await measure('manager-menu', ['/api/manager-menu']);
     await measure('menu-edit-refresh', ['/api/manager-menu', '/api/restaurant']);
-    const publicOrigin = origin.startsWith('https') ? 'https://menu.cafe-menu.workers.dev' : origin;
+    const publicOrigin = process.env.PUBLIC_MENU_ORIGIN || origin;
     await measure('public-menu-four-requests', [`/api/restaurant/public/${id}`, `/api/categories/public/${id}`, `/api/menu-items/public/${id}`, `/api/price-variants/public/restaurant/${id}`], publicOrigin);
     if (label === 'after') await measure('public-menu-bundle', [`/api/menu/public/${id}`], publicOrigin);
   } finally {

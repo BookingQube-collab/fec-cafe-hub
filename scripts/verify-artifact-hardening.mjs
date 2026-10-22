@@ -6,7 +6,7 @@ let localSecrets={};
 try { localSecrets=parse(await fs.readFile('.env.cloud','utf8')); }
 catch(error) { if(error.code!=='ENOENT') throw error; }
 const cloud={...process.env,...localSecrets};
-const names=['SESSION_SECRET','PASSWORD_SERVICE_SECRET','SUPABASE_SERVICE_ROLE_KEY','DATABASE_URL','SUPABASE_ACCESS_TOKEN','CLOUDFLARE_API_TOKEN'];
+const names=['SESSION_SECRET','SUPABASE_SERVICE_ROLE_KEY','DATABASE_URL','SUPABASE_ACCESS_TOKEN'];
 const secrets=names.filter(name=>cloud[name]?.length>=24).map(name=>({name,value:cloud[name]}));
 let files=0;
 async function inspect(directory) {

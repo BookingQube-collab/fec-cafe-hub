@@ -1,8 +1,8 @@
 import fs from 'node:fs/promises';
 import assert from 'node:assert/strict';
 import path from 'node:path';
-const publicOrigin = 'https://menu.cafe-menu.workers.dev';
-const staffOrigin = 'https://staff.cafe-menu.workers.dev';
+const publicOrigin = process.env.PUBLIC_URL || process.env.PUBLIC_MENU_ORIGIN || 'http://localhost:5100';
+const staffOrigin = process.env.MANAGEMENT_ORIGIN || process.env.PUBLIC_URL || 'http://localhost:5100';
 const cafeIds = ['fe7f873f-acd2-483b-8258-a06528a2a8f7', '4fb514c8-9d8c-441b-a92b-aa2b72bfbede', 'a3fc34fa-ce03-4cda-8cc9-4020ee55f9b1'];
 async function request(origin, route, expected = 200, init = {}) {
   const response = await fetch(origin + route, { ...init, signal: AbortSignal.timeout(45000) });

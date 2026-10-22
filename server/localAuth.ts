@@ -30,7 +30,7 @@ export function getSession() {
   }
   if (!process.env.SESSION_SECRET || process.env.SESSION_SECRET.length < 48) throw new Error('Configure a session secret of at least 48 characters');
   const sessionStore = new DatabaseSessionStore();
-  if (process.env.CAFE_RUNTIME !== 'workers') db.delete(sessions).where(lt(sessions.expire, new Date())).catch(error => console.error('Session cleanup failed', safeError(error)));
+  db.delete(sessions).where(lt(sessions.expire, new Date())).catch(error => console.error('Session cleanup failed', safeError(error)));
   return session({
     name: sessionCookieName(),
     secret: process.env.SESSION_SECRET!,

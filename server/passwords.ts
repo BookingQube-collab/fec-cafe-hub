@@ -1,2 +1,2 @@
-// Native bcrypt stays in the local Node runtime, outside the Worker bundle.
+// Native bcrypt in the Node/Express runtime (no edge password function).
 export { default } from 'bcrypt';
