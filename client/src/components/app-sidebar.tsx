@@ -1,4 +1,4 @@
-import { LayoutDashboard, UtensilsCrossed, FolderOpen, Store, QrCode, LogOut, Building2, LibraryBig, Users, History } from "lucide-react";
+import { LayoutDashboard, UtensilsCrossed, FolderOpen, Store, QrCode, LogOut, Building2, LibraryBig, Users, History, Palette } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import {
   Sidebar,
@@ -39,6 +39,11 @@ const adminMenuItems = [
     title: "Menu Items",
     url: "/admin/menu",
     icon: UtensilsCrossed,
+  },
+  {
+    title: "Menu design",
+    url: "/admin/menu-design",
+    icon: Palette,
   },
   { title: "Account & Backup", url: "/admin/settings", icon: Store },
   { title: "Global Menu Library", url: "/admin/library", icon: LibraryBig },

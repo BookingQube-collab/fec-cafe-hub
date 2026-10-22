@@ -32,7 +32,7 @@ export async function authUser(req: any): Promise<AuthUser> {
 }
 
 const publicGet = /^\/api\/(?:cafes$|(?:menu|restaurant|categories|menu-items)\/public\/[^/]+$|price-variants\/public\/(?:[^/]+|restaurant\/[^/]+)$)/;
-const cafePath = /^\/api\/(?:restaurant|categories|menu-items|price-variants|manager-menu|category-order|cafe-backup|cafe-menu|objects\/upload)(?:\/|$)/;
+const cafePath = /^\/api\/(?:restaurant|categories|menu-items|price-variants|manager-menu|category-order|cafe-backup|cafe-menu|admin\/menu-design|objects\/upload)(?:\/|$)/;
 const sharedPath = /^\/api\/(?:auth\/user|account\/password|menu-library)(?:\/|$)/;
 
 export function mountAccessControl(app: Express) {

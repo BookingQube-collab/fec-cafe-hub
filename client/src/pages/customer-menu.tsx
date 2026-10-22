@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { useRoute } from 'wouter';
 import { useQuery } from '@tanstack/react-query';
 import { ArrowUpRight, Check, Coffee, Clock3, Heart, MapPin, Phone, Search, Sparkles, SlidersHorizontal, X, Leaf, Pause, Play } from 'lucide-react';
@@ -14,6 +14,7 @@ import { matchesMenuSearch, menuSearchIndex, menuSearchQuery } from '@/lib/menuS
 import { arabicMenuLabel, MenuLanguageProvider, MenuLanguageSwitch, useMenuLanguage } from '@/lib/menuLanguage';
 import type { PublicCafe, MenuItem, PriceVariant, PublicMenuData } from '@shared/schema';
 import { customizationTotal, reconcileModifierSelections, selectedModifierOptions, missingModifierGroups, type MenuModifierSelections } from '@shared/menuCustomization';
+import { buildArenaConfig, type ArenaHelpers } from '@/menu-arena/buildArenaConfig';
 import './customer-menu.css';
 import './customer-menu-live.css';
 import './customer-menu-simple.css';
@@ -22,6 +23,22 @@ import './customer-menu-responsive.css';
 import './customer-menu-arabic.css';
 import './customer-menu-compact.css';
 import { getMenuData, keepMenuDuringReconnect, MenuLoadError } from '@/lib/menuRefresh';
+
+const ArenaMenu = lazy(() => import('@/menu-arena/ArenaMenu'));
+
+const arenaHelpers: ArenaHelpers = {
+  // Classic customer page shows only available items; specialDate is a badge/filter, not a hide rule.
+  isItemVisible: (item) => item.isAvailable !== false,
+  arabicForItem: (name) => {
+    const ar = arabicMenuLabel(name);
+    return ar === name ? '' : ar;
+  },
+  arabicForCategory: (title) => {
+    const ar = arabicMenuLabel(title);
+    return ar === title ? '' : ar;
+  },
+  groupForCategory: (category) => (categoryGroup(category.title) === 'drinks' ? 'drinks' : 'food'),
+};
 
 const EMPTY_MODIFIER_GROUPS: MenuItem['modifierGroups'] = [];
 
@@ -85,6 +102,16 @@ function CustomerMenuContent() {
     queryFn: ({ signal }) => getMenuData('/api/menu/public/' + id, signal),
     staleTime: 0, refetchInterval: 5000, refetchOnWindowFocus: true,
     retry: (attempt, error) => attempt < 1 && (!(error instanceof MenuLoadError) || error.status === 0 || error.status === 429 || error.status >= 500) });
+  const arenaConfig = useMemo(() => {
+    const data = menuQuery.data;
+    if (!data?.design?.enabled) return null;
+    try {
+      return buildArenaConfig(data, data.design.settings, arenaHelpers);
+    } catch (error) {
+      console.error('Arena menu config failed; falling back to classic page', error);
+      return null;
+    }
+  }, [menuQuery.data]);
   const restaurant = menuQuery.data?.restaurant;
   const today = useMemo(() => cafeDate(restaurant?.timezone), [restaurant?.timezone, now]);
   const available = useMemo(() => (menuQuery.data?.items || []).filter(item => item.isAvailable), [menuQuery.data?.items]);
@@ -160,6 +187,11 @@ function CustomerMenuContent() {
     if (!item.hasMultiplePricing || !options.length) return itemPricing(item);
     const lowest = options.reduce((best, option) => Number(option.price) * (1-Number(option.discount || 0)/100) < Number(best.price) * (1-Number(best.discount || 0)/100) ? option : best);
     return <div className="guest-starting-price"><small>{t('From')}</small><Price price={lowest.price} discount={lowest.discount} currency={restaurant!.currency} unit={lowest.unit}/></div>;
+  }
+  if (arenaConfig) {
+    return <Suspense fallback={<div className="guest-menu guest-loading" lang={language} dir={dir} style={cafeThemeStyle()} aria-busy="true"><Coffee size={40}/><p>{t('Preparing your menu…')}</p></div>}>
+      <ArenaMenu config={arenaConfig} />
+    </Suspense>;
   }
   if (menuQuery.isLoading) return <div className="guest-menu guest-loading" lang={language} dir={dir} style={cafeThemeStyle()}><MenuLanguageSwitch/><Coffee size={40}/><p>{t('Preparing your menu…')}</p></div>;
   if (!restaurant || menuQuery.isError && !keepMenuDuringReconnect(menuQuery.error, menuQuery.dataUpdatedAt, now)) return <div className="guest-menu guest-loading" lang={language} dir={dir} style={cafeThemeStyle()}><MenuLanguageSwitch/><Coffee size={40}/><h1>{t("We'll be back shortly.")}</h1><p>{t('This café menu is currently unavailable.')}</p><button className="guest-button" onClick={() => menuQuery.refetch()}>{t('Try again')}</button></div>;

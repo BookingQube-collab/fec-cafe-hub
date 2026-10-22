@@ -1,0 +1,101 @@
+<!-- Arena menu markup (from arena-menu-kit/design/menu.html). ArenaMenu.tsx injects the config JSON below.
+     Content comes only from the config; do not hardcode text or images here. -->
+<script id="menu-config" type="application/json">__MENU_CONFIG__</script>
+
+<div id="bubbles-container"></div>
+
+<header class="header" id="top">
+    <a href="#top" class="logo" aria-label=""><img class="logo-img" data-bind="logo" src="" alt=""></a>
+    <a class="social-pill" data-bind="social" href="#" target="_blank" rel="noopener"><span class="dot"></span><span data-bind="social-label"></span></a>
+</header>
+
+<main class="hero">
+    <div class="hero-content">
+        <div class="leaves-container">
+            <img class="leaf l1" alt="">
+            <img class="leaf l2" alt="">
+            <img class="leaf l3" alt="">
+            <img class="leaf l4" alt="">
+        </div>
+
+        <div class="hero-left">
+            <h1 class="main-title">
+                <span class="title-line outline" data-bind="title1"></span><br>
+                <span class="title-line" data-bind="title2"></span>
+            </h1>
+            <p class="description" data-bind="description"></p>
+            <a href="#menu" class="primary-btn">
+                <span data-bind="cta-label"></span>
+                <span class="plus-icon" data-bind="cta-icon"></span>
+            </a>
+            <div class="award-badge" data-bind="badge">
+                <div class="award-icon" data-bind="badge-icon"></div>
+                <div class="award-text">
+                    <span class="award-title" data-bind="badge-title"></span>
+                    <span class="award-subtitle" data-bind="badge-subtitle"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="berries-container-bg">
+            <img class="berry b7" data-i="6" alt="">
+            <img class="berry b8" data-i="7" alt="">
+            <img class="berry b9" data-i="8" alt="">
+        </div>
+
+        <div class="hero-center">
+            <model-viewer id="product-model" alt="" camera-controls
+                disable-zoom touch-action="pan-y" shadow-intensity="0" environment-image="neutral"
+                interaction-prompt="none" camera-orbit="0deg 90deg 380%" field-of-view="30deg"
+                class="main-product-3d">
+            </model-viewer>
+        </div>
+
+        <div class="berries-container">
+            <img class="berry b1" data-i="0" alt="">
+            <img class="berry b2" data-i="1" alt="">
+            <img class="berry b3" data-i="2" alt="">
+            <img class="berry b4" data-i="3" alt="">
+            <img class="berry b5" data-i="4" alt="">
+            <img class="berry b6" data-i="5" alt="">
+        </div>
+
+        <div class="hero-right">
+            <div class="product-carousel">
+                <div class="carousel-cards" id="hero-cards"></div>
+                <div class="carousel-nav">
+                    <button class="nav-arrow" data-dir="-1" aria-label="Previous">←</button>
+                    <button class="nav-arrow" data-dir="1" aria-label="Next">→</button>
+                </div>
+            </div>
+            <h2 class="side-title">
+                <span class="title-line outline" data-bind="side1"></span><br>
+                <span class="title-line pink-word" data-bind="side2"></span>
+            </h2>
+        </div>
+    </div>
+    <a href="#menu" class="scroll-cue" data-bind="scroll-cue"><span class="mouse"></span><span data-bind="scroll-cue-label"></span></a>
+</main>
+
+<div class="marquee" data-bind="marquee"><div class="marquee-track" id="marquee"></div></div>
+
+<section class="menu-section" id="menu">
+    <div class="menu-intro">
+        <h2 class="reveal-title" data-bind="intro-title"></h2>
+        <span class="ar-big" data-bind="intro-title-ar"></span>
+        <p data-bind="intro-subtitle"></p>
+    </div>
+    <div class="stats" id="stats"></div>
+    <div class="filter-bar" id="filter-bar">
+        <div class="segmented" id="segmented">
+            <span class="seg-pill" id="seg-pill"></span>
+        </div>
+        <div class="rail"><button class="rail-arrow prev" aria-label="Scroll categories left">←</button><div class="chips" id="chips"></div><button class="rail-arrow next" aria-label="Scroll categories right">→</button></div>
+    </div>
+    <div class="menu-grid" id="menu-grid"></div>
+</section>
+
+<footer class="footer">
+    <a href="#top" class="logo footer-logo" aria-label=""><img class="logo-img" data-bind="logo" src="" alt=""></a>
+    <p><span data-bind="footer-text"></span> <a data-bind="footer-social" href="#" target="_blank" rel="noopener"></a><span data-bind="footer-note"></span></p>
+</footer>

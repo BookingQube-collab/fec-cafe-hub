@@ -90,8 +90,9 @@ export function mountLocalUploads(app: Express) {
       else if (/^GIF8[79]a$/.test(body.subarray(0,6).toString())) mime = 'image/gif';
       else if (body.subarray(0,4).toString() === 'RIFF' && body.subarray(8,12).toString() === 'WEBP') mime = 'image/webp';
       else if (body.subarray(4,8).toString() === 'ftyp') mime = 'video/mp4';
-      if (!mime) return res.status(400).json({ message: 'Use PNG, JPEG, GIF, WebP, or MP4 media' });
-      if (!imageDimensionsValid(body, mime)) return res.status(400).json({ message: 'This media file is incomplete or too large in dimensions. Choose another file.' });
+      else if (body.subarray(0,4).toString() === 'glTF') mime = 'model/gltf-binary';
+      if (!mime) return res.status(400).json({ message: 'Use PNG, JPEG, GIF, WebP, MP4, or GLB media' });
+      if (mime !== 'model/gltf-binary' && !imageDimensionsValid(body, mime)) return res.status(400).json({ message: 'This media file is incomplete or too large in dimensions. Choose another file.' });
       await putMedia(req.params.id, body, owner, mime);
       res.json({ success: true });
     } catch (error: any) { if (error.code === 'EEXIST') return res.status(409).json({ message: 'This upload was already completed' }); next(error); }

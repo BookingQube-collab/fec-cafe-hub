@@ -1,7 +1,7 @@
 import { type Express, type RequestHandler } from 'express';
 import { storage } from './storage';
 import { db } from './db';
-import { categories, restaurants, menuItems, menuItemPriceVariants, sessions, users, insertMenuItemSchema, insertPriceVariantSchema, cafeProfileSchema, passwordSchema } from '@shared/schema';
+import { categories, restaurants, menuItems, menuItemPriceVariants, menuDesigns, sessions, users, insertMenuItemSchema, insertPriceVariantSchema, cafeProfileSchema, passwordSchema } from '@shared/schema';
 import { eq, and, ne, sql } from 'drizzle-orm';
 import { isAuthenticated } from './localAuth';
 import bcrypt from './passwords';
@@ -10,7 +10,27 @@ import { ObjectStorageService } from './localObjects';
 import { getManagedCafe, mediaOwner } from './accessControl';
 import { mountPricingControls } from './pricingControls';
 import { rateLimit } from './httpSecurity';
+import { menuDesignPutSchema } from '@shared/menuDesignSettings';
 const profileFields = ['name','theme','currency','timezone','logoUrl','coverMediaUrl','coverMediaType','cuisineType','address','phone','openingHours'];
+
+async function assertOwnedArenaAssets(cafeUserId: string, settings: Record<string, unknown>) {
+  const media = new ObjectStorageService();
+  const urls: string[] = [];
+  const walk = (v: unknown) => {
+    if (typeof v === 'string' && /^\/objects\/[a-f0-9-]{36}$/i.test(v)) urls.push(v);
+    else if (Array.isArray(v)) v.forEach(walk);
+    else if (v && typeof v === 'object') Object.values(v as Record<string, unknown>).forEach(walk);
+  };
+  walk(settings);
+  for (const url of urls) {
+    try {
+      await media.trySetObjectEntityAclPolicy(url, { owner: cafeUserId, visibility: 'public' });
+    } catch {
+      throw Object.assign(new Error('Choose media uploaded for this café'), { status: 400 });
+    }
+  }
+}
+
 export function mountCafeControls(app: Express) {
   const guarded: RequestHandler = async (req: any, res, next) => {
     try {
@@ -161,11 +181,19 @@ export function mountCafeControls(app: Express) {
       const id = z.string().uuid().parse(req.params.id);
       const restaurant = await storage.getRestaurantById(id);
       if (!restaurant || restaurant.hidden || restaurant.status !== 'active') return res.status(404).json({ message: 'Café unavailable' });
-      const [cats, allItems, allVariants] = await Promise.all([storage.getCategoriesByRestaurantId(id), storage.getMenuItemsByRestaurantId(id), storage.getPriceVariantsByRestaurantId(id)]);
+      const [cats, allItems, allVariants, designRow] = await Promise.all([
+        storage.getCategoriesByRestaurantId(id),
+        storage.getMenuItemsByRestaurantId(id),
+        storage.getPriceVariantsByRestaurantId(id),
+        db.select().from(menuDesigns).where(eq(menuDesigns.restaurantId, id)).limit(1).then(rows => rows[0] ?? null),
+      ]);
       const items = allItems.filter(item => item.isAvailable);
       const visibleIds = new Set(items.map(item => item.id));
       const { name, theme, currency, timezone, logoUrl, coverMediaUrl, coverMediaType, cuisineType, address, phone, openingHours } = restaurant;
-      res.json({ restaurant: { id, name, theme, currency, timezone, logoUrl, coverMediaUrl, coverMediaType, cuisineType, address, phone, openingHours }, categories: cats, items, variants: allVariants.filter(v => visibleIds.has(v.menuItemId)) });
+      const design = designRow
+        ? { enabled: designRow.enabled, settings: (designRow.settings && typeof designRow.settings === 'object' && !Array.isArray(designRow.settings) ? designRow.settings : {}) as Record<string, unknown> }
+        : null;
+      res.json({ restaurant: { id, name, theme, currency, timezone, logoUrl, coverMediaUrl, coverMediaType, cuisineType, address, phone, openingHours }, categories: cats, items, variants: allVariants.filter(v => visibleIds.has(v.menuItemId)), design });
     } catch (e) { next(e); }
   });
   app.put('/api/categories/:id', isAuthenticated, async (req, res, next) => {
@@ -198,5 +226,69 @@ export function mountCafeControls(app: Express) {
       });
       res.json({ success: true });
     } catch(e) { next(e); }
+  });
+
+  app.get('/api/admin/menu-design', isAuthenticated, async (req: any, res, next) => {
+    try {
+      const cafe = await getManagedCafe(req);
+      if (!cafe) return res.status(404).json({ message: 'Set up your café first' });
+      const row = (await db.select().from(menuDesigns).where(eq(menuDesigns.restaurantId, cafe.id)).limit(1))[0];
+      const settings = row?.settings && typeof row.settings === 'object' && !Array.isArray(row.settings)
+        ? (row.settings as Record<string, unknown>)
+        : {};
+      res.json({
+        restaurantId: cafe.id,
+        enabled: row?.enabled ?? false,
+        settings,
+        updatedAt: row?.updatedAt ?? null,
+        updatedBy: row?.updatedBy ?? null,
+      });
+    } catch (e) { next(e); }
+  });
+
+  app.put('/api/admin/menu-design', isAuthenticated, async (req: any, res, next) => {
+    try {
+      const cafe = await getManagedCafe(req);
+      if (!cafe) return res.status(404).json({ message: 'Set up your café first' });
+      if (req.body?.restaurantId && req.body.restaurantId !== cafe.id) {
+        return res.status(403).json({ message: 'You can only edit your own café menu design' });
+      }
+      const body = menuDesignPutSchema.parse(req.body);
+      if (body.settings) await assertOwnedArenaAssets(cafe.userId, body.settings as Record<string, unknown>);
+
+      const existing = (await db.select().from(menuDesigns).where(eq(menuDesigns.restaurantId, cafe.id)).limit(1))[0];
+      const nextEnabled = body.enabled ?? existing?.enabled ?? false;
+      const nextSettings = body.settings !== undefined
+        ? body.settings
+        : (existing?.settings && typeof existing.settings === 'object' && !Array.isArray(existing.settings) ? existing.settings : {});
+
+      const [row] = await db.insert(menuDesigns).values({
+        restaurantId: cafe.id,
+        enabled: nextEnabled,
+        settings: nextSettings,
+        updatedAt: new Date(),
+        updatedBy: req.user.id,
+      }).onConflictDoUpdate({
+        target: menuDesigns.restaurantId,
+        set: {
+          enabled: nextEnabled,
+          settings: nextSettings,
+          updatedAt: new Date(),
+          updatedBy: req.user.id,
+        },
+      }).returning();
+
+      res.json({
+        restaurantId: cafe.id,
+        enabled: row.enabled,
+        settings: row.settings,
+        updatedAt: row.updatedAt,
+        updatedBy: row.updatedBy,
+      });
+    } catch (e) {
+      if (e instanceof z.ZodError) return res.status(400).json({ message: e.issues.map(i => i.message).join(', ') });
+      if ((e as any)?.status === 400) return res.status(400).json({ message: (e as Error).message });
+      next(e);
+    }
   });
 }

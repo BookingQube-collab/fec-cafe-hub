@@ -25,8 +25,9 @@ export async function refreshCafe(scope: 'menu' | 'profile' | 'library' = 'menu'
 export async function uploadMedia(file: File): Promise<string> {
   if (file.size > 5 * 1024 * 1024) throw new Error('Choose a file smaller than 5 MB');
   const { uploadURL } = await (await apiRequest('POST', '/api/objects/upload')).json();
-  const response = await fetch(uploadURL, { method: 'PUT', body: file, headers: { 'Content-Type': file.type } });
-  if (!response.ok) throw new Error('Upload failed. Use JPEG, PNG, GIF, WebP, or MP4.');
+  const contentType = file.type || (file.name.toLowerCase().endsWith('.glb') ? 'model/gltf-binary' : 'application/octet-stream');
+  const response = await fetch(uploadURL, { method: 'PUT', body: file, headers: { 'Content-Type': contentType } });
+  if (!response.ok) throw new Error('Upload failed. Use JPEG, PNG, GIF, WebP, MP4, or GLB.');
   return uploadURL.split('?')[0];
 }
 export function managerMoney(price: string | number, currency = 'QAR') {

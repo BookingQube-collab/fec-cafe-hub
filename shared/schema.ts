@@ -102,12 +102,32 @@ export const restaurants = pgTable("restaurants", {
   updatedAt: timestamp("updated_at").defaultNow(),
 }, table => [uniqueIndex('restaurants_one_owner').on(table.userId), check('restaurants_status', sql`${table.status} in ('active','suspended','pending')`)]);
 
+export const menuDesigns = pgTable('menu_designs', {
+  restaurantId: varchar('restaurant_id').primaryKey().references(() => restaurants.id, { onDelete: 'cascade' }),
+  enabled: boolean('enabled').notNull().default(false),
+  settings: jsonb('settings').notNull().default(sql`'{}'::jsonb`),
+  updatedAt: timestamp('updated_at').defaultNow(),
+  updatedBy: varchar('updated_by'),
+});
+export type MenuDesign = typeof menuDesigns.$inferSelect;
+
 export const restaurantsRelations = relations(restaurants, ({ one, many }) => ({
   user: one(users, {
     fields: [restaurants.userId],
     references: [users.id],
   }),
   categories: many(categories),
+  menuDesign: one(menuDesigns, {
+    fields: [restaurants.id],
+    references: [menuDesigns.restaurantId],
+  }),
+}));
+
+export const menuDesignsRelations = relations(menuDesigns, ({ one }) => ({
+  restaurant: one(restaurants, {
+    fields: [menuDesigns.restaurantId],
+    references: [restaurants.id],
+  }),
 }));
 
 export const insertRestaurantSchema = createInsertSchema(restaurants).omit({
@@ -355,4 +375,5 @@ export interface PublicMenuData {
   categories: Category[];
   items: MenuItem[];
   variants: PriceVariant[];
+  design: { enabled: boolean; settings: Record<string, unknown> } | null;
 }

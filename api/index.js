@@ -23,6 +23,8 @@ __export(schema_exports, {
   insertRestaurantSchema: () => insertRestaurantSchema,
   loginSchema: () => loginSchema,
   mediaObjects: () => mediaObjects,
+  menuDesigns: () => menuDesigns,
+  menuDesignsRelations: () => menuDesignsRelations,
   menuItemPriceVariants: () => menuItemPriceVariants,
   menuItemPriceVariantsRelations: () => menuItemPriceVariantsRelations,
   menuItems: () => menuItems,
@@ -141,12 +143,29 @@ var restaurants = pgTable("restaurants", {
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow()
 }, (table) => [uniqueIndex("restaurants_one_owner").on(table.userId), check("restaurants_status", sql`${table.status} in ('active','suspended','pending')`)]);
+var menuDesigns = pgTable("menu_designs", {
+  restaurantId: varchar("restaurant_id").primaryKey().references(() => restaurants.id, { onDelete: "cascade" }),
+  enabled: boolean("enabled").notNull().default(false),
+  settings: jsonb("settings").notNull().default(sql`'{}'::jsonb`),
+  updatedAt: timestamp("updated_at").defaultNow(),
+  updatedBy: varchar("updated_by")
+});
 var restaurantsRelations = relations(restaurants, ({ one, many }) => ({
   user: one(users, {
     fields: [restaurants.userId],
     references: [users.id]
   }),
-  categories: many(categories)
+  categories: many(categories),
+  menuDesign: one(menuDesigns, {
+    fields: [restaurants.id],
+    references: [menuDesigns.restaurantId]
+  })
+}));
+var menuDesignsRelations = relations(menuDesigns, ({ one }) => ({
+  restaurant: one(restaurants, {
+    fields: [menuDesigns.restaurantId],
+    references: [restaurants.id]
+  })
 }));
 var insertRestaurantSchema = createInsertSchema(restaurants).omit({
   id: true,
@@ -672,7 +691,7 @@ import { eq as eq2, lt } from "drizzle-orm";
 import { fromZodError } from "zod-validation-error";
 
 // server/securityHeaders.ts
-var CONTENT_SECURITY_POLICY = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self'; object-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'";
+var CONTENT_SECURITY_POLICY = "default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' blob: data:; worker-src 'self' blob:; object-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'";
 function securityHeaders(production, https) {
   return {
     "X-Content-Type-Options": "nosniff",
@@ -892,7 +911,7 @@ async function authUser(req) {
   } : null };
 }
 var publicGet = /^\/api\/(?:cafes$|(?:menu|restaurant|categories|menu-items)\/public\/[^/]+$|price-variants\/public\/(?:[^/]+|restaurant\/[^/]+)$)/;
-var cafePath = /^\/api\/(?:restaurant|categories|menu-items|price-variants|manager-menu|category-order|cafe-backup|cafe-menu|objects\/upload)(?:\/|$)/;
+var cafePath = /^\/api\/(?:restaurant|categories|menu-items|price-variants|manager-menu|category-order|cafe-backup|cafe-menu|admin\/menu-design|objects\/upload)(?:\/|$)/;
 var sharedPath = /^\/api\/(?:auth\/user|account\/password|menu-library)(?:\/|$)/;
 function mountAccessControl(app) {
   app.use(async (req, res, next) => {
@@ -1222,8 +1241,9 @@ function mountLocalUploads(app) {
       else if (/^GIF8[79]a$/.test(body.subarray(0, 6).toString())) mime = "image/gif";
       else if (body.subarray(0, 4).toString() === "RIFF" && body.subarray(8, 12).toString() === "WEBP") mime = "image/webp";
       else if (body.subarray(4, 8).toString() === "ftyp") mime = "video/mp4";
-      if (!mime) return res.status(400).json({ message: "Use PNG, JPEG, GIF, WebP, or MP4 media" });
-      if (!imageDimensionsValid(body, mime)) return res.status(400).json({ message: "This media file is incomplete or too large in dimensions. Choose another file." });
+      else if (body.subarray(0, 4).toString() === "glTF") mime = "model/gltf-binary";
+      if (!mime) return res.status(400).json({ message: "Use PNG, JPEG, GIF, WebP, MP4, or GLB media" });
+      if (mime !== "model/gltf-binary" && !imageDimensionsValid(body, mime)) return res.status(400).json({ message: "This media file is incomplete or too large in dimensions. Choose another file." });
       await putMedia(req.params.id, body, owner, mime);
       res.json({ success: true });
     } catch (error) {
@@ -1278,7 +1298,7 @@ var ObjectStorageService = class {
 
 // server/cafeControls.ts
 import { eq as eq5, and, ne, sql as sql3 } from "drizzle-orm";
-import { z as z4 } from "zod";
+import { z as z5 } from "zod";
 
 // server/pricingControls.ts
 import { eq as eq4 } from "drizzle-orm";
@@ -1364,8 +1384,138 @@ function mountPricingControls(app) {
   });
 }
 
+// shared/menuDesignSettings.ts
+import { z as z4 } from "zod";
+var arenaAssetUrl = z4.string().refine(
+  (v) => /^\/objects\/[a-f0-9-]{36}$/i.test(v) || /^\/assets\/arena\/[A-Za-z0-9._\-/]+$/.test(v) || /^https:\/\//i.test(v),
+  { message: "Use /objects/<uuid>, /assets/arena/\u2026, or an https URL" }
+);
+var arenaAssetUrlOrNull = z4.union([arenaAssetUrl, z4.null()]);
+var hex = z4.string().regex(/^#[0-9a-fA-F]{6}$/, "Use a #RRGGBB colour");
+var optStr = z4.string().max(500);
+var optLong = z4.string().max(2e3);
+var categoryOverride = z4.object({
+  group: z4.enum(["food", "drinks"]).optional(),
+  nameAr: z4.string().max(200).optional(),
+  hue: hex.optional(),
+  bannerUrl: arenaAssetUrlOrNull.optional(),
+  iconUrl: arenaAssetUrlOrNull.optional()
+}).strict();
+var groupOverride = z4.object({
+  key: z4.enum(["food", "drinks"]).optional(),
+  label: optStr.optional(),
+  railLabel: optStr.optional(),
+  bg: z4.object({ inner: hex.optional(), mid: hex.optional(), outer: hex.optional() }).strict().optional(),
+  canTextureUrl: arenaAssetUrlOrNull.optional(),
+  card: z4.object({
+    label: optStr.optional(),
+    countSuffix: optStr.optional(),
+    imageUrl: arenaAssetUrlOrNull.optional(),
+    imageAlt: optStr.optional()
+  }).strict().optional(),
+  floaters: z4.array(arenaAssetUrlOrNull).max(9).optional()
+}).strict();
+var menuDesignSettingsSchema = z4.object({
+  version: z4.literal(1).optional(),
+  seo: z4.object({ title: optStr.optional(), description: optLong.optional() }).strict().optional(),
+  theme: z4.object({
+    accent: hex.optional(),
+    accentInk: hex.optional(),
+    fontHeading: optStr.optional(),
+    fontBody: optStr.optional(),
+    fontArabic: optStr.optional()
+  }).strict().optional(),
+  brand: z4.object({
+    logoUrl: arenaAssetUrlOrNull.optional(),
+    logoAlt: optStr.optional(),
+    socialLabel: optStr.optional(),
+    socialUrl: z4.union([z4.string().url().max(500), z4.literal(""), z4.null()]).optional(),
+    showSocial: z4.boolean().optional(),
+    footerText: optStr.optional(),
+    footerNote: optStr.optional(),
+    currency: optStr.optional(),
+    fallbackLogoUrl: arenaAssetUrlOrNull.optional()
+  }).strict().optional(),
+  hero: z4.object({
+    titleLine1: optStr.optional(),
+    titleLine2: optStr.optional(),
+    description: optLong.optional(),
+    ctaLabel: optStr.optional(),
+    ctaIcon: optStr.optional(),
+    showBadge: z4.boolean().optional(),
+    badgeIcon: optStr.optional(),
+    badgeTitle: optStr.optional(),
+    badgeSubtitle: optStr.optional(),
+    sideLine1: optStr.optional(),
+    sideLine2: optStr.optional(),
+    showScrollCue: z4.boolean().optional(),
+    scrollCueLabel: optStr.optional()
+  }).strict().optional(),
+  groups: z4.array(groupOverride).max(2).optional(),
+  product3d: z4.object({
+    enabled: z4.boolean().optional(),
+    modelUrl: arenaAssetUrlOrNull.optional(),
+    alt: optStr.optional(),
+    exposure: z4.number().min(0).max(5).optional(),
+    tiltDeg: z4.number().min(-180).max(180).optional()
+  }).strict().optional(),
+  backFloaters: z4.array(z4.object({ imageUrl: arenaAssetUrlOrNull.optional(), enabled: z4.boolean().optional() }).strict()).max(4).optional(),
+  bubbles: z4.object({
+    enabled: z4.boolean().optional(),
+    imageUrl: arenaAssetUrlOrNull.optional(),
+    intervalMs: z4.number().int().min(50).max(1e4).optional()
+  }).strict().optional(),
+  marquee: z4.object({
+    enabled: z4.boolean().optional(),
+    mode: z4.enum(["categories", "custom"]).optional(),
+    separator: optStr.optional(),
+    customItems: z4.array(z4.string().max(100)).max(40).optional()
+  }).strict().optional(),
+  menuIntro: z4.object({ title: optStr.optional(), titleAr: optStr.optional(), subtitle: optLong.optional() }).strict().optional(),
+  stats: z4.array(
+    z4.object({
+      key: z4.enum(["items", "categories", "minPrice"]).optional(),
+      label: optStr.optional(),
+      enabled: z4.boolean().optional()
+    }).strict()
+  ).max(3).optional(),
+  filters: z4.object({ allLabel: optStr.optional(), showGroupFilter: z4.boolean().optional() }).strict().optional(),
+  labels: z4.object({ itemsUpper: optStr.optional(), itemsLower: optStr.optional(), soldOut: optStr.optional() }).strict().optional(),
+  effects: z4.object({
+    reveal: z4.boolean().optional(),
+    countUp: z4.boolean().optional(),
+    tilt: z4.boolean().optional(),
+    cursorRepel: z4.boolean().optional()
+  }).strict().optional(),
+  /** Per-category visual overrides keyed by category UUID. */
+  categories: z4.record(z4.string().uuid(), categoryOverride).optional()
+}).strict();
+var menuDesignPutSchema = z4.object({
+  enabled: z4.boolean().optional(),
+  settings: menuDesignSettingsSchema.optional()
+}).strict().refine((b) => b.enabled !== void 0 || b.settings !== void 0, {
+  message: "Provide enabled and/or settings"
+});
+
 // server/cafeControls.ts
 var profileFields = ["name", "theme", "currency", "timezone", "logoUrl", "coverMediaUrl", "coverMediaType", "cuisineType", "address", "phone", "openingHours"];
+async function assertOwnedArenaAssets(cafeUserId, settings) {
+  const media3 = new ObjectStorageService();
+  const urls = [];
+  const walk = (v) => {
+    if (typeof v === "string" && /^\/objects\/[a-f0-9-]{36}$/i.test(v)) urls.push(v);
+    else if (Array.isArray(v)) v.forEach(walk);
+    else if (v && typeof v === "object") Object.values(v).forEach(walk);
+  };
+  walk(settings);
+  for (const url of urls) {
+    try {
+      await media3.trySetObjectEntityAclPolicy(url, { owner: cafeUserId, visibility: "public" });
+    } catch {
+      throw Object.assign(new Error("Choose media uploaded for this caf\xE9"), { status: 400 });
+    }
+  }
+}
 function mountCafeControls(app) {
   const guarded = async (req, res, next) => {
     try {
@@ -1407,7 +1557,7 @@ function mountCafeControls(app) {
             }
           }
           if ("coverMediaUrl" in parsed && !parsed.coverMediaUrl) parsed.coverMediaType = null;
-          const expectedUpdatedAt = req.body.expectedUpdatedAt === void 0 ? void 0 : z4.string().datetime().parse(req.body.expectedUpdatedAt);
+          const expectedUpdatedAt = req.body.expectedUpdatedAt === void 0 ? void 0 : z5.string().datetime().parse(req.body.expectedUpdatedAt);
           req.body = { ...parsed, userId: cafe?.userId || user.id, expectedUpdatedAt };
         }
         return next();
@@ -1420,7 +1570,7 @@ function mountCafeControls(app) {
         id && resource[1] === "price-variants" && req.method !== "GET" ? storage.getPriceVariantsByRestaurantId(cafe.id) : Promise.resolve([])
       ]);
       if (resource[1] === "categories" && ["POST", "PUT"].includes(req.method)) {
-        req.body.title = z4.string().trim().min(1).max(100).parse(req.body.title);
+        req.body.title = z5.string().trim().min(1).max(100).parse(req.body.title);
         if (cats.some((c) => c.id !== id && c.title.toLowerCase() === req.body.title.toLowerCase())) return res.status(400).json({ message: "A category with this name already exists" });
       }
       if (req.body?.restaurantId && req.body.restaurantId !== cafe.id) return res.sendStatus(403);
@@ -1441,7 +1591,7 @@ function mountCafeControls(app) {
       }
       next();
     } catch (error) {
-      if (error instanceof z4.ZodError) return res.status(400).json({ message: error.issues.map((i) => i.message).join(", ") });
+      if (error instanceof z5.ZodError) return res.status(400).json({ message: error.issues.map((i) => i.message).join(", ") });
       next(error);
     }
   };
@@ -1476,7 +1626,7 @@ function mountCafeControls(app) {
     try {
       const cafe = await getManagedCafe(req);
       if (!cafe) return res.status(404).json({ message: "Set up your caf\xE9 first" });
-      const data = insertMenuItemSchema.extend({ order: z4.number().int().min(0).optional() }).parse(req.body.item);
+      const data = insertMenuItemSchema.extend({ order: z5.number().int().min(0).optional() }).parse(req.body.item);
       if (data.imageUrl) {
         try {
           const media3 = new ObjectStorageService();
@@ -1490,12 +1640,12 @@ function mountCafeControls(app) {
       if (!cats.some((c) => c.id === data.categoryId)) return res.status(403).json({ message: "Choose a category from your caf\xE9" });
       const id = req.body.id;
       if (id && !(await storage.getMenuItemsByRestaurantId(cafe.id)).some((i) => i.id === id)) return res.status(404).json({ message: "Item not found" });
-      const options = z4.array(insertPriceVariantSchema.omit({ menuItemId: true })).max(3).parse(req.body.variants || []);
+      const options = z5.array(insertPriceVariantSchema.omit({ menuItemId: true })).max(3).parse(req.body.variants || []);
       if (data.hasMultiplePricing && !options.length) return res.status(400).json({ message: "Add at least one price option" });
       if (!data.hasMultiplePricing && options.length) return res.status(400).json({ message: "Enable multiple pricing to save price options" });
       if (new Set(options.map((v) => v.label.toLowerCase())).size !== options.length) return res.status(400).json({ message: "Price option labels must be unique" });
       const values = { ...data, price: String(data.price), discount: String(data.discount || 0) };
-      const revision = req.body.expectedUpdatedAt === void 0 ? void 0 : z4.string().datetime().parse(req.body.expectedUpdatedAt);
+      const revision = req.body.expectedUpdatedAt === void 0 ? void 0 : z5.string().datetime().parse(req.body.expectedUpdatedAt);
       const result = await db.transaction(async (tx) => {
         if (id) {
           const [current] = await tx.select().from(menuItems).where(eq5(menuItems.id, id)).for("update");
@@ -1509,7 +1659,7 @@ function mountCafeControls(app) {
       });
       res.json(result);
     } catch (e) {
-      if (e instanceof z4.ZodError) return res.status(400).json({ message: e.issues.map((i) => i.message).join(", ") });
+      if (e instanceof z5.ZodError) return res.status(400).json({ message: e.issues.map((i) => i.message).join(", ") });
       next(e);
     }
   });
@@ -1517,7 +1667,7 @@ function mountCafeControls(app) {
     try {
       const cafe = await getManagedCafe(req);
       if (!cafe) return res.sendStatus(404);
-      const ids = z4.array(z4.string()).parse(req.body.ids);
+      const ids = z5.array(z5.string()).parse(req.body.ids);
       const owned = await storage.getCategoriesByRestaurantId(cafe.id);
       if (ids.length !== owned.length || new Set(ids).size !== ids.length || ids.some((id) => !owned.some((c) => c.id === id))) return res.status(400).json({ message: "Order must contain every category from your caf\xE9 once" });
       await db.transaction(async (tx) => {
@@ -1537,21 +1687,27 @@ function mountCafeControls(app) {
   });
   app.get("/api/menu/public/:id", async (req, res, next) => {
     try {
-      const id = z4.string().uuid().parse(req.params.id);
+      const id = z5.string().uuid().parse(req.params.id);
       const restaurant = await storage.getRestaurantById(id);
       if (!restaurant || restaurant.hidden || restaurant.status !== "active") return res.status(404).json({ message: "Caf\xE9 unavailable" });
-      const [cats, allItems, allVariants] = await Promise.all([storage.getCategoriesByRestaurantId(id), storage.getMenuItemsByRestaurantId(id), storage.getPriceVariantsByRestaurantId(id)]);
+      const [cats, allItems, allVariants, designRow] = await Promise.all([
+        storage.getCategoriesByRestaurantId(id),
+        storage.getMenuItemsByRestaurantId(id),
+        storage.getPriceVariantsByRestaurantId(id),
+        db.select().from(menuDesigns).where(eq5(menuDesigns.restaurantId, id)).limit(1).then((rows) => rows[0] ?? null)
+      ]);
       const items = allItems.filter((item) => item.isAvailable);
       const visibleIds = new Set(items.map((item) => item.id));
       const { name, theme, currency, timezone, logoUrl, coverMediaUrl, coverMediaType, cuisineType, address, phone, openingHours } = restaurant;
-      res.json({ restaurant: { id, name, theme, currency, timezone, logoUrl, coverMediaUrl, coverMediaType, cuisineType, address, phone, openingHours }, categories: cats, items, variants: allVariants.filter((v) => visibleIds.has(v.menuItemId)) });
+      const design = designRow ? { enabled: designRow.enabled, settings: designRow.settings && typeof designRow.settings === "object" && !Array.isArray(designRow.settings) ? designRow.settings : {} } : null;
+      res.json({ restaurant: { id, name, theme, currency, timezone, logoUrl, coverMediaUrl, coverMediaType, cuisineType, address, phone, openingHours }, categories: cats, items, variants: allVariants.filter((v) => visibleIds.has(v.menuItemId)), design });
     } catch (e) {
       next(e);
     }
   });
   app.put("/api/categories/:id", isAuthenticated, async (req, res, next) => {
     try {
-      res.json(await storage.updateCategory(req.params.id, z4.object({ title: z4.string().trim().min(1), order: z4.number().int().min(0).optional() }).parse(req.body)));
+      res.json(await storage.updateCategory(req.params.id, z5.object({ title: z5.string().trim().min(1), order: z5.number().int().min(0).optional() }).parse(req.body)));
     } catch (e) {
       next(e);
     }
@@ -1578,7 +1734,7 @@ function mountCafeControls(app) {
   });
   app.put("/api/account/password", isAuthenticated, rateLimit(5, 15 * 60 * 1e3, (req) => req.user.id), async (req, res, next) => {
     try {
-      const data = z4.object({ currentPassword: z4.string().max(72), newPassword: passwordSchema }).strict().parse(req.body);
+      const data = z5.object({ currentPassword: z5.string().max(72), newPassword: passwordSchema }).strict().parse(req.body);
       if (!await default2.compare(data.currentPassword, req.user.password)) return res.status(400).json({ message: "Current password is incorrect" });
       const password = await default2.hash(data.newPassword, 12);
       await db.transaction(async (tx) => {
@@ -1590,14 +1746,71 @@ function mountCafeControls(app) {
       next(e);
     }
   });
+  app.get("/api/admin/menu-design", isAuthenticated, async (req, res, next) => {
+    try {
+      const cafe = await getManagedCafe(req);
+      if (!cafe) return res.status(404).json({ message: "Set up your caf\xE9 first" });
+      const row = (await db.select().from(menuDesigns).where(eq5(menuDesigns.restaurantId, cafe.id)).limit(1))[0];
+      const settings = row?.settings && typeof row.settings === "object" && !Array.isArray(row.settings) ? row.settings : {};
+      res.json({
+        restaurantId: cafe.id,
+        enabled: row?.enabled ?? false,
+        settings,
+        updatedAt: row?.updatedAt ?? null,
+        updatedBy: row?.updatedBy ?? null
+      });
+    } catch (e) {
+      next(e);
+    }
+  });
+  app.put("/api/admin/menu-design", isAuthenticated, async (req, res, next) => {
+    try {
+      const cafe = await getManagedCafe(req);
+      if (!cafe) return res.status(404).json({ message: "Set up your caf\xE9 first" });
+      if (req.body?.restaurantId && req.body.restaurantId !== cafe.id) {
+        return res.status(403).json({ message: "You can only edit your own caf\xE9 menu design" });
+      }
+      const body = menuDesignPutSchema.parse(req.body);
+      if (body.settings) await assertOwnedArenaAssets(cafe.userId, body.settings);
+      const existing = (await db.select().from(menuDesigns).where(eq5(menuDesigns.restaurantId, cafe.id)).limit(1))[0];
+      const nextEnabled = body.enabled ?? existing?.enabled ?? false;
+      const nextSettings = body.settings !== void 0 ? body.settings : existing?.settings && typeof existing.settings === "object" && !Array.isArray(existing.settings) ? existing.settings : {};
+      const [row] = await db.insert(menuDesigns).values({
+        restaurantId: cafe.id,
+        enabled: nextEnabled,
+        settings: nextSettings,
+        updatedAt: /* @__PURE__ */ new Date(),
+        updatedBy: req.user.id
+      }).onConflictDoUpdate({
+        target: menuDesigns.restaurantId,
+        set: {
+          enabled: nextEnabled,
+          settings: nextSettings,
+          updatedAt: /* @__PURE__ */ new Date(),
+          updatedBy: req.user.id
+        }
+      }).returning();
+      res.json({
+        restaurantId: cafe.id,
+        enabled: row.enabled,
+        settings: row.settings,
+        updatedAt: row.updatedAt,
+        updatedBy: row.updatedBy
+      });
+    } catch (e) {
+      if (e instanceof z5.ZodError) return res.status(400).json({ message: e.issues.map((i) => i.message).join(", ") });
+      if (e?.status === 400) return res.status(400).json({ message: e.message });
+      next(e);
+    }
+  });
 }
 
 // server/menuLibrary.ts
 import { and as and2, asc, eq as eq6, inArray } from "drizzle-orm";
-import { z as z5 } from "zod";
+import { z as z6 } from "zod";
 var normalize = (value) => value.trim().replace(/\s+/g, " ").toLocaleLowerCase();
-var idSchema = z5.string().uuid();
-var itemIdsSchema = z5.array(idSchema).min(1).max(500).refine((ids) => new Set(ids).size === ids.length, "Select each item once");
+var idSchema = z6.string().uuid();
+var itemIdsSchema = z6.array(idSchema).min(1).max(500).refine((ids) => new Set(ids).size === ids.length, "Select each item once");
 var media = new ObjectStorageService();
 function mountMenuLibrary(app) {
   app.get("/api/menu-library", isAuthenticated, async (req, res, next) => {
@@ -1620,7 +1833,7 @@ function mountMenuLibrary(app) {
   app.post("/api/menu-library/publish", isAuthenticated, async (req, res, next) => {
     const copies = [];
     try {
-      const input = z5.object({ restaurantId: idSchema, itemIds: itemIdsSchema.optional() }).parse(req.body);
+      const input = z6.object({ restaurantId: idSchema, itemIds: itemIdsSchema.optional() }).parse(req.body);
       const result = await db.transaction(async (tx) => {
         const [cafe] = await tx.select().from(restaurants).where(eq6(restaurants.id, input.restaurantId)).for("update");
         if (!cafe || req.user.role !== "super_admin" && cafe.userId !== req.user.id) return null;
@@ -1667,12 +1880,12 @@ function mountMenuLibrary(app) {
   app.post("/api/menu-library/import", isAuthenticated, async (req, res, next) => {
     const copies = [];
     try {
-      const input = z5.object({
+      const input = z6.object({
         restaurantId: idSchema,
         itemIds: itemIdsSchema,
         categoryId: idSchema.optional(),
-        isAvailable: z5.boolean().default(false),
-        acceptCurrencyDifference: z5.boolean().default(false)
+        isAvailable: z6.boolean().default(false),
+        acceptCurrencyDifference: z6.boolean().default(false)
       }).parse(req.body);
       const result = await db.transaction(async (tx) => {
         const [cafe] = await tx.select().from(restaurants).where(eq6(restaurants.id, input.restaurantId)).for("update");
@@ -1748,12 +1961,12 @@ function mountMenuLibrary(app) {
 
 // server/platformControls.ts
 import { and as and3, eq as eq7, sql as sql4 } from "drizzle-orm";
-import { z as z6 } from "zod";
+import { z as z7 } from "zod";
 var profileSchema = cafeProfileSchema.partial().extend({
-  name: z6.string().trim().min(1).max(150).optional(),
-  theme: z6.enum(["e3", "forest", "terracotta", "ocean", "plum"]).optional(),
-  currency: z6.enum(["SAR", "QAR", "INR", "AED", "USD", "EUR", "GBP"]).optional(),
-  timezone: z6.string().refine((v) => {
+  name: z7.string().trim().min(1).max(150).optional(),
+  theme: z7.enum(["e3", "forest", "terracotta", "ocean", "plum"]).optional(),
+  currency: z7.enum(["SAR", "QAR", "INR", "AED", "USD", "EUR", "GBP"]).optional(),
+  timezone: z7.string().refine((v) => {
     try {
       new Intl.DateTimeFormat("en", { timeZone: v });
       return true;
@@ -1761,8 +1974,8 @@ var profileSchema = cafeProfileSchema.partial().extend({
       return false;
     }
   }).optional(),
-  status: z6.enum(["active", "suspended", "pending"]).optional(),
-  hidden: z6.boolean().optional()
+  status: z7.enum(["active", "suspended", "pending"]).optional(),
+  hidden: z7.boolean().optional()
 }).strict();
 var media2 = new ObjectStorageService();
 async function mediaForCafe(url, cafeOwner, actorId) {
@@ -1782,13 +1995,13 @@ function mountPlatformControls(app) {
   });
   app.post("/api/super-admin/users", isSuperAdmin, async (req, res, next) => {
     try {
-      const input = z6.object({
+      const input = z7.object({
         email: emailSchema,
         password: passwordSchema,
-        firstName: z6.string().trim().min(1).max(100),
-        lastName: z6.string().trim().min(1).max(100),
-        role: z6.enum(["admin", "super_admin"]),
-        restaurantName: z6.string().trim().min(1).max(150).optional()
+        firstName: z7.string().trim().min(1).max(100),
+        lastName: z7.string().trim().min(1).max(100),
+        role: z7.enum(["admin", "super_admin"]),
+        restaurantName: z7.string().trim().min(1).max(150).optional()
       }).strict().refine(
         (v) => v.role === "super_admin" ? !v.restaurantName : !!v.restaurantName,
         "Caf\xE9 managers need a restaurant name; super admins do not."
@@ -1810,7 +2023,7 @@ function mountPlatformControls(app) {
   });
   const changeAccountStatus = (accountStatus, restore = false) => async (req, res, next) => {
     try {
-      if (!z6.string().uuid().safeParse(req.params.id).success) return res.status(400).json({ message: "Choose a valid account" });
+      if (!z7.string().uuid().safeParse(req.params.id).success) return res.status(400).json({ message: "Choose a valid account" });
       const result = await db.transaction(async (tx) => {
         const platformAdmins = await tx.select().from(users).where(eq7(users.role, "super_admin")).orderBy(users.id).for("update");
         const [target] = await tx.select().from(users).where(eq7(users.id, req.params.id)).for("update");
@@ -1873,11 +2086,11 @@ function mountPlatformControls(app) {
   });
   app.put("/api/super-admin/users/:id", isSuperAdmin, async (req, res, next) => {
     try {
-      const data = z6.object({
+      const data = z7.object({
         email: emailSchema.optional(),
-        firstName: z6.string().trim().max(100).nullable().optional(),
-        lastName: z6.string().trim().max(100).nullable().optional(),
-        role: z6.enum(["admin", "super_admin"]).optional(),
+        firstName: z7.string().trim().max(100).nullable().optional(),
+        lastName: z7.string().trim().max(100).nullable().optional(),
+        role: z7.enum(["admin", "super_admin"]).optional(),
         password: passwordSchema.optional()
       }).strict().refine((v) => Object.keys(v).length > 0, "Choose an account field to update").parse(req.body);
       const password = data.password ? await default2.hash(data.password, 12) : void 0;
@@ -1933,7 +2146,7 @@ function mountPlatformControls(app) {
   });
   app.put("/api/super-admin/restaurants/:id/password", isSuperAdmin, async (req, res, next) => {
     try {
-      const { newPassword } = z6.object({ newPassword: passwordSchema }).strict().parse(req.body);
+      const { newPassword } = z7.object({ newPassword: passwordSchema }).strict().parse(req.body);
       const cafe = await storage.getRestaurantById(req.params.id);
       if (!cafe) return res.status(404).json({ message: "Caf\xE9 not found" });
       const password = await default2.hash(newPassword, 12);
@@ -1948,7 +2161,7 @@ function mountPlatformControls(app) {
   });
   app.put("/api/super-admin/restaurants/:id/cover-media", isSuperAdmin, async (req, res, next) => {
     try {
-      const data = z6.object({ coverMediaUrl: z6.string(), coverMediaType: z6.enum(["image", "video", "gif"]).nullable() }).strict().parse(req.body);
+      const data = z7.object({ coverMediaUrl: z7.string(), coverMediaType: z7.enum(["image", "video", "gif"]).nullable() }).strict().parse(req.body);
       const cafe = await storage.getRestaurantById(req.params.id);
       if (!cafe) return res.status(404).json({ message: "Caf\xE9 not found" });
       const url = data.coverMediaUrl ? await mediaForCafe(data.coverMediaUrl.split("?")[0], cafe.userId, req.user.id) : null;
@@ -2032,7 +2245,7 @@ function mountPlatformControls(app) {
 
 // server/routes.ts
 import { fromZodError as fromZodError2 } from "zod-validation-error";
-import { z as z7 } from "zod";
+import { z as z8 } from "zod";
 async function registerRoutes(app) {
   await setupAuth(app);
   app.post("/api/register-restaurant", (_req, res) => res.status(410).json({ message: "Restaurant accounts are created by the super admin." }));
@@ -2145,8 +2358,8 @@ async function registerRoutes(app) {
   });
   app.put("/api/super-admin/restaurants/:id/suspend", isSuperAdmin, async (req, res) => {
     try {
-      const suspendSchema = z7.object({
-        reason: z7.string().min(5, "Suspension reason must be at least 5 characters")
+      const suspendSchema = z8.object({
+        reason: z8.string().min(5, "Suspension reason must be at least 5 characters")
       });
       const validatedData = suspendSchema.parse(req.body);
       const restaurant = await storage.updateRestaurant(req.params.id, {
@@ -2156,7 +2369,7 @@ async function registerRoutes(app) {
       res.json(restaurant);
     } catch (error) {
       console.error("Error suspending restaurant:", safeError(error));
-      if (error instanceof z7.ZodError) {
+      if (error instanceof z8.ZodError) {
         return res.status(400).json({ message: "Invalid suspension data", errors: error.errors });
       }
       res.status(500).json({ message: "Failed to suspend restaurant" });
@@ -2193,15 +2406,15 @@ async function registerRoutes(app) {
   });
   app.put("/api/super-admin/restaurants/:id/visibility", isSuperAdmin, async (req, res) => {
     try {
-      const visibilitySchema = z7.object({
-        hidden: z7.boolean()
+      const visibilitySchema = z8.object({
+        hidden: z8.boolean()
       });
       const validatedData = visibilitySchema.parse(req.body);
       const restaurant = await storage.updateRestaurant(req.params.id, validatedData);
       res.json(restaurant);
     } catch (error) {
       console.error("Error updating visibility:", safeError(error));
-      if (error instanceof z7.ZodError) {
+      if (error instanceof z8.ZodError) {
         return res.status(400).json({ message: "Invalid visibility data", errors: error.errors });
       }
       res.status(500).json({ message: "Failed to update visibility" });
@@ -2273,9 +2486,9 @@ async function registerRoutes(app) {
   });
   app.put("/api/restaurant/cover-media", isAuthenticated, async (req, res) => {
     try {
-      const coverMediaSchema = z7.object({
-        coverMediaUrl: z7.string(),
-        coverMediaType: z7.enum(["image", "video", "gif"]).nullable()
+      const coverMediaSchema = z8.object({
+        coverMediaUrl: z8.string(),
+        coverMediaType: z8.enum(["image", "video", "gif"]).nullable()
       });
       const validatedData = coverMediaSchema.parse(req.body);
       const userId = await mediaOwner(req);
@@ -2306,7 +2519,7 @@ async function registerRoutes(app) {
       res.status(200).json({ objectPath: objectPath2, coverMediaType });
     } catch (error) {
       console.error("Error setting cover media:", safeError(error));
-      if (error instanceof z7.ZodError) {
+      if (error instanceof z8.ZodError) {
         return res.status(400).json({ error: "Invalid cover media data", details: error.errors });
       }
       res.status(500).json({ error: "Internal server error" });
@@ -2380,9 +2593,9 @@ async function registerRoutes(app) {
     }
   });
   app.put("/api/menu-items/image", isAuthenticated, async (req, res) => {
-    const schema = z7.object({
-      imageUrl: z7.string(),
-      menuItemId: z7.string().optional()
+    const schema = z8.object({
+      imageUrl: z8.string(),
+      menuItemId: z8.string().optional()
     });
     const validationResult = schema.safeParse(req.body);
     if (!validationResult.success) {

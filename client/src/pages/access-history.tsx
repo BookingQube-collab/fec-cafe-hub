@@ -31,6 +31,7 @@ function activityLabel(action: string) {
   if (path?.includes('/menu-items')) return `${change} menu item`;
   if (path?.includes('/payments')) return 'Recorded café payment';
   if (path === '/api/restaurant' || path?.endsWith('/profile')) return 'Updated café profile';
+  if (path === '/api/admin/menu-design') return 'Updated Arena menu design';
   if (path?.includes('/restaurants/')) return method === 'DELETE' ? 'Removed café account' : 'Updated café settings';
   return 'Updated a management resource';
 }
