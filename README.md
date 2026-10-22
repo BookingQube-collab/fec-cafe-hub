@@ -2,7 +2,7 @@
 
 Independent café themes, café-manager and super-admin roles, a reusable global menu library, and a phone-friendly guest menu. See [the detailed audit](AUDIT.md), [the permission model](RBAC.md), and [Vercel + Supabase deployment](DEPLOYMENT.md).
 
-**Stack:** Node.js / Express + Supabase (Postgres + Storage). Production deploys on **Vercel serverless** (`api/index.ts`); Cloudflare Workers and Railway are not part of this project.
+**Stack:** Node.js / Express + Supabase (Postgres + Storage). Production deploys on **Vercel serverless** (committed + rebuildable `api/index.js`); Cloudflare Workers and Railway are not part of this project.
 
 **Deploy:** connect this repo to Vercel (Framework: Other, output `dist/public`), set Supabase env vars, and redeploy. Details: [DEPLOYMENT.md](DEPLOYMENT.md#hosting-on-vercel-recommended).
 

@@ -3,7 +3,7 @@
 ## Current system
 
 - Source: https://github.com/BookingQube-collab/fec-cafe-hub (`main`).
-- Runtime: **Vercel serverless** (Express via `api/index.ts`) + **Supabase** Postgres and Storage.
+- Runtime: **Vercel serverless** (Express via bundled `api/index.js`) + **Supabase** Postgres and Storage.
 - Local development still uses long-running Express (`npm run dev` / `npm start`).
 - Cloudflare Workers and Railway are not used.
 
@@ -72,7 +72,7 @@ Never commit `.env`, `.env.cloud`, credentials, `data/`, or `backup/`.
 
 ## Hosting on Vercel (recommended)
 
-The SPA builds to `dist/public`. `npm run build` also bundles `server/vercelEntry.ts` → `api/index.js` (single CommonJS file so Vercel does not hit ESM `Cannot find module '../server/...'`). `vercel.json` rewrites `/api/*` and `/objects/*` to that function and falls back to `index.html` for client routes.
+The SPA builds to `dist/public`. `api/index.js` is the Vercel serverless entry (bundled from `server/vercelEntry.ts`). It is committed so Vercel’s pre-build `functions` check matches, and `npm run build` regenerates it. A single CommonJS file avoids ESM `Cannot find module '../server/...'` under `/var/task`. `vercel.json` rewrites `/api/*` and `/objects/*` to that function and falls back to `index.html` for client routes.
 
 ### Dashboard settings
 
@@ -106,7 +106,7 @@ Redeploy after changing env vars.
 
 | Incoming | Destination |
 | --- | --- |
-| `/api/*` | Serverless Express (`api/index.ts`) |
+| `/api/*` | Serverless Express (`api/index.js` from `server/vercelEntry.ts`) |
 | `/objects/*` | Same function (signed media PUT/GET) |
 | Other unmatched paths | `index.html` (SPA); existing files under `dist/public` are served first |
 
