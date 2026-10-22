@@ -72,7 +72,7 @@ Never commit `.env`, `.env.cloud`, credentials, `data/`, or `backup/`.
 
 ## Hosting on Vercel (recommended)
 
-The SPA builds to `dist/public`. API and media upload routes run as one Node serverless function exporting Express (`api/index.ts`). `vercel.json` rewrites `/api/*` and `/objects/*` to that function and falls back to `index.html` for client routes.
+The SPA builds to `dist/public`. `npm run build` also bundles `server/vercelEntry.ts` → `api/index.js` (single CommonJS file so Vercel does not hit ESM `Cannot find module '../server/...'`). `vercel.json` rewrites `/api/*` and `/objects/*` to that function and falls back to `index.html` for client routes.
 
 ### Dashboard settings
 

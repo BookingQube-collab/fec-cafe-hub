@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "cross-env NODE_ENV=development tsx server/index.ts",
-    "build": "vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist",
+    "build": "vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist && esbuild server/vercelEntry.ts --platform=node --packages=external --bundle --format=cjs --outfile=api/index.js --alias:@shared=./shared",
     "start": "cross-env NODE_ENV=production node dist/index.js",
     "check": "tsc",
     "test": "tsx scripts/verify-menu-modifiers.ts && tsx scripts/verify-menu-language.ts && tsx scripts/verify-menu-search.ts && tsx scripts/verify-menu-discovery.ts && tsx scripts/verify-menu-refresh.ts && node scripts/verify-photo-assets.mjs && node scripts/verify-setup.mjs",

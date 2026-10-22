@@ -5,7 +5,7 @@
   "outputDirectory": "dist/public",
   "installCommand": "npm ci",
   "functions": {
-    "api/index.ts": {
+    "api/index.js": {
       "memory": 1024,
       "maxDuration": 60,
       "includeFiles": "migrations/**"
