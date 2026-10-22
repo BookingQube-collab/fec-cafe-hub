@@ -60,11 +60,13 @@ Generate a private env file skeleton:
 npm run db:configure
 ```
 
-Apply migrations before or on first cloud boot (the serverless function also runs idempotent Drizzle migrate when `migrations/` is present):
+Apply migrations from your machine (recommended) before relying on production:
 
 ```powershell
 npm run db:migrate
 ```
+
+On Vercel the API verifies `select 1` on cold start but does **not** run Drizzle migrate unless you set `RUN_MIGRATE_ON_BOOT=true` (transaction poolers often break migrate).
 
 Never commit `.env`, `.env.cloud`, credentials, `data/`, or `backup/`.
 
@@ -130,11 +132,12 @@ Production on Vercel: HTTPS cookies and trust-proxy default on. Point `PUBLIC_UR
 
 ## Limitations on serverless
 
-- **Cold starts:** First request after idle can be slow (Express + DB migrate/check + pool).
+- **Cold starts:** First request after idle can be slow (Express + DB connect + pool).
 - **In-memory rate limits:** Login/upload buckets are per-instance; they reset on cold start and do not share across regions.
 - **Uploads:** Body size and function duration limits apply; very large images may need smaller files or a future direct-to-Storage upload.
 - **No PGlite / local disk:** Vercel requires a Postgres URL (`DATABASE_URL` or integration `POSTGRES_*`) and Supabase Storage for media.
 - **Connection churn:** Pool size is `1` on Vercel to protect Supabase connection limits.
+- **Debug boot:** `GET /api/healthz` returns which env flags are present (no secrets). If `/api/cafes` returns `API failed to start`, read `detail` and Vercel → Logs for the same message.
 
 ## Recovery
 
