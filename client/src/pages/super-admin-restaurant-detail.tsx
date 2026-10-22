@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { OpenCafeAccount } from '@/components/open-cafe-account';
+import { OpenCafeAccount, OpenCafeMenuDesign } from '@/components/open-cafe-account';
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useRoute, useLocation } from "wouter";
 import { apiRequest, queryClient } from "@/lib/queryClient";
@@ -413,6 +413,7 @@ export default function SuperAdminRestaurantDetail() {
         </div>
         <div className="flex items-center gap-2">
           <OpenCafeAccount id={restaurant.id} name={restaurant.name}/>
+          <OpenCafeMenuDesign id={restaurant.id} name={restaurant.name}/>
           {restaurant.status === "suspended" ? (
             <Badge variant="destructive">Suspended</Badge>
           ) : (

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from 'wouter';
-import { OpenCafeAccount } from '@/components/open-cafe-account';
+import { OpenCafeAccount, OpenCafeMenuDesign } from '@/components/open-cafe-account';
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -219,6 +219,7 @@ export default function SuperAdminDashboard() {
 
               <div className="staff-restaurant-actions flex flex-wrap gap-2 pt-2">
                 <OpenCafeAccount id={restaurant.id} name={restaurant.name}/>
+                <OpenCafeMenuDesign id={restaurant.id} name={restaurant.name}/>
                 <Button
                   size="sm"
                   variant="outline"

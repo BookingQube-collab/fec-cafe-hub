@@ -218,9 +218,12 @@ export default function AdminMenuDesign() {
   const cafe = menu.data?.restaurant;
   const { toast } = useToast();
   const designQuery = useQuery<DesignResponse>({
-    queryKey: ['/api/admin/menu-design'],
-    enabled: !!cafe,
+    // Second key scopes React Query cache per location; fetch still hits /api/admin/menu-design
+    // (default queryFn joins keys into a URL, so we override it).
+    queryKey: ['/api/admin/menu-design', cafe?.id],
+    enabled: !!cafe?.id,
     staleTime: 0,
+    queryFn: async () => (await apiRequest('GET', '/api/admin/menu-design')).json() as Promise<DesignResponse>,
   });
 
   const [enabled, setEnabled] = useState(true);
@@ -231,11 +234,13 @@ export default function AdminMenuDesign() {
 
   useEffect(() => {
     if (!designQuery.data) return;
+    // Ignore stale responses if the café context changed mid-flight.
+    if (cafe?.id && designQuery.data.restaurantId !== cafe.id) return;
     setEnabled(designQuery.data.enabled);
     const next = clone(designQuery.data.settings || {});
     setSettings(next);
     setBaseline(JSON.stringify({ enabled: designQuery.data.enabled, settings: next }));
-  }, [designQuery.data]);
+  }, [designQuery.data, cafe?.id]);
 
   const effective = useMemo(() => deepMerge(clone(designDefaults), settings) as any, [settings]);
   const dirty = baseline !== '' && JSON.stringify({ enabled, settings }) !== baseline;
@@ -302,10 +307,13 @@ export default function AdminMenuDesign() {
       setSettings(next);
       setBaseline(JSON.stringify({ enabled: result.enabled, settings: next }));
       setError('');
-      queryClient.setQueryData(['/api/admin/menu-design'], result);
+      queryClient.setQueryData(['/api/admin/menu-design', result.restaurantId], result);
       void refreshCafe('menu');
       void queryClient.invalidateQueries({ queryKey: ['/api/menu/public'] });
-      toast({ title: 'Menu design saved', description: 'Customer menu will pick this up on the next refresh.' });
+      toast({
+        title: 'Menu design saved',
+        description: `${cafe?.name || 'This location'}’s customer menu will pick this up on the next refresh.`,
+      });
     },
     onError: (e: Error) => {
       setError(e.message);
@@ -338,9 +346,12 @@ export default function AdminMenuDesign() {
       <UnsavedChanges dirty={dirty} />
       <div className="manager-section-heading">
         <div>
-          <p className="manager-eyebrow">CUSTOMER MENU LOOK</p>
-          <h1 className="text-3xl font-bold">Menu design</h1>
-          <p className="text-muted-foreground">Arena is on by default for every café. Only what you change is stored; the rest follows shared defaults plus this café&apos;s live menu.</p>
+          <p className="manager-eyebrow">CUSTOMER MENU LOOK · THIS LOCATION ONLY</p>
+          <h1 className="text-3xl font-bold">Menu design · {cafe.name}</h1>
+          <p className="text-muted-foreground">
+            Hero, theme, images, categories, and Arena on/off are saved for {cafe.name} only — not shared with other locations.
+            Only what you change is stored; the rest follows shared defaults plus this café&apos;s live menu.
+          </p>
         </div>
         <div className="flex flex-wrap gap-2">
           <Button type="button" variant="outline" asChild>
@@ -357,7 +368,7 @@ export default function AdminMenuDesign() {
       </div>
       {error && <p role="alert" className="manager-panel p-4 text-destructive">{error}</p>}
 
-      <Section title="1. Arena style" hint="Arena is the default public menu. Turn it off only if this café should use the classic page.">
+      <Section title="1. Arena style" hint={`Arena is the default public menu for ${cafe.name}. Turn it off only if this location should use the classic page.`}>
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <Switch checked={enabled} onCheckedChange={setEnabled} id="arena-enabled" />
@@ -745,7 +756,7 @@ export default function AdminMenuDesign() {
         </Field>
       </Section>
 
-      <Section title="9. Categories" hint="Group, Arabic name, colour, banner, and tile icon for each category on this café." onReset={() => resetSection('categories')}>
+      <Section title="9. Categories" hint={`Group, Arabic name, colour, banner, and tile icon for each category on ${cafe.name}. Other locations keep their own overrides.`} onReset={() => resetSection('categories')}>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
