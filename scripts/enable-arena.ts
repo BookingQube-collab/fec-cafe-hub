@@ -31,17 +31,18 @@ if (allowCloud) {
   console.log('Using local PGlite (data/database). Cloud write blocked unless ALLOW_CLOUD_ARENA=1.');
 }
 
-const { initializeDatabase, pool, db, usingRemoteDatabase } = await import('../server/db');
-if (usingRemoteDatabase && !allowCloud) {
+// Namespace import so PGlite's post-init `db` live binding is visible (do not destructure).
+const dbMod = await import('../server/db');
+if (dbMod.usingRemoteDatabase && !allowCloud) {
   console.error('Refusing remote write without ALLOW_CLOUD_ARENA=1');
   process.exit(2);
 }
 const { menuDesigns, restaurants, categories } = await import('../shared/schema');
-await initializeDatabase();
+await dbMod.initializeDatabase();
 
 const enabled = mode === 'on';
 const restaurantIds = all
-  ? (await db
+  ? (await dbMod.db
       .select({ id: restaurants.id })
       .from(restaurants)
       .where(sql`exists (select 1 from ${categories} where ${categories.restaurantId} = ${restaurants.id})`))
@@ -54,7 +55,7 @@ if (!restaurantIds.length) {
 }
 
 for (const restaurantId of restaurantIds) {
-  await db.insert(menuDesigns).values({
+  await dbMod.db.insert(menuDesigns).values({
     restaurantId,
     enabled,
     settings: {},
@@ -66,5 +67,5 @@ for (const restaurantId of restaurantIds) {
   });
 }
 
-console.log(`menu_designs: ${restaurantIds.length} café(s) with menus enabled=${enabled} (remote=${usingRemoteDatabase})`);
-await pool.close();
+console.log(`menu_designs: ${restaurantIds.length} café(s) with menus enabled=${enabled} (remote=${dbMod.usingRemoteDatabase})`);
+await dbMod.pool.close();
