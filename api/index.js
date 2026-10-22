@@ -390,9 +390,19 @@ function resolveDatabaseUrl() {
   ];
   for (const value of candidates) {
     const trimmed = value?.trim();
-    if (trimmed) return trimmed;
+    if (trimmed) return normalizePostgresUrl(trimmed);
   }
   return void 0;
+}
+function normalizePostgresUrl(url) {
+  try {
+    const parsed = new URL(url);
+    if (!parsed.searchParams.has("uselibpqcompat")) parsed.searchParams.set("uselibpqcompat", "true");
+    if (!parsed.searchParams.get("sslmode")) parsed.searchParams.set("sslmode", "require");
+    return parsed.toString();
+  } catch {
+    return url;
+  }
 }
 function resolveMigrationsFolder() {
   return path.resolve(process.cwd(), "migrations");

@@ -24,9 +24,25 @@ function resolveDatabaseUrl(): string | undefined {
   ];
   for (const value of candidates) {
     const trimmed = value?.trim();
-    if (trimmed) return trimmed;
+    if (trimmed) return normalizePostgresUrl(trimmed);
   }
   return undefined;
+}
+
+/**
+ * node-pg v8+ maps sslmode=require → verify-full, which breaks Supabase on Vercel
+ * (SELF_SIGNED_CERT_IN_CHAIN) even when Pool.ssl.rejectUnauthorized is false.
+ * uselibpqcompat restores libpq's require = encrypt without full CA verify.
+ */
+function normalizePostgresUrl(url: string): string {
+  try {
+    const parsed = new URL(url);
+    if (!parsed.searchParams.has('uselibpqcompat')) parsed.searchParams.set('uselibpqcompat', 'true');
+    if (!parsed.searchParams.get('sslmode')) parsed.searchParams.set('sslmode', 'require');
+    return parsed.toString();
+  } catch {
+    return url;
+  }
 }
 
 function resolveMigrationsFolder() {
