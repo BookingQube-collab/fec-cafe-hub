@@ -19,7 +19,14 @@ export function log(message: string, source = "express") {
 export async function setupVite(app: Express, server: Server) {
   // Keep build tooling outside the production server's dependency graph.
   const { createServer: createViteServer, createLogger } = await import('vite');
-  const { default: viteConfig } = await import(pathToFileURL(path.resolve('vite.config.ts')).href);
+  const { default: importedConfig } = await import(pathToFileURL(path.resolve('vite.config.ts')).href);
+  // vite.config may export a defineConfig callback; spreading the function itself
+  // drops root/plugins/aliases and makes /src/main.tsx resolve from the repo root.
+  const mode = process.env.NODE_ENV === "production" ? "production" : "development";
+  const viteConfig =
+    typeof importedConfig === "function"
+      ? await importedConfig({ command: "serve", mode })
+      : importedConfig;
   const viteLogger = createLogger();
   const serverOptions = {
     middlewareMode: true,
@@ -37,7 +44,10 @@ export async function setupVite(app: Express, server: Server) {
         process.exit(1);
       },
     },
-    server: serverOptions,
+    server: {
+      ...viteConfig.server,
+      ...serverOptions,
+    },
     appType: "custom",
   });
 
