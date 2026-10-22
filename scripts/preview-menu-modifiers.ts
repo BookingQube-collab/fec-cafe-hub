@@ -5,7 +5,7 @@ import { randomUUID, randomBytes } from 'node:crypto';
 import { spawn } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import { modifierFixture } from './modifier-fixture';
 import { users, restaurants, categories, menuItems, menuItemPriceVariants } from '../shared/schema';
 

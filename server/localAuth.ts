@@ -10,8 +10,14 @@ import { fromZodError } from "zod-validation-error";
 import { rateLimit } from './httpSecurity';
 import { safeError } from './securityHeaders';
 
+export function cookieSecureEnabled() {
+  if (process.env.COOKIE_SECURE === 'true') return true;
+  if (process.env.COOKIE_SECURE === 'false') return false;
+  return process.env.VERCEL === '1';
+}
+
 export function sessionCookieName() {
-  return process.env.COOKIE_SECURE === 'true' ? '__Host-cafe.sid' : 'connect.sid';
+  return cookieSecureEnabled() ? '__Host-cafe.sid' : 'connect.sid';
 }
 
 export function getSession() {
@@ -39,7 +45,7 @@ export function getSession() {
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      secure: process.env.COOKIE_SECURE === "true",
+      secure: cookieSecureEnabled(),
       sameSite: "lax",
       path: '/',
       maxAge: sessionTtl,
@@ -103,7 +109,7 @@ export async function setupAuth(app: Express) {
       if (err) {
         return res.status(500).json({ message: "Failed to logout" });
       }
-      res.clearCookie(sessionCookieName(), { path: '/', httpOnly: true, secure: process.env.COOKIE_SECURE === 'true', sameSite: 'lax' });
+      res.clearCookie(sessionCookieName(), { path: '/', httpOnly: true, secure: cookieSecureEnabled(), sameSite: 'lax' });
       res.json({ success: true });
     });
   });

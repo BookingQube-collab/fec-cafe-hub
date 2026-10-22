@@ -1,8 +1,10 @@
 # Café menu application
 
-Independent café themes, café-manager and super-admin roles, a reusable global menu library, and a phone-friendly guest menu. See [the detailed audit](AUDIT.md), [the permission model](RBAC.md), and [Node + Supabase deployment](DEPLOYMENT.md).
+Independent café themes, café-manager and super-admin roles, a reusable global menu library, and a phone-friendly guest menu. See [the detailed audit](AUDIT.md), [the permission model](RBAC.md), and [Vercel + Supabase deployment](DEPLOYMENT.md).
 
-**Stack:** Node.js / Express + Supabase (Postgres + Storage). Cloudflare Workers are not part of this project.
+**Stack:** Node.js / Express + Supabase (Postgres + Storage). Production deploys on **Vercel serverless** (`api/index.ts`); Cloudflare Workers and Railway are not part of this project.
+
+**Deploy:** connect this repo to Vercel (Framework: Other, output `dist/public`), set Supabase env vars, and redeploy. Details: [DEPLOYMENT.md](DEPLOYMENT.md#hosting-on-vercel-recommended).
 
 ## Run locally
 
@@ -48,7 +50,7 @@ Search and filters, theme-aware presentation, English/Arabic, price options and 
 
 ## Persistence
 
-Without `DATABASE_URL`: database/sessions in `data/database`, photos in `data/uploads`. With Supabase: Postgres via `DATABASE_URL`, media via service-role Storage. Keep `.env` / `.env.cloud`, credentials, and `data/` private.
+Without `DATABASE_URL`: database/sessions in `data/database`, photos in `data/uploads`. With Supabase: Postgres via `DATABASE_URL`, media via service-role Storage. On Vercel, `DATABASE_URL` is required (no PGlite). Keep `.env` / `.env.cloud`, credentials, and `data/` private.
 
 ## Verification
 

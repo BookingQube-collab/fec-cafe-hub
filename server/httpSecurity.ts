@@ -3,9 +3,16 @@ import { securityHeaders } from './securityHeaders';
 
 // Browser mutations must originate from this app. CLI clients without browser
 // origin headers still authenticate normally; no CORS access is granted.
+function trustProxyEnabled() {
+  if (process.env.TRUST_PROXY === 'true') return true;
+  if (process.env.TRUST_PROXY === 'false') return false;
+  // Vercel terminates TLS and forwards X-Forwarded-* ; required for secure cookies.
+  return process.env.VERCEL === '1';
+}
+
 export function mountHttpSecurity(app: Express) {
   app.disable('x-powered-by');
-  app.set('trust proxy', process.env.TRUST_PROXY === 'true' ? 1 : false);
+  app.set('trust proxy', trustProxyEnabled() ? 1 : false);
   app.use((req, res, next) => {
     res.set(securityHeaders(process.env.NODE_ENV === 'production', req.secure));
     if (req.path.startsWith('/api/')) res.set('Cache-Control', 'no-store');

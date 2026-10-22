@@ -6,7 +6,7 @@ import { spawn } from 'node:child_process';
 import { PGlite } from '@electric-sql/pglite';
 import { drizzle } from 'drizzle-orm/pglite';
 import { migrate } from 'drizzle-orm/pglite/migrator';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 
 const appRoot = process.cwd();
 const auditRoot = path.resolve('data/ui-audit');
