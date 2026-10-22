@@ -1,0 +1,2 @@
+ALTER TABLE "users" ADD COLUMN "account_status" varchar DEFAULT 'active' NOT NULL;--> statement-breakpoint
+ALTER TABLE "users" ADD CONSTRAINT "users_account_status" CHECK ("users"."account_status" in ('active','frozen','deleted'));

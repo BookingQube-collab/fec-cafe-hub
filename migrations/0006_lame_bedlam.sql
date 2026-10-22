@@ -1,0 +1,3 @@
+ALTER TABLE "global_menu_items" ADD COLUMN "modifier_groups" jsonb DEFAULT '[]'::jsonb NOT NULL;--> statement-breakpoint
+ALTER TABLE "menu_items" ADD COLUMN "modifier_groups" jsonb DEFAULT '[]'::jsonb NOT NULL;--> statement-breakpoint
+ALTER TABLE "menu_items" ADD CONSTRAINT "menu_modifier_groups_array" CHECK (jsonb_typeof("menu_items"."modifier_groups") = 'array' and jsonb_array_length("menu_items"."modifier_groups") <= 8);

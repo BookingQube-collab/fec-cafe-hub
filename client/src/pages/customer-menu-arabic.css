@@ -1,0 +1,31 @@
+.guest-header-actions{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.guest-language-switch{display:flex;align-items:center;justify-content:center;gap:6px;min-height:44px;padding:8px 11px;border:1px solid hsl(var(--primary)/.12);border-radius:15px;background:#ffffffb5;color:hsl(var(--primary));font-size:12px;font-weight:600;white-space:nowrap}
+.guest-language-switch:focus-visible{outline:2px solid hsl(var(--primary));outline-offset:3px}
+/* Use logical sides for mirrored controls. Keep food photos and wheel geometry intact. */
+.guest-menu[dir=rtl],.guest-detail[dir=rtl],.guest-filter-panel[dir=rtl],.menu-wheel-dialog[dir=rtl]{font-family:Tahoma,Arial,sans-serif;letter-spacing:normal}
+.guest-menu[dir=rtl] .guest-brand,.guest-menu[dir=rtl] .guest-card-name,.guest-menu[dir=rtl] .guest-category-heading h2{letter-spacing:normal;line-height:1.5}
+.guest-menu[dir=rtl] .guest-brand small,.guest-menu[dir=rtl] .guest-simple-tools>div>span,.guest-detail[dir=rtl] .guest-kicker,.guest-detail[dir=rtl] .guest-option-picker legend,.menu-wheel-dialog[dir=rtl] .menu-wheel-eyebrow,.menu-wheel-dialog[dir=rtl] small{letter-spacing:normal}
+.guest-menu[dir=rtl] .guest-card-bottom>.guest-card-arrow{margin-left:0;margin-right:auto}
+.guest-menu[dir=rtl] .guest-heart{right:auto;left:16px}
+.guest-menu[dir=rtl] .guest-search button{margin-right:0;margin-left:-10px}
+.guest-menu[dir=rtl] .guest-card-arrow>svg,.menu-wheel-dialog[dir=rtl] .menu-wheel-result-arrow>svg,.menu-wheel-dialog[dir=rtl] .menu-wheel-shortlist button>svg{transform:scaleX(-1)}
+.guest-filter-panel[dir=rtl] h2{padding-right:0;padding-left:40px}
+.guest-filter-panel[dir=rtl]>button:last-child,.menu-wheel-dialog[dir=rtl]>button:last-child{right:auto;left:7px}
+.guest-detail[dir=rtl]>button:last-child{right:auto;left:12px}
+.guest-detail[dir=rtl] .guest-detail-title{letter-spacing:normal;line-height:1.45}
+.menu-wheel-dialog[dir=rtl] .menu-wheel-heading{padding-right:0;padding-left:22px}
+.menu-wheel-dialog[dir=rtl] .menu-wheel-heading h2{letter-spacing:normal;line-height:1.4}
+.menu-wheel-dialog[dir=rtl] .menu-wheel-result,.menu-wheel-dialog[dir=rtl] .menu-wheel-shortlist button{text-align:right}
+.menu-wheel-dialog[dir=rtl] .menu-wheel-result>div{padding-right:0;padding-left:50px}
+.menu-wheel-dialog[dir=rtl] .menu-wheel-food strong{line-height:1.35;font-size:10px}
+.guest-menu[dir=rtl] .guest-price strong,.guest-detail[dir=rtl] .guest-price strong,.menu-wheel-dialog[dir=rtl] .guest-price strong{letter-spacing:normal}
+@media(max-width:520px){
+  .guest-simple .guest-brand{min-width:0;flex:1}
+  .guest-simple .guest-filter-trigger>span{display:none}
+  .guest-simple .guest-filter-trigger{min-width:44px;padding:8px}
+  .guest-header-actions{gap:6px}
+  .guest-language-switch{padding:8px;font-size:11px;gap:4px}
+  .guest-language-switch>svg{width:14px;height:14px}
+  .guest-menu[dir=rtl] .guest-category-bar>button{font-size:11px}
+  .guest-menu[dir=rtl] .guest-heart{left:10px}
+}

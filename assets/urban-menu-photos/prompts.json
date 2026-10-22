@@ -1,0 +1,637 @@
+{
+  "mode": "built-in imagegen",
+  "sourceMenu": "test-data/urban-menu-source.pdf",
+  "referencePolicy": "Preserve source serving shapes and vessels. Studio images are AI-generated visual interpretations.",
+  "items": [
+    {
+      "index": 0,
+      "category": "Pizza",
+      "name": "Marguareita",
+      "page": 1,
+      "slug": "pizza--marguareita",
+      "prompt": "Use case: product-mockup. Asset: one square premium café menu photograph, ONLY Marguareita pizza. Reference image: provided Urban menu page, use the FIRST pizza in the pizza row as the subject reference, NOT the menu layout. Recreate this modest rectangular personal pizza on a small dark wooden rectangular serving board: golden rounded rectangular crust, melted mozzarella, tomato sauce and a few fresh basil leaves. Full pizza and full board visible, centered, appetizing three-quarter overhead angle, occupies 72% of square. Hyperrealistic professional food studio photograph, beautifully browned cheese with realistic irregular bubbles, crisp airy crust, natural basil, fine tactile detail, soft large side softbox and gentle shadow, warm ivory seamless tabletop with subtle pale blush light matching a plum café theme. Clean restrained composition, no extra side dishes, no people, no lettering, no logos, no watermark. It must look like the reference rectangular pizza, not a round pizza. Single individual product image, not a collage or poster.",
+      "status": "generated"
+    },
+    {
+      "index": 1,
+      "category": "Pizza",
+      "name": "Creamy Mushroom",
+      "page": 1,
+      "slug": "pizza--creamy-mushroom",
+      "prompt": "Use case: product-mockup. Asset: a SINGLE square menu product photograph for Urban Café. Input reference: supplied Urban menu page; use its specific food shape, vessel and modest café serving style, NOT the poster layout. Subject: Second pizza: rounded rectangular personal pizza on dark rectangular wooden board, creamy melted cheese with sliced browned mushrooms and dark olive rings, delicate yellow cream sauce drizzle. Match rectangular shape in reference. Style: hyperrealistic professional food studio photography, tangible fine textures, soft large side softbox and gentle natural grounded shadow; warm ivory seamless tabletop with very subtle pale blush light, consistent across a plum café menu. Composition: entire serving centered with 12 percent breathing room on every edge; subject occupies about 72 percent of square, slightly elevated three-quarter camera view, sharp product detail, clean restrained background. Preserve the actual reference serving style, no invented luxury side dishes. No people, no lettering, no labels, no logos, no watermark, no collage, no menu typography. One individual asset only.",
+      "status": "generated"
+    },
+    {
+      "index": 2,
+      "category": "Pizza",
+      "name": "BBR Chicken",
+      "page": 1,
+      "slug": "pizza--bbr-chicken",
+      "prompt": "Use case: product-mockup. Asset: a SINGLE square menu product photograph for Urban Café. Input reference: supplied Urban menu page; use its specific food shape, vessel and modest café serving style, NOT the poster layout. Subject: Third pizza: rounded rectangular personal pizza on dark rectangular wooden board, melted cheese and small grilled chicken pieces, a delicate golden BBQ sauce drizzle, golden crust. Style: hyperrealistic professional food studio photography, tangible fine textures, soft large side softbox and gentle natural grounded shadow; warm ivory seamless tabletop with very subtle pale blush light, consistent across a plum café menu. Composition: entire serving centered with 12 percent breathing room on every edge; subject occupies about 72 percent of square, slightly elevated three-quarter camera view, sharp product detail, clean restrained background. Preserve the actual reference serving style, no invented luxury side dishes. No people, no lettering, no labels, no logos, no watermark, no collage, no menu typography. One individual asset only.",
+      "status": "generated"
+    },
+    {
+      "index": 3,
+      "category": "Pizza",
+      "name": "Pepperoni",
+      "page": 1,
+      "slug": "pizza--pepperoni",
+      "prompt": "Use case: product-mockup. Asset: a SINGLE square menu product photograph for Urban Café. Input reference: supplied Urban menu page; use its specific food shape, vessel and modest café serving style, NOT the poster layout. Subject: Fourth pizza: rounded rectangular personal pizza on dark rectangular wooden board, tomato sauce, glossy melted cheese and several reddish pepperoni rounds with crisp curled edges. Style: hyperrealistic professional food studio photography, tangible fine textures, soft large side softbox and gentle natural grounded shadow; warm ivory seamless tabletop with very subtle pale blush light, consistent across a plum café menu. Composition: entire serving centered with 12 percent breathing room on every edge; subject occupies about 72 percent of square, slightly elevated three-quarter camera view, sharp product detail, clean restrained background. Preserve the actual reference serving style, no invented luxury side dishes. No people, no lettering, no labels, no logos, no watermark, no collage, no menu typography. One individual asset only.",
+      "status": "generated"
+    },
+    {
+      "index": 4,
+      "category": "Pizza",
+      "name": "Four Cheese",
+      "page": 1,
+      "slug": "pizza--four-cheese",
+      "prompt": "Use case: product-mockup. Asset: a SINGLE square menu product photograph for Urban Café. Input reference: supplied Urban menu page; use its specific food shape, vessel and modest café serving style, NOT the poster layout. Subject: Fifth pizza: rounded rectangular personal pizza on dark rectangular wooden board, a rich creamy four-cheese topping with light golden bubbling and a little fine herb speckling. No pepperoni or vegetables. Style: hyperrealistic professional food studio photography, tangible fine textures, soft large side softbox and gentle natural grounded shadow; warm ivory seamless tabletop with very subtle pale blush light, consistent across a plum café menu. Composition: entire serving centered with 12 percent breathing room on every edge; subject occupies about 72 percent of square, slightly elevated three-quarter camera view, sharp product detail, clean restrained background. Preserve the actual reference serving style, no invented luxury side dishes. No people, no lettering, no labels, no logos, no watermark, no collage, no menu typography. One individual asset only.",
+      "status": "generated"
+    },
+    {
+      "index": 5,
+      "category": "Hot Dogs",
+      "name": "Classic Hot Dog",
+      "page": 1,
+      "slug": "hot-dogs--classic-hot-dog",
+      "prompt": "Use case: product-mockup. Asset: a SINGLE square menu product photograph for Urban Café. Input reference: supplied Urban menu page; use its specific food shape, vessel and modest café serving style, NOT the poster layout. Subject: First hot dog: one grilled frankfurter in a golden split brioche-style bun on small oval dark wooden board, neat yellow mustard zigzag, red ketchup line. Simple uncluttered hot dog. Style: hyperrealistic professional food studio photography, tangible fine textures, soft large side softbox and gentle natural grounded shadow; warm ivory seamless tabletop with very subtle pale blush light, consistent across a plum café menu. Composition: entire serving centered with 12 percent breathing room on every edge; subject occupies about 72 percent of square, slightly elevated three-quarter camera view, sharp product detail, clean restrained background. Preserve the actual reference serving style, no invented luxury side dishes. No people, no lettering, no labels, no logos, no watermark, no collage, no menu typography. One individual asset only.",
+      "status": "generated"
+    },
+    {
+      "index": 6,
+      "category": "Hot Dogs",
+      "name": "Cheesy Melt Hot Dog",
+      "page": 1,
+      "slug": "hot-dogs--cheesy-melt-hot-dog",
+      "prompt": "Use case: product-mockup. Asset: a SINGLE square menu product photograph for Urban Café. Input reference: supplied Urban menu page; use its specific food shape, vessel and modest café serving style, NOT the poster layout. Subject: Second hot dog: one grilled frankfurter in golden split bun on oval dark wooden board, generous glossy melted yellow cheese zigzag, a little red ketchup underneath. Style: hyperrealistic professional food studio photography, tangible fine textures, soft large side softbox and gentle natural grounded shadow; warm ivory seamless tabletop with very subtle pale blush light, consistent across a plum café menu. Composition: entire serving centered with 12 percent breathing room on every edge; subject occupies about 72 percent of square, slightly elevated three-quarter camera view, sharp product detail, clean restrained background. Preserve the actual reference serving style, no invented luxury side dishes. No people, no lettering, no labels, no logos, no watermark, no collage, no menu typography. One individual asset only.",
+      "status": "generated"
+    },
+    {
+      "index": 7,
+      "category": "Hot Dogs",
+      "name": "Sriracha Mayo Hot Dog",
+      "page": 1,
+      "slug": "hot-dogs--sriracha-mayo-hot-dog",
+      "prompt": "Use case: product-mockup. Asset: a SINGLE square menu product photograph for Urban Café. Input reference: supplied Urban menu page; use its specific food shape, vessel and modest café serving style, NOT the poster layout. Subject: Third hot dog: one frankfurter in golden split bun on oval dark wooden board, an elegant coral pink sriracha mayonnaise zigzag along its full length, lightly toasted bun. Style: hyperrealistic professional food studio photography, tangible fine textures, soft large side softbox and gentle natural grounded shadow; warm ivory seamless tabletop with very subtle pale blush light, consistent across a plum café menu. Composition: entire serving centered with 12 percent breathing room on every edge; subject occupies about 72 percent of square, slightly elevated three-quarter camera view, sharp product detail, clean restrained background. Preserve the actual reference serving style, no invented luxury side dishes. No people, no lettering, no labels, no logos, no watermark, no collage, no menu typography. One individual asset only.",
+      "status": "generated"
+    },
+    {
+      "index": 8,
+      "category": "Hot Dogs",
+      "name": "Caeser Hot Dog",
+      "page": 1,
+      "slug": "hot-dogs--caeser-hot-dog",
+      "prompt": "Use case: product-mockup. Asset: a SINGLE square menu product photograph for Urban Café. Input reference: supplied Urban menu page; use its specific food shape, vessel and modest café serving style, NOT the poster layout. Subject: Fourth hot dog: one frankfurter in golden split bun on oval dark wooden board, fine pale creamy Caesar-style sauce zigzag with finely shredded white cheese and tiny green herb flecks, reference serving shape. Style: hyperrealistic professional food studio photography, tangible fine textures, soft large side softbox and gentle natural grounded shadow; warm ivory seamless tabletop with very subtle pale blush light, consistent across a plum café menu. Composition: entire serving centered with 12 percent breathing room on every edge; subject occupies about 72 percent of square, slightly elevated three-quarter camera view, sharp product detail, clean restrained background. Preserve the actual reference serving style, no invented luxury side dishes. No people, no lettering, no labels, no logos, no watermark, no collage, no menu typography. One individual asset only.",
+      "status": "generated"
+    },
+    {
+      "index": 9,
+      "category": "Hot Dogs",
+      "name": "Loaded Hot Dog",
+      "page": 1,
+      "slug": "hot-dogs--loaded-hot-dog",
+      "prompt": "Use case: product-mockup. Asset: a SINGLE square menu product photograph for Urban Café. Input reference: supplied Urban menu page; use its specific food shape, vessel and modest café serving style, NOT the poster layout. Subject: Fifth hot dog: one frankfurter in golden split bun on oval dark wooden board, loaded with small crispy browned onion pieces, melted cheese, neat ketchup and mustard drizzle. Match modest reference portion. Style: hyperrealistic professional food studio photography, tangible fine textures, soft large side softbox and gentle natural grounded shadow; warm ivory seamless tabletop with very subtle pale blush light, consistent across a plum café menu. Composition: entire serving centered with 12 percent breathing room on every edge; subject occupies about 72 percent of square, slightly elevated three-quarter camera view, sharp product detail, clean restrained background. Preserve the actual reference serving style, no invented luxury side dishes. No people, no lettering, no labels, no logos, no watermark, no collage, no menu typography. One individual asset only.",
+      "status": "generated"
+    },
+    {
+      "index": 10,
+      "category": "Spiral Potato",
+      "name": "Classic Salted Spiral",
+      "page": 1,
+      "slug": "spiral-potato--classic-salted-spiral",
+      "prompt": "Use case: product-mockup. Asset: a SINGLE square menu product photograph for Urban Café. Input reference: supplied Urban menu page; use its specific food shape, vessel and modest café serving style, NOT the poster layout. Subject: First spiral potato: one whole golden crispy tornado potato spiraled around a thin wooden skewer, presented diagonally on a small unbranded paper tray, fine sea salt grains. Continuous thin cut potato spiral, NOT curly fries. Style: hyperrealistic professional food studio photography, tangible fine textures, soft large side softbox and gentle natural grounded shadow; warm ivory seamless tabletop with very subtle pale blush light, consistent across a plum café menu. Composition: entire serving centered with 12 percent breathing room on every edge; subject occupies about 72 percent of square, slightly elevated three-quarter camera view, sharp product detail, clean restrained background. Preserve the actual reference serving style, no invented luxury side dishes. No people, no lettering, no labels, no logos, no watermark, no collage, no menu typography. One individual asset only.",
+      "status": "generated"
+    },
+    {
+      "index": 11,
+      "category": "Spiral Potato",
+      "name": "Chilli Lemon Spiral",
+      "page": 1,
+      "slug": "spiral-potato--chilli-lemon-spiral",
+      "prompt": "Use case: product-mockup. Asset: a SINGLE square menu product photograph for Urban Café. Input reference: supplied Urban menu page; use its specific food shape, vessel and modest café serving style, NOT the poster layout. Subject: Second spiral potato: one whole golden crispy tornado potato on a wooden skewer, fine red chilli seasoning and one small fresh lemon wedge beside it in a modest plain paper tray. Style: hyperrealistic professional food studio photography, tangible fine textures, soft large side softbox and gentle natural grounded shadow; warm ivory seamless tabletop with very subtle pale blush light, consistent across a plum café menu. Composition: entire serving centered with 12 percent breathing room on every edge; subject occupies about 72 percent of square, slightly elevated three-quarter camera view, sharp product detail, clean restrained background. Preserve the actual reference serving style, no invented luxury side dishes. No people, no lettering, no labels, no logos, no watermark, no collage, no menu typography. One individual asset only.",
+      "status": "generated"
+    },
+    {
+      "index": 12,
+      "category": "Spiral Potato",
+      "name": "Sriracha Mayo Spiral",
+      "page": 1,
+      "slug": "spiral-potato--sriracha-mayo-spiral",
+      "prompt": "Use case: product-mockup. Asset: a SINGLE square menu product photograph for Urban Café. Input reference: supplied Urban menu page; use its specific food shape, vessel and modest café serving style, NOT the poster layout. Subject: Third spiral potato: one whole crisp golden tornado potato on a thin wooden skewer with light coral sriracha mayo zigzag, small plain paper tray. Continuous potato spiral. Style: hyperrealistic professional food studio photography, tangible fine textures, soft large side softbox and gentle natural grounded shadow; warm ivory seamless tabletop with very subtle pale blush light, consistent across a plum café menu. Composition: entire serving centered with 12 percent breathing room on every edge; subject occupies about 72 percent of square, slightly elevated three-quarter camera view, sharp product detail, clean restrained background. Preserve the actual reference serving style, no invented luxury side dishes. No people, no lettering, no labels, no logos, no watermark, no collage, no menu typography. One individual asset only.",
+      "status": "generated"
+    },
+    {
+      "index": 13,
+      "category": "Corn on the Cob",
+      "name": "Classic Butter Corn",
+      "page": 1,
+      "slug": "corn-on-the-cob--classic-butter-corn",
+      "prompt": "Use case: product-mockup. Asset: a SINGLE square menu product photograph for Urban Café. Input reference: supplied Urban menu page; use its specific food shape, vessel and modest café serving style, NOT the poster layout. Subject: First corn: one golden yellow corn cob with juicy natural kernels, glossy butter and one small melting butter pat, in a simple small cream serving dish. Keep cob intact. Style: hyperrealistic professional food studio photography, tangible fine textures, soft large side softbox and gentle natural grounded shadow; warm ivory seamless tabletop with very subtle pale blush light, consistent across a plum café menu. Composition: entire serving centered with 12 percent breathing room on every edge; subject occupies about 72 percent of square, slightly elevated three-quarter camera view, sharp product detail, clean restrained background. Preserve the actual reference serving style, no invented luxury side dishes. No people, no lettering, no labels, no logos, no watermark, no collage, no menu typography. One individual asset only.",
+      "status": "generated"
+    },
+    {
+      "index": 14,
+      "category": "Corn on the Cob",
+      "name": "Mexican Style Corn",
+      "page": 1,
+      "slug": "corn-on-the-cob--mexican-style-corn",
+      "prompt": "Use case: product-mockup. Asset: a SINGLE square menu product photograph for Urban Café. Input reference: supplied Urban menu page; use its specific food shape, vessel and modest café serving style, NOT the poster layout. Subject: Second corn: one full yellow corn cob, creamy white sauce zigzag and fine red chilli seasoning, one lemon wedge alongside, in a simple small cream dish, matching reference. Style: hyperrealistic professional food studio photography, tangible fine textures, soft large side softbox and gentle natural grounded shadow; warm ivory seamless tabletop with very subtle pale blush light, consistent across a plum café menu. Composition: entire serving centered with 12 percent breathing room on every edge; subject occupies about 72 percent of square, slightly elevated three-quarter camera view, sharp product detail, clean restrained background. Preserve the actual reference serving style, no invented luxury side dishes. No people, no lettering, no labels, no logos, no watermark, no collage, no menu typography. One individual asset only.",
+      "status": "generated"
+    },
+    {
+      "index": 15,
+      "category": "Corn on the Cob",
+      "name": "Chessy Corn",
+      "page": 1,
+      "slug": "corn-on-the-cob--chessy-corn",
+      "prompt": "Use case: product-mockup. Asset: a SINGLE square menu product photograph for Urban Café. Input reference: supplied Urban menu page; use its specific food shape, vessel and modest café serving style, NOT the poster layout. Subject: Third corn: one full yellow corn cob lightly coated in fine melted yellow cheese with fine seasoning, one small cheese cube beside it in cream dish. No corn cup. Style: hyperrealistic professional food studio photography, tangible fine textures, soft large side softbox and gentle natural grounded shadow; warm ivory seamless tabletop with very subtle pale blush light, consistent across a plum café menu. Composition: entire serving centered with 12 percent breathing room on every edge; subject occupies about 72 percent of square, slightly elevated three-quarter camera view, sharp product detail, clean restrained background. Preserve the actual reference serving style, no invented luxury side dishes. No people, no lettering, no labels, no logos, no watermark, no collage, no menu typography. One individual asset only.",
+      "status": "generated"
+    },
+    {
+      "index": 16,
+      "category": "Combos",
+      "name": "UFO Beef Burger Combo",
+      "page": 2,
+      "slug": "combos--ufo-beef-burger-combo",
+      "prompt": "Use case: product-mockup. Asset: a SINGLE square menu product photograph for Urban Café. Input reference: supplied Urban menu page; use its specific food shape, vessel and modest café serving style, NOT the poster layout. Subject: First combo: round sealed UFO beef burger, golden pressed circular bun with a closed crimped seam all around, NOT a standard open burger stack. On small kraft tray with a portion of golden straight fries, small red ketchup ramekin and clear plastic cup of iced dark cola with black straw behind. Match reference sealed circular burger. Style: hyperrealistic professional food studio photography, tangible fine textures, soft large side softbox and gentle natural grounded shadow; warm ivory seamless tabletop with very subtle pale blush light, consistent across a plum café menu. Composition: entire serving centered with 12 percent breathing room on every edge; subject occupies about 72 percent of square, slightly elevated three-quarter camera view, sharp product detail, clean restrained background. Preserve the actual reference serving style, no invented luxury side dishes. No people, no lettering, no labels, no logos, no watermark, no collage, no menu typography. One individual asset only.",
+      "status": "generated"
+    },
+    {
+      "index": 17,
+      "category": "Combos",
+      "name": "UFO Chicken Burger Combo",
+      "page": 2,
+      "slug": "combos--ufo-chicken-burger-combo",
+      "prompt": "Use case: product-mockup. Asset: a SINGLE square menu product photograph for Urban Café. Input reference: supplied Urban menu page; use its specific food shape, vessel and modest café serving style, NOT the poster layout. Subject: Second combo: round sealed UFO chicken burger, golden pressed circular bun completely closed with a crimped circular seam, NOT a normal burger stack. Small kraft tray with straight fries, small red ketchup ramekin and clear plastic cup of iced cola with black straw behind. Style: hyperrealistic professional food studio photography, tangible fine textures, soft large side softbox and gentle natural grounded shadow; warm ivory seamless tabletop with very subtle pale blush light, consistent across a plum café menu. Composition: entire serving centered with 12 percent breathing room on every edge; subject occupies about 72 percent of square, slightly elevated three-quarter camera view, sharp product detail, clean restrained background. Preserve the actual reference serving style, no invented luxury side dishes. No people, no lettering, no labels, no logos, no watermark, no collage, no menu typography. One individual asset only.",
+      "status": "generated"
+    },
+    {
+      "index": 18,
+      "category": "Nuggets & Fries",
+      "name": "Nuggets",
+      "page": 2,
+      "slug": "nuggets-fries--nuggets",
+      "prompt": "Use case: product-mockup. Asset: a SINGLE square menu product photograph for Urban Café. Input reference: supplied Urban menu page; use its specific food shape, vessel and modest café serving style, NOT the poster layout. Subject: A modest square kraft paper tray with six or seven chunky oval golden breaded chicken nuggets, irregular crisp crumb texture, no fries or drink. Match reference tray. Style: hyperrealistic professional food studio photography, tangible fine textures, soft large side softbox and gentle natural grounded shadow; warm ivory seamless tabletop with very subtle pale blush light, consistent across a plum café menu. Composition: entire serving centered with 12 percent breathing room on every edge; subject occupies about 72 percent of square, slightly elevated three-quarter camera view, sharp product detail, clean restrained background. Preserve the actual reference serving style, no invented luxury side dishes. No people, no lettering, no labels, no logos, no watermark, no collage, no menu typography. One individual asset only.",
+      "status": "generated"
+    },
+    {
+      "index": 19,
+      "category": "Nuggets & Fries",
+      "name": "Fries",
+      "page": 2,
+      "slug": "nuggets-fries--fries",
+      "prompt": "Use case: product-mockup. Asset: a SINGLE square menu product photograph for Urban Café. Input reference: supplied Urban menu page; use its specific food shape, vessel and modest café serving style, NOT the poster layout. Subject: A square kraft paper tray generously filled with golden thin straight French fries, crisp slightly uneven ends, light sea salt, small round ketchup ramekin beside the tray. No burger. Style: hyperrealistic professional food studio photography, tangible fine textures, soft large side softbox and gentle natural grounded shadow; warm ivory seamless tabletop with very subtle pale blush light, consistent across a plum café menu. Composition: entire serving centered with 12 percent breathing room on every edge; subject occupies about 72 percent of square, slightly elevated three-quarter camera view, sharp product detail, clean restrained background. Preserve the actual reference serving style, no invented luxury side dishes. No people, no lettering, no labels, no logos, no watermark, no collage, no menu typography. One individual asset only.",
+      "status": "generated"
+    },
+    {
+      "index": 20,
+      "category": "Nuggets & Fries",
+      "name": "Nuggets + Fries + Ketchup Combo",
+      "page": 2,
+      "slug": "nuggets-fries--nuggets-fries-ketchup-combo",
+      "prompt": "Use case: product-mockup. Asset: a SINGLE square menu product photograph for Urban Café. Input reference: supplied Urban menu page; use its specific food shape, vessel and modest café serving style, NOT the poster layout. Subject: One compact café snack combo: kraft tray of six golden chicken nuggets, adjacent small kraft tray of golden straight French fries and small round red ketchup ramekin. No drink or burger. All three full components in frame. Style: hyperrealistic professional food studio photography, tangible fine textures, soft large side softbox and gentle natural grounded shadow; warm ivory seamless tabletop with very subtle pale blush light, consistent across a plum café menu. Composition: entire serving centered with 12 percent breathing room on every edge; subject occupies about 72 percent of square, slightly elevated three-quarter camera view, sharp product detail, clean restrained background. Preserve the actual reference serving style, no invented luxury side dishes. No people, no lettering, no labels, no logos, no watermark, no collage, no menu typography. One individual asset only.",
+      "status": "generated"
+    },
+    {
+      "index": 21,
+      "category": "Popcorn",
+      "name": "Salt",
+      "page": 2,
+      "slug": "popcorn--salt",
+      "prompt": "Use case: product-mockup. Asset: a SINGLE square menu product photograph for Urban Café. Input reference: supplied Urban menu page; use its specific food shape, vessel and modest café serving style, NOT the poster layout. Subject: First popcorn: one plain black paper popcorn tub overflowing with white fluffy salted popcorn, natural craggy kernels, few tiny salt grains and stray popped kernels at base. No caramel. Style: hyperrealistic professional food studio photography, tangible fine textures, soft large side softbox and gentle natural grounded shadow; warm ivory seamless tabletop with very subtle pale blush light, consistent across a plum café menu. Composition: entire serving centered with 12 percent breathing room on every edge; subject occupies about 72 percent of square, slightly elevated three-quarter camera view, sharp product detail, clean restrained background. Preserve the actual reference serving style, no invented luxury side dishes. No people, no lettering, no labels, no logos, no watermark, no collage, no menu typography. One individual asset only.",
+      "status": "generated"
+    },
+    {
+      "index": 22,
+      "category": "Popcorn",
+      "name": "Carame",
+      "page": 2,
+      "slug": "popcorn--carame",
+      "prompt": "Use case: product-mockup. Asset: a SINGLE square menu product photograph for Urban Café. Input reference: supplied Urban menu page; use its specific food shape, vessel and modest café serving style, NOT the poster layout. Subject: Second popcorn: one plain black paper popcorn tub overflowing with amber caramel-coated popcorn, glossy thin caramel sheen and visible natural kernel texture, few caramel popcorn kernels beside tub. Style: hyperrealistic professional food studio photography, tangible fine textures, soft large side softbox and gentle natural grounded shadow; warm ivory seamless tabletop with very subtle pale blush light, consistent across a plum café menu. Composition: entire serving centered with 12 percent breathing room on every edge; subject occupies about 72 percent of square, slightly elevated three-quarter camera view, sharp product detail, clean restrained background. Preserve the actual reference serving style, no invented luxury side dishes. No people, no lettering, no labels, no logos, no watermark, no collage, no menu typography. One individual asset only.",
+      "status": "generated"
+    },
+    {
+      "index": 23,
+      "category": "Popcorn",
+      "name": "Cheese",
+      "page": 2,
+      "slug": "popcorn--cheese",
+      "prompt": "Use case: product-mockup. Asset: a SINGLE square menu product photograph for Urban Café. Input reference: supplied Urban menu page; use its specific food shape, vessel and modest café serving style, NOT the poster layout. Subject: Third popcorn: one plain black paper popcorn tub overflowing with golden orange cheese-dusted popcorn, powder coating rather than melted cheese, a small cheddar cube beside tub. Style: hyperrealistic professional food studio photography, tangible fine textures, soft large side softbox and gentle natural grounded shadow; warm ivory seamless tabletop with very subtle pale blush light, consistent across a plum café menu. Composition: entire serving centered with 12 percent breathing room on every edge; subject occupies about 72 percent of square, slightly elevated three-quarter camera view, sharp product detail, clean restrained background. Preserve the actual reference serving style, no invented luxury side dishes. No people, no lettering, no labels, no logos, no watermark, no collage, no menu typography. One individual asset only.",
+      "status": "generated"
+    },
+    {
+      "index": 24,
+      "category": "Soft Serve",
+      "name": "Chocolate Soft Serve (Cone)",
+      "page": 2,
+      "slug": "soft-serve--chocolate-soft-serve-cone",
+      "prompt": "Use case: product-mockup. Asset: a SINGLE square menu product photograph for Urban Café. Input reference: supplied Urban menu page; use its specific food shape, vessel and modest café serving style, NOT the poster layout. Subject: First cone: one crisp golden waffle cone with a tall elegant spiral of chocolate soft serve, glossy creamy chocolate brown folds, entire cone tip visible, standing in discreet small cone stand. A few chocolate shavings near base only. Style: hyperrealistic professional food studio photography, tangible fine textures, soft large side softbox and gentle natural grounded shadow; warm ivory seamless tabletop with very subtle pale blush light, consistent across a plum café menu. Composition: entire serving centered with 12 percent breathing room on every edge; subject occupies about 72 percent of square, slightly elevated three-quarter camera view, sharp product detail, clean restrained background. Preserve the actual reference serving style, no invented luxury side dishes. No people, no lettering, no labels, no logos, no watermark, no collage, no menu typography. One individual asset only.",
+      "status": "generated"
+    },
+    {
+      "index": 25,
+      "category": "Soft Serve",
+      "name": "Vanilla Soft Serve (Cone)",
+      "page": 2,
+      "slug": "soft-serve--vanilla-soft-serve-cone",
+      "prompt": "Use case: product-mockup. Asset: a SINGLE square menu product photograph for Urban Café. Input reference: supplied Urban menu page; use its specific food shape, vessel and modest café serving style, NOT the poster layout. Subject: Second cone: one crisp golden waffle cone with tall elegant creamy ivory vanilla soft serve spiral, delicate ridges, full pointed cone visible, discreet small cone stand. Simple vanilla without fruit. Style: hyperrealistic professional food studio photography, tangible fine textures, soft large side softbox and gentle natural grounded shadow; warm ivory seamless tabletop with very subtle pale blush light, consistent across a plum café menu. Composition: entire serving centered with 12 percent breathing room on every edge; subject occupies about 72 percent of square, slightly elevated three-quarter camera view, sharp product detail, clean restrained background. Preserve the actual reference serving style, no invented luxury side dishes. No people, no lettering, no labels, no logos, no watermark, no collage, no menu typography. One individual asset only.",
+      "status": "generated"
+    },
+    {
+      "index": 26,
+      "category": "Hot Coffee",
+      "name": "Espresso Single/Double",
+      "page": 3,
+      "slug": "hot-coffee--espresso-single-double",
+      "prompt": "Use case: product-mockup. Asset: a SINGLE square menu product photograph for Urban Café. Input reference: supplied Urban menu page; use its specific food shape, vessel and modest café serving style, NOT the poster layout. Subject: First hot coffee: one small plain matte black espresso paper cup, rich dark espresso with mottled golden crema visible on top. A few roasted coffee beans at base. Small single serving, no milk. Style: hyperrealistic professional food studio photography, tangible fine textures, soft large side softbox and gentle natural grounded shadow; warm ivory seamless tabletop with very subtle pale blush light, consistent across a plum café menu. Composition: entire serving centered with 12 percent breathing room on every edge; subject occupies about 72 percent of square, slightly elevated three-quarter camera view, sharp product detail, clean restrained background. Preserve the actual reference serving style, no invented luxury side dishes. No people, no lettering, no labels, no logos, no watermark, no collage, no menu typography. One individual asset only.",
+      "status": "generated"
+    },
+    {
+      "index": 27,
+      "category": "Hot Coffee",
+      "name": "Americano",
+      "page": 3,
+      "slug": "hot-coffee--americano",
+      "prompt": "Use case: product-mockup. Asset: a SINGLE square menu product photograph for Urban Café. Input reference: supplied Urban menu page; use its specific food shape, vessel and modest café serving style, NOT the poster layout. Subject: Second hot coffee: one plain matte black paper cup of hot black americano, deep dark coffee with a fine amber surface ring, faint natural steam, few coffee beans alongside. Style: hyperrealistic professional food studio photography, tangible fine textures, soft large side softbox and gentle natural grounded shadow; warm ivory seamless tabletop with very subtle pale blush light, consistent across a plum café menu. Composition: entire serving centered with 12 percent breathing room on every edge; subject occupies about 72 percent of square, slightly elevated three-quarter camera view, sharp product detail, clean restrained background. Preserve the actual reference serving style, no invented luxury side dishes. No people, no lettering, no labels, no logos, no watermark, no collage, no menu typography. One individual asset only.",
+      "status": "generated"
+    },
+    {
+      "index": 28,
+      "category": "Hot Coffee",
+      "name": "Latte",
+      "page": 3,
+      "slug": "hot-coffee--latte",
+      "prompt": "Use case: product-mockup. Asset: a SINGLE square menu product photograph for Urban Café. Input reference: supplied Urban menu page; use its specific food shape, vessel and modest café serving style, NOT the poster layout. Subject: Third coffee: one plain matte black paper cup with silky tan latte and refined white rosetta latte art, fine glossy microfoam, a few roasted beans beside cup. No whipped cream. Style: hyperrealistic professional food studio photography, tangible fine textures, soft large side softbox and gentle natural grounded shadow; warm ivory seamless tabletop with very subtle pale blush light, consistent across a plum café menu. Composition: entire serving centered with 12 percent breathing room on every edge; subject occupies about 72 percent of square, slightly elevated three-quarter camera view, sharp product detail, clean restrained background. Preserve the actual reference serving style, no invented luxury side dishes. No people, no lettering, no labels, no logos, no watermark, no collage, no menu typography. One individual asset only.",
+      "status": "generated"
+    },
+    {
+      "index": 29,
+      "category": "Hot Coffee",
+      "name": "Cappuccino",
+      "page": 3,
+      "slug": "hot-coffee--cappuccino",
+      "prompt": "Use case: product-mockup. Asset: a SINGLE square menu product photograph for Urban Café. Input reference: supplied Urban menu page; use its specific food shape, vessel and modest café serving style, NOT the poster layout. Subject: Fourth coffee: one plain matte black paper cup with cappuccino, thicker velvety ivory foam and small symmetrical rosetta in toasted caramel brown coffee. Fine bubbles, few beans beside cup. Style: hyperrealistic professional food studio photography, tangible fine textures, soft large side softbox and gentle natural grounded shadow; warm ivory seamless tabletop with very subtle pale blush light, consistent across a plum café menu. Composition: entire serving centered with 12 percent breathing room on every edge; subject occupies about 72 percent of square, slightly elevated three-quarter camera view, sharp product detail, clean restrained background. Preserve the actual reference serving style, no invented luxury side dishes. No people, no lettering, no labels, no logos, no watermark, no collage, no menu typography. One individual asset only.",
+      "status": "generated"
+    },
+    {
+      "index": 30,
+      "category": "Hot Coffee",
+      "name": "Flat White",
+      "page": 3,
+      "slug": "hot-coffee--flat-white",
+      "prompt": "Use case: product-mockup. Asset: a SINGLE square menu product photograph for Urban Café. Input reference: supplied Urban menu page; use its specific food shape, vessel and modest café serving style, NOT the poster layout. Subject: Fifth coffee: one modest plain matte black paper cup with flat white, thin silky microfoam with clean white heart latte art on warm tan espresso milk, no thick foam or whipped cream. Style: hyperrealistic professional food studio photography, tangible fine textures, soft large side softbox and gentle natural grounded shadow; warm ivory seamless tabletop with very subtle pale blush light, consistent across a plum café menu. Composition: entire serving centered with 12 percent breathing room on every edge; subject occupies about 72 percent of square, slightly elevated three-quarter camera view, sharp product detail, clean restrained background. Preserve the actual reference serving style, no invented luxury side dishes. No people, no lettering, no labels, no logos, no watermark, no collage, no menu typography. One individual asset only.",
+      "status": "generated"
+    },
+    {
+      "index": 31,
+      "category": "Hot Coffee",
+      "name": "Spanish Latte",
+      "page": 3,
+      "slug": "hot-coffee--spanish-latte",
+      "prompt": "Use case: product-mockup. Asset: a SINGLE square menu product photograph for Urban Café. Input reference: supplied Urban menu page; use its specific food shape, vessel and modest café serving style, NOT the poster layout. Subject: Sixth coffee: one plain matte black paper cup with rich creamy Spanish latte and delicate white rosetta latte art, warm caramel colored milky coffee, subtle milk gloss. No iced layers. Style: hyperrealistic professional food studio photography, tangible fine textures, soft large side softbox and gentle natural grounded shadow; warm ivory seamless tabletop with very subtle pale blush light, consistent across a plum café menu. Composition: entire serving centered with 12 percent breathing room on every edge; subject occupies about 72 percent of square, slightly elevated three-quarter camera view, sharp product detail, clean restrained background. Preserve the actual reference serving style, no invented luxury side dishes. No people, no lettering, no labels, no logos, no watermark, no collage, no menu typography. One individual asset only.",
+      "status": "generated"
+    },
+    {
+      "index": 32,
+      "category": "Hot Coffee",
+      "name": "Mocha",
+      "page": 3,
+      "slug": "hot-coffee--mocha",
+      "prompt": "Use case: product-mockup. Asset: a SINGLE square menu product photograph for Urban Café. Input reference: supplied Urban menu page; use its specific food shape, vessel and modest café serving style, NOT the poster layout. Subject: Seventh coffee: plain matte black paper cup of hot chocolate mocha with neat whipped cream peak and a fine dark chocolate drizzle, a few chocolate shavings by cup, matching reference whipped topping. Style: hyperrealistic professional food studio photography, tangible fine textures, soft large side softbox and gentle natural grounded shadow; warm ivory seamless tabletop with very subtle pale blush light, consistent across a plum café menu. Composition: entire serving centered with 12 percent breathing room on every edge; subject occupies about 72 percent of square, slightly elevated three-quarter camera view, sharp product detail, clean restrained background. Preserve the actual reference serving style, no invented luxury side dishes. No people, no lettering, no labels, no logos, no watermark, no collage, no menu typography. One individual asset only.",
+      "status": "generated"
+    },
+    {
+      "index": 33,
+      "category": "Hot Coffee",
+      "name": "Caramel Latte",
+      "page": 3,
+      "slug": "hot-coffee--caramel-latte",
+      "prompt": "Use case: product-mockup. Asset: a SINGLE square menu product photograph for Urban Café. Input reference: supplied Urban menu page; use its specific food shape, vessel and modest café serving style, NOT the poster layout. Subject: Eighth coffee: plain matte black paper cup of hot caramel latte with a modest creamy whipped topping and delicate glossy caramel ribbons, two tiny caramel pieces beside cup, matching reference. Style: hyperrealistic professional food studio photography, tangible fine textures, soft large side softbox and gentle natural grounded shadow; warm ivory seamless tabletop with very subtle pale blush light, consistent across a plum café menu. Composition: entire serving centered with 12 percent breathing room on every edge; subject occupies about 72 percent of square, slightly elevated three-quarter camera view, sharp product detail, clean restrained background. Preserve the actual reference serving style, no invented luxury side dishes. No people, no lettering, no labels, no logos, no watermark, no collage, no menu typography. One individual asset only.",
+      "status": "generated"
+    },
+    {
+      "index": 34,
+      "category": "Hot Coffee",
+      "name": "Vanilla Latte",
+      "page": 3,
+      "slug": "hot-coffee--vanilla-latte",
+      "prompt": "Use case: product-mockup. Asset: a SINGLE square menu product photograph for Urban Café. Input reference: supplied Urban menu page; use its specific food shape, vessel and modest café serving style, NOT the poster layout. Subject: Plain matte black paper cup of hot vanilla latte, smooth tan milky coffee with small white leaf latte art, one short vanilla pod alongside to distinguish flavor. No ice. Style: hyperrealistic professional food studio photography, tangible fine textures, soft large side softbox and gentle natural grounded shadow; warm ivory seamless tabletop with very subtle pale blush light, consistent across a plum café menu. Composition: entire serving centered with 12 percent breathing room on every edge; subject occupies about 72 percent of square, slightly elevated three-quarter camera view, sharp product detail, clean restrained background. Preserve the actual reference serving style, no invented luxury side dishes. No people, no lettering, no labels, no logos, no watermark, no collage, no menu typography. One individual asset only.",
+      "status": "generated"
+    },
+    {
+      "index": 35,
+      "category": "Hot Coffee",
+      "name": "Hazelnut Latte",
+      "page": 3,
+      "slug": "hot-coffee--hazelnut-latte",
+      "prompt": "Use case: product-mockup. Asset: a SINGLE square menu product photograph for Urban Café. Input reference: supplied Urban menu page; use its specific food shape, vessel and modest café serving style, NOT the poster layout. Subject: Plain matte black paper cup of hot hazelnut latte, silky tan coffee and small white rosetta latte art, two hazelnuts beside cup as restrained flavor cue. No ice. Style: hyperrealistic professional food studio photography, tangible fine textures, soft large side softbox and gentle natural grounded shadow; warm ivory seamless tabletop with very subtle pale blush light, consistent across a plum café menu. Composition: entire serving centered with 12 percent breathing room on every edge; subject occupies about 72 percent of square, slightly elevated three-quarter camera view, sharp product detail, clean restrained background. Preserve the actual reference serving style, no invented luxury side dishes. No people, no lettering, no labels, no logos, no watermark, no collage, no menu typography. One individual asset only.",
+      "status": "generated"
+    },
+    {
+      "index": 36,
+      "category": "Hot Coffee",
+      "name": "Pistachio Latte",
+      "page": 3,
+      "slug": "hot-coffee--pistachio-latte",
+      "prompt": "Use case: product-mockup. Asset: a SINGLE square menu product photograph for Urban Café. Input reference: supplied Urban menu page; use its specific food shape, vessel and modest café serving style, NOT the poster layout. Subject: Plain matte black paper cup of hot pistachio latte, pale warm pistachio-tan milky coffee with subtle white latte art and a fine sprinkle of green pistachio crumbs on one edge, two pistachios beside cup. No whipped tower. Style: hyperrealistic professional food studio photography, tangible fine textures, soft large side softbox and gentle natural grounded shadow; warm ivory seamless tabletop with very subtle pale blush light, consistent across a plum café menu. Composition: entire serving centered with 12 percent breathing room on every edge; subject occupies about 72 percent of square, slightly elevated three-quarter camera view, sharp product detail, clean restrained background. Preserve the actual reference serving style, no invented luxury side dishes. No people, no lettering, no labels, no logos, no watermark, no collage, no menu typography. One individual asset only.",
+      "status": "generated"
+    },
+    {
+      "index": 37,
+      "category": "Karak & Tea",
+      "name": "Karak",
+      "page": 3,
+      "slug": "karak-tea--karak",
+      "prompt": "Use case: product-mockup. Asset: a SINGLE square menu product photograph for Urban Café. Input reference: supplied Urban menu page; use its specific food shape, vessel and modest café serving style, NOT the poster layout. Subject: One small plain matte black paper cup filled with warm caramel-brown karak milk tea, subtle velvety surface and faint steam, one cardamom pod beside cup. Match reference milky tea. Style: hyperrealistic professional food studio photography, tangible fine textures, soft large side softbox and gentle natural grounded shadow; warm ivory seamless tabletop with very subtle pale blush light, consistent across a plum café menu. Composition: entire serving centered with 12 percent breathing room on every edge; subject occupies about 72 percent of square, slightly elevated three-quarter camera view, sharp product detail, clean restrained background. Preserve the actual reference serving style, no invented luxury side dishes. No people, no lettering, no labels, no logos, no watermark, no collage, no menu typography. One individual asset only.",
+      "status": "generated"
+    },
+    {
+      "index": 38,
+      "category": "Karak & Tea",
+      "name": "Black/Green Tea",
+      "page": 3,
+      "slug": "karak-tea--black-green-tea",
+      "prompt": "Use case: product-mockup. Asset: a SINGLE square menu product photograph for Urban Café. Input reference: supplied Urban menu page; use its specific food shape, vessel and modest café serving style, NOT the poster layout. Subject: One small plain matte black paper cup of clear warm amber tea, surface visible with faint steam, a few modest green tea leaves beside cup. This photograph represents a tea item offering black OR green tea; do not show two servings or milk. Style: hyperrealistic professional food studio photography, tangible fine textures, soft large side softbox and gentle natural grounded shadow; warm ivory seamless tabletop with very subtle pale blush light, consistent across a plum café menu. Composition: entire serving centered with 12 percent breathing room on every edge; subject occupies about 72 percent of square, slightly elevated three-quarter camera view, sharp product detail, clean restrained background. Preserve the actual reference serving style, no invented luxury side dishes. No people, no lettering, no labels, no logos, no watermark, no collage, no menu typography. One individual asset only.",
+      "status": "generated"
+    },
+    {
+      "index": 39,
+      "category": "Cold Coffee",
+      "name": "Iced Americano",
+      "page": 3,
+      "slug": "cold-coffee--iced-americano",
+      "prompt": "Use case: product-mockup. Asset: a SINGLE square menu product photograph for Urban Café. Input reference: supplied Urban menu page; use its specific food shape, vessel and modest café serving style, NOT the poster layout. Subject: First iced coffee: one clear plastic café cup of dark iced Americano, clean visible angular ice cubes, amber edges and lifelike tiny condensation beads. No milk or whipped cream. Style: hyperrealistic professional food studio photography, tangible fine textures, soft large side softbox and gentle natural grounded shadow; warm ivory seamless tabletop with very subtle pale blush light, consistent across a plum café menu. Composition: entire serving centered with 12 percent breathing room on every edge; subject occupies about 72 percent of square, slightly elevated three-quarter camera view, sharp product detail, clean restrained background. Preserve the actual reference serving style, no invented luxury side dishes. No people, no lettering, no labels, no logos, no watermark, no collage, no menu typography. One individual asset only.",
+      "status": "generated"
+    },
+    {
+      "index": 40,
+      "category": "Cold Coffee",
+      "name": "Iced Latte",
+      "page": 3,
+      "slug": "cold-coffee--iced-latte",
+      "prompt": "Use case: product-mockup. Asset: a SINGLE square menu product photograph for Urban Café. Input reference: supplied Urban menu page; use its specific food shape, vessel and modest café serving style, NOT the poster layout. Subject: Second iced coffee: one clear plastic café cup of creamy tan iced latte, clean angular ice cubes, slight natural coffee-milk swirling and lifelike small condensation droplets. Style: hyperrealistic professional food studio photography, tangible fine textures, soft large side softbox and gentle natural grounded shadow; warm ivory seamless tabletop with very subtle pale blush light, consistent across a plum café menu. Composition: entire serving centered with 12 percent breathing room on every edge; subject occupies about 72 percent of square, slightly elevated three-quarter camera view, sharp product detail, clean restrained background. Preserve the actual reference serving style, no invented luxury side dishes. No people, no lettering, no labels, no logos, no watermark, no collage, no menu typography. One individual asset only.",
+      "status": "generated"
+    },
+    {
+      "index": 41,
+      "category": "Cold Coffee",
+      "name": "Iced Spanish Latte",
+      "page": 3,
+      "slug": "cold-coffee--iced-spanish-latte",
+      "prompt": "Use case: product-mockup. Asset: a SINGLE square menu product photograph for Urban Café. Input reference: supplied Urban menu page; use its specific food shape, vessel and modest café serving style, NOT the poster layout. Subject: Third iced coffee: one clear plastic café cup of iced Spanish latte, creamy condensed-milk ivory at base blending into caramel coffee at top, visible ice and lifelike fine condensation. Style: hyperrealistic professional food studio photography, tangible fine textures, soft large side softbox and gentle natural grounded shadow; warm ivory seamless tabletop with very subtle pale blush light, consistent across a plum café menu. Composition: entire serving centered with 12 percent breathing room on every edge; subject occupies about 72 percent of square, slightly elevated three-quarter camera view, sharp product detail, clean restrained background. Preserve the actual reference serving style, no invented luxury side dishes. No people, no lettering, no labels, no logos, no watermark, no collage, no menu typography. One individual asset only.",
+      "status": "generated"
+    },
+    {
+      "index": 42,
+      "category": "Cold Coffee",
+      "name": "Iced Mocha",
+      "page": 3,
+      "slug": "cold-coffee--iced-mocha",
+      "prompt": "Use case: product-mockup. Asset: a SINGLE square menu product photograph for Urban Café. Input reference: supplied Urban menu page; use its specific food shape, vessel and modest café serving style, NOT the poster layout. Subject: Fourth iced coffee: one clear plastic café cup of chocolate brown iced mocha with visible ice cubes and subtle chocolate syrup traces on inner cup, no extravagant whipped cream, small chocolate fragment at base. Style: hyperrealistic professional food studio photography, tangible fine textures, soft large side softbox and gentle natural grounded shadow; warm ivory seamless tabletop with very subtle pale blush light, consistent across a plum café menu. Composition: entire serving centered with 12 percent breathing room on every edge; subject occupies about 72 percent of square, slightly elevated three-quarter camera view, sharp product detail, clean restrained background. Preserve the actual reference serving style, no invented luxury side dishes. No people, no lettering, no labels, no logos, no watermark, no collage, no menu typography. One individual asset only.",
+      "status": "generated"
+    },
+    {
+      "index": 43,
+      "category": "Cold Coffee",
+      "name": "Iced Caramel Latte",
+      "page": 3,
+      "slug": "cold-coffee--iced-caramel-latte",
+      "prompt": "Use case: product-mockup. Asset: a SINGLE square menu product photograph for Urban Café. Input reference: supplied Urban menu page; use its specific food shape, vessel and modest café serving style, NOT the poster layout. Subject: One clear plastic café cup of golden caramel tan iced latte, visible ice cubes, subtle caramel syrup streak inside cup and light condensation, tiny caramel piece beside it. Style: hyperrealistic professional food studio photography, tangible fine textures, soft large side softbox and gentle natural grounded shadow; warm ivory seamless tabletop with very subtle pale blush light, consistent across a plum café menu. Composition: entire serving centered with 12 percent breathing room on every edge; subject occupies about 72 percent of square, slightly elevated three-quarter camera view, sharp product detail, clean restrained background. Preserve the actual reference serving style, no invented luxury side dishes. No people, no lettering, no labels, no logos, no watermark, no collage, no menu typography. One individual asset only.",
+      "status": "generated"
+    },
+    {
+      "index": 44,
+      "category": "Cold Coffee",
+      "name": "Iced Vanilla Latte",
+      "page": 3,
+      "slug": "cold-coffee--iced-vanilla-latte",
+      "prompt": "Use case: product-mockup. Asset: a SINGLE square menu product photograph for Urban Café. Input reference: supplied Urban menu page; use its specific food shape, vessel and modest café serving style, NOT the poster layout. Subject: One clear plastic café cup of light creamy tan iced vanilla latte, visible ice cubes and subtle condensation, one short vanilla pod beside cup, no whipped topping. Style: hyperrealistic professional food studio photography, tangible fine textures, soft large side softbox and gentle natural grounded shadow; warm ivory seamless tabletop with very subtle pale blush light, consistent across a plum café menu. Composition: entire serving centered with 12 percent breathing room on every edge; subject occupies about 72 percent of square, slightly elevated three-quarter camera view, sharp product detail, clean restrained background. Preserve the actual reference serving style, no invented luxury side dishes. No people, no lettering, no labels, no logos, no watermark, no collage, no menu typography. One individual asset only.",
+      "status": "generated"
+    },
+    {
+      "index": 45,
+      "category": "Cold Coffee",
+      "name": "Iced Hazelnut Latte",
+      "page": 3,
+      "slug": "cold-coffee--iced-hazelnut-latte",
+      "prompt": "Use case: product-mockup. Asset: a SINGLE square menu product photograph for Urban Café. Input reference: supplied Urban menu page; use its specific food shape, vessel and modest café serving style, NOT the poster layout. Subject: One clear plastic café cup of warm nut-brown iced hazelnut latte, creamy milk blend, clear ice cubes and condensation, two hazelnuts beside cup. No decorative whip. Style: hyperrealistic professional food studio photography, tangible fine textures, soft large side softbox and gentle natural grounded shadow; warm ivory seamless tabletop with very subtle pale blush light, consistent across a plum café menu. Composition: entire serving centered with 12 percent breathing room on every edge; subject occupies about 72 percent of square, slightly elevated three-quarter camera view, sharp product detail, clean restrained background. Preserve the actual reference serving style, no invented luxury side dishes. No people, no lettering, no labels, no logos, no watermark, no collage, no menu typography. One individual asset only.",
+      "status": "generated"
+    },
+    {
+      "index": 46,
+      "category": "Cold Coffee",
+      "name": "Iced Pistachio Latte",
+      "page": 3,
+      "slug": "cold-coffee--iced-pistachio-latte",
+      "prompt": "Use case: product-mockup. Asset: a SINGLE square menu product photograph for Urban Café. Input reference: supplied Urban menu page; use its specific food shape, vessel and modest café serving style, NOT the poster layout. Subject: One clear plastic café cup of iced pistachio latte with pale pistachio milk at base and tan espresso flowing through upper half, visible ice, subtle green pistachio crumbs, two pistachios beside cup. Style: hyperrealistic professional food studio photography, tangible fine textures, soft large side softbox and gentle natural grounded shadow; warm ivory seamless tabletop with very subtle pale blush light, consistent across a plum café menu. Composition: entire serving centered with 12 percent breathing room on every edge; subject occupies about 72 percent of square, slightly elevated three-quarter camera view, sharp product detail, clean restrained background. Preserve the actual reference serving style, no invented luxury side dishes. No people, no lettering, no labels, no logos, no watermark, no collage, no menu typography. One individual asset only.",
+      "status": "generated"
+    },
+    {
+      "index": 47,
+      "category": "Cold Coffee",
+      "name": "Iced Rose Latte",
+      "page": 3,
+      "slug": "cold-coffee--iced-rose-latte",
+      "prompt": "Use case: product-mockup. Asset: a SINGLE square menu product photograph for Urban Café. Input reference: supplied Urban menu page; use its specific food shape, vessel and modest café serving style, NOT the poster layout. Subject: One clear plastic café cup of iced rose latte, delicate pale rose-tinted milk merging with tan espresso, clean ice cubes, fine condensation, two rose petals beside cup. Subtle natural pink, not neon. Style: hyperrealistic professional food studio photography, tangible fine textures, soft large side softbox and gentle natural grounded shadow; warm ivory seamless tabletop with very subtle pale blush light, consistent across a plum café menu. Composition: entire serving centered with 12 percent breathing room on every edge; subject occupies about 72 percent of square, slightly elevated three-quarter camera view, sharp product detail, clean restrained background. Preserve the actual reference serving style, no invented luxury side dishes. No people, no lettering, no labels, no logos, no watermark, no collage, no menu typography. One individual asset only.",
+      "status": "generated"
+    },
+    {
+      "index": 48,
+      "category": "Cold Coffee",
+      "name": "Iced Coconut Latte",
+      "page": 3,
+      "slug": "cold-coffee--iced-coconut-latte",
+      "prompt": "Use case: product-mockup. Asset: a SINGLE square menu product photograph for Urban Café. Input reference: supplied Urban menu page; use its specific food shape, vessel and modest café serving style, NOT the poster layout. Subject: One clear plastic café cup of iced coconut latte, creamy ivory coconut milk and tan coffee swirl with ice cubes and fine condensation, small white coconut sliver beside cup. Style: hyperrealistic professional food studio photography, tangible fine textures, soft large side softbox and gentle natural grounded shadow; warm ivory seamless tabletop with very subtle pale blush light, consistent across a plum café menu. Composition: entire serving centered with 12 percent breathing room on every edge; subject occupies about 72 percent of square, slightly elevated three-quarter camera view, sharp product detail, clean restrained background. Preserve the actual reference serving style, no invented luxury side dishes. No people, no lettering, no labels, no logos, no watermark, no collage, no menu typography. One individual asset only.",
+      "status": "generated"
+    },
+    {
+      "index": 49,
+      "category": "Matcha Latte",
+      "name": "Classic Hot Matcha Latte",
+      "page": 4,
+      "slug": "matcha-latte--classic-hot-matcha-latte",
+      "prompt": "Use case: product-mockup. Asset: a SINGLE square menu product photograph for Urban Café. Input reference: supplied Urban menu page; use its specific food shape, vessel and modest café serving style, NOT the poster layout. Subject: First hot matcha: one plain matte black paper cup of warm bright natural matcha-green latte, delicate silky pale microfoam leaf, faint steam, no ice or fruit. Style: hyperrealistic professional food studio photography, tangible fine textures, soft large side softbox and gentle natural grounded shadow; warm ivory seamless tabletop with very subtle pale blush light, consistent across a plum café menu. Composition: entire serving centered with 12 percent breathing room on every edge; subject occupies about 72 percent of square, slightly elevated three-quarter camera view, sharp product detail, clean restrained background. Preserve the actual reference serving style, no invented luxury side dishes. No people, no lettering, no labels, no logos, no watermark, no collage, no menu typography. One individual asset only.",
+      "status": "generated"
+    },
+    {
+      "index": 50,
+      "category": "Matcha Latte",
+      "name": "Hot Vanilla Matcha Latte",
+      "page": 4,
+      "slug": "matcha-latte--hot-vanilla-matcha-latte",
+      "prompt": "Use case: product-mockup. Asset: a SINGLE square menu product photograph for Urban Café. Input reference: supplied Urban menu page; use its specific food shape, vessel and modest café serving style, NOT the poster layout. Subject: Second hot matcha: one plain matte black paper cup of warm creamy matcha-green vanilla latte, delicate pale microfoam swirl, short vanilla pod beside cup, no ice. Style: hyperrealistic professional food studio photography, tangible fine textures, soft large side softbox and gentle natural grounded shadow; warm ivory seamless tabletop with very subtle pale blush light, consistent across a plum café menu. Composition: entire serving centered with 12 percent breathing room on every edge; subject occupies about 72 percent of square, slightly elevated three-quarter camera view, sharp product detail, clean restrained background. Preserve the actual reference serving style, no invented luxury side dishes. No people, no lettering, no labels, no logos, no watermark, no collage, no menu typography. One individual asset only.",
+      "status": "generated"
+    },
+    {
+      "index": 51,
+      "category": "Matcha Latte",
+      "name": "Hot Pistachio Matcha Latte",
+      "page": 4,
+      "slug": "matcha-latte--hot-pistachio-matcha-latte",
+      "prompt": "Use case: product-mockup. Asset: a SINGLE square menu product photograph for Urban Café. Input reference: supplied Urban menu page; use its specific food shape, vessel and modest café serving style, NOT the poster layout. Subject: Third hot matcha: one plain matte black paper cup of warm matcha-green pistachio latte, fine pale microfoam and small fresh pistachio crumb sprinkle, two pistachios beside cup, no ice. Style: hyperrealistic professional food studio photography, tangible fine textures, soft large side softbox and gentle natural grounded shadow; warm ivory seamless tabletop with very subtle pale blush light, consistent across a plum café menu. Composition: entire serving centered with 12 percent breathing room on every edge; subject occupies about 72 percent of square, slightly elevated three-quarter camera view, sharp product detail, clean restrained background. Preserve the actual reference serving style, no invented luxury side dishes. No people, no lettering, no labels, no logos, no watermark, no collage, no menu typography. One individual asset only.",
+      "status": "generated"
+    },
+    {
+      "index": 52,
+      "category": "Matcha Latte",
+      "name": "Hot Rose Matcha Latte",
+      "page": 4,
+      "slug": "matcha-latte--hot-rose-matcha-latte",
+      "prompt": "Use case: product-mockup. Asset: a SINGLE square menu product photograph for Urban Café. Input reference: supplied Urban menu page; use its specific food shape, vessel and modest café serving style, NOT the poster layout. Subject: Fourth hot matcha: one plain matte black paper cup of hot green matcha latte with a small delicate dried pink rose-petal sprinkle on top, a restrained rose petal beside cup, no ice. Style: hyperrealistic professional food studio photography, tangible fine textures, soft large side softbox and gentle natural grounded shadow; warm ivory seamless tabletop with very subtle pale blush light, consistent across a plum café menu. Composition: entire serving centered with 12 percent breathing room on every edge; subject occupies about 72 percent of square, slightly elevated three-quarter camera view, sharp product detail, clean restrained background. Preserve the actual reference serving style, no invented luxury side dishes. No people, no lettering, no labels, no logos, no watermark, no collage, no menu typography. One individual asset only.",
+      "status": "generated"
+    },
+    {
+      "index": 53,
+      "category": "Iced Matcha",
+      "name": "Iced Matcha Latte",
+      "page": 4,
+      "slug": "iced-matcha--iced-matcha-latte",
+      "prompt": "Use case: product-mockup. Asset: a SINGLE square menu product photograph for Urban Café. Input reference: supplied Urban menu page; use its specific food shape, vessel and modest café serving style, NOT the poster layout. Subject: First iced matcha: one clear plastic café cup with creamy ivory milk at base and fresh natural matcha-green upper layer, visible clean ice cubes, natural slight blending and fine condensation. Match reference green and ivory layers. Style: hyperrealistic professional food studio photography, tangible fine textures, soft large side softbox and gentle natural grounded shadow; warm ivory seamless tabletop with very subtle pale blush light, consistent across a plum café menu. Composition: entire serving centered with 12 percent breathing room on every edge; subject occupies about 72 percent of square, slightly elevated three-quarter camera view, sharp product detail, clean restrained background. Preserve the actual reference serving style, no invented luxury side dishes. No people, no lettering, no labels, no logos, no watermark, no collage, no menu typography. One individual asset only.",
+      "status": "generated"
+    },
+    {
+      "index": 54,
+      "category": "Iced Matcha",
+      "name": "Iced Strawberry Matcha Latte",
+      "page": 4,
+      "slug": "iced-matcha--iced-strawberry-matcha-latte",
+      "prompt": "Use case: product-mockup. Asset: a SINGLE square menu product photograph for Urban Café. Input reference: supplied Urban menu page; use its specific food shape, vessel and modest café serving style, NOT the poster layout. Subject: Second iced matcha: one clear plastic café cup with real red strawberry purée at base, ivory milk middle and natural matcha-green top, visible ice cubes, soft organic blending, one strawberry beside cup. Style: hyperrealistic professional food studio photography, tangible fine textures, soft large side softbox and gentle natural grounded shadow; warm ivory seamless tabletop with very subtle pale blush light, consistent across a plum café menu. Composition: entire serving centered with 12 percent breathing room on every edge; subject occupies about 72 percent of square, slightly elevated three-quarter camera view, sharp product detail, clean restrained background. Preserve the actual reference serving style, no invented luxury side dishes. No people, no lettering, no labels, no logos, no watermark, no collage, no menu typography. One individual asset only.",
+      "status": "generated"
+    },
+    {
+      "index": 55,
+      "category": "Iced Matcha",
+      "name": "Iced Rose Matcha Latte",
+      "page": 4,
+      "slug": "iced-matcha--iced-rose-matcha-latte",
+      "prompt": "Use case: product-mockup. Asset: a SINGLE square menu product photograph for Urban Café. Input reference: supplied Urban menu page; use its specific food shape, vessel and modest café serving style, NOT the poster layout. Subject: Third iced matcha: one clear plastic café cup with pale rose-pink milk at base and natural matcha-green upper layer, visible ice cubes and condensation, small rose petals beside cup. Match reference pink and green two-layer drink. Style: hyperrealistic professional food studio photography, tangible fine textures, soft large side softbox and gentle natural grounded shadow; warm ivory seamless tabletop with very subtle pale blush light, consistent across a plum café menu. Composition: entire serving centered with 12 percent breathing room on every edge; subject occupies about 72 percent of square, slightly elevated three-quarter camera view, sharp product detail, clean restrained background. Preserve the actual reference serving style, no invented luxury side dishes. No people, no lettering, no labels, no logos, no watermark, no collage, no menu typography. One individual asset only.",
+      "status": "generated"
+    },
+    {
+      "index": 56,
+      "category": "Mocktails",
+      "name": "Strawberry Mojito",
+      "page": 4,
+      "slug": "mocktails--strawberry-mojito",
+      "prompt": "Use case: product-mockup. Asset: a SINGLE square menu product photograph for Urban Café. Input reference: supplied Urban menu page; use its specific food shape, vessel and modest café serving style, NOT the poster layout. Subject: First mocktail: one clear plastic café cup of red strawberry mojito, crushed ice, red strawberry pieces, fresh mint leaves and lime, natural condensation, one small strawberry and lime wedge beside cup. Nonalcoholic. Style: hyperrealistic professional food studio photography, tangible fine textures, soft large side softbox and gentle natural grounded shadow; warm ivory seamless tabletop with very subtle pale blush light, consistent across a plum café menu. Composition: entire serving centered with 12 percent breathing room on every edge; subject occupies about 72 percent of square, slightly elevated three-quarter camera view, sharp product detail, clean restrained background. Preserve the actual reference serving style, no invented luxury side dishes. No people, no lettering, no labels, no logos, no watermark, no collage, no menu typography. One individual asset only.",
+      "status": "generated"
+    },
+    {
+      "index": 57,
+      "category": "Mocktails",
+      "name": "Passion Fruit Mojito",
+      "page": 4,
+      "slug": "mocktails--passion-fruit-mojito",
+      "prompt": "Use case: product-mockup. Asset: a SINGLE square menu product photograph for Urban Café. Input reference: supplied Urban menu page; use its specific food shape, vessel and modest café serving style, NOT the poster layout. Subject: Second mocktail: one clear plastic café cup of yellow passion fruit mojito, crushed ice, fresh mint, visible black passion fruit seeds and lime, half passion fruit beside cup. Nonalcoholic. Style: hyperrealistic professional food studio photography, tangible fine textures, soft large side softbox and gentle natural grounded shadow; warm ivory seamless tabletop with very subtle pale blush light, consistent across a plum café menu. Composition: entire serving centered with 12 percent breathing room on every edge; subject occupies about 72 percent of square, slightly elevated three-quarter camera view, sharp product detail, clean restrained background. Preserve the actual reference serving style, no invented luxury side dishes. No people, no lettering, no labels, no logos, no watermark, no collage, no menu typography. One individual asset only.",
+      "status": "generated"
+    },
+    {
+      "index": 58,
+      "category": "Mocktails",
+      "name": "Classic Mojito",
+      "page": 4,
+      "slug": "mocktails--classic-mojito",
+      "prompt": "Use case: product-mockup. Asset: a SINGLE square menu product photograph for Urban Café. Input reference: supplied Urban menu page; use its specific food shape, vessel and modest café serving style, NOT the poster layout. Subject: Third mocktail: one clear plastic café cup of clear pale lime-green mojito with crushed ice, visible fresh lime wedges and mint leaves, small lime wedge beside cup. Nonalcoholic. Style: hyperrealistic professional food studio photography, tangible fine textures, soft large side softbox and gentle natural grounded shadow; warm ivory seamless tabletop with very subtle pale blush light, consistent across a plum café menu. Composition: entire serving centered with 12 percent breathing room on every edge; subject occupies about 72 percent of square, slightly elevated three-quarter camera view, sharp product detail, clean restrained background. Preserve the actual reference serving style, no invented luxury side dishes. No people, no lettering, no labels, no logos, no watermark, no collage, no menu typography. One individual asset only.",
+      "status": "generated"
+    },
+    {
+      "index": 59,
+      "category": "Mocktails",
+      "name": "Blue Lagoon",
+      "page": 4,
+      "slug": "mocktails--blue-lagoon",
+      "prompt": "Use case: product-mockup. Asset: a SINGLE square menu product photograph for Urban Café. Input reference: supplied Urban menu page; use its specific food shape, vessel and modest café serving style, NOT the poster layout. Subject: Fourth mocktail: one clear plastic café cup of brilliant natural-looking blue lagoon soda with translucent ice cubes, tiny fresh mint sprig and lime wedge at rim, clean condensation. Nonalcoholic, no liquor bottle. Style: hyperrealistic professional food studio photography, tangible fine textures, soft large side softbox and gentle natural grounded shadow; warm ivory seamless tabletop with very subtle pale blush light, consistent across a plum café menu. Composition: entire serving centered with 12 percent breathing room on every edge; subject occupies about 72 percent of square, slightly elevated three-quarter camera view, sharp product detail, clean restrained background. Preserve the actual reference serving style, no invented luxury side dishes. No people, no lettering, no labels, no logos, no watermark, no collage, no menu typography. One individual asset only.",
+      "status": "generated"
+    },
+    {
+      "index": 60,
+      "category": "Mocktails",
+      "name": "Pinna Colada",
+      "page": 4,
+      "slug": "mocktails--pinna-colada",
+      "prompt": "Use case: product-mockup. Asset: a SINGLE square menu product photograph for Urban Café. Input reference: supplied Urban menu page; use its specific food shape, vessel and modest café serving style, NOT the poster layout. Subject: Fifth mocktail: one clear plastic café cup of creamy ivory nonalcoholic pineapple coconut piña colada, soft crushed ice texture at top, a small pineapple wedge on rim and a small pineapple piece at base. No alcohol or huge garnishes. Style: hyperrealistic professional food studio photography, tangible fine textures, soft large side softbox and gentle natural grounded shadow; warm ivory seamless tabletop with very subtle pale blush light, consistent across a plum café menu. Composition: entire serving centered with 12 percent breathing room on every edge; subject occupies about 72 percent of square, slightly elevated three-quarter camera view, sharp product detail, clean restrained background. Preserve the actual reference serving style, no invented luxury side dishes. No people, no lettering, no labels, no logos, no watermark, no collage, no menu typography. One individual asset only.",
+      "status": "generated"
+    },
+    {
+      "index": 61,
+      "category": "Slush",
+      "name": "Lemon",
+      "page": 4,
+      "slug": "slush--lemon",
+      "prompt": "Use case: product-mockup. Asset: a SINGLE square menu product photograph for Urban Café. Input reference: supplied Urban menu page; use its specific food shape, vessel and modest café serving style, NOT the poster layout. Subject: First slush: one clear plastic café cup filled with yellow lemon slush, crystalline icy granules heaped slightly above rim, fresh lemon wedge beside cup. Visible frozen texture, not clear liquid. Style: hyperrealistic professional food studio photography, tangible fine textures, soft large side softbox and gentle natural grounded shadow; warm ivory seamless tabletop with very subtle pale blush light, consistent across a plum café menu. Composition: entire serving centered with 12 percent breathing room on every edge; subject occupies about 72 percent of square, slightly elevated three-quarter camera view, sharp product detail, clean restrained background. Preserve the actual reference serving style, no invented luxury side dishes. No people, no lettering, no labels, no logos, no watermark, no collage, no menu typography. One individual asset only.",
+      "status": "generated"
+    },
+    {
+      "index": 62,
+      "category": "Slush",
+      "name": "Strawberry",
+      "page": 4,
+      "slug": "slush--strawberry",
+      "prompt": "Use case: product-mockup. Asset: a SINGLE square menu product photograph for Urban Café. Input reference: supplied Urban menu page; use its specific food shape, vessel and modest café serving style, NOT the poster layout. Subject: Second slush: one clear plastic café cup filled with ruby red strawberry slush, frosty crushed ice granules heaped above rim, one fresh strawberry beside cup. No milk. Style: hyperrealistic professional food studio photography, tangible fine textures, soft large side softbox and gentle natural grounded shadow; warm ivory seamless tabletop with very subtle pale blush light, consistent across a plum café menu. Composition: entire serving centered with 12 percent breathing room on every edge; subject occupies about 72 percent of square, slightly elevated three-quarter camera view, sharp product detail, clean restrained background. Preserve the actual reference serving style, no invented luxury side dishes. No people, no lettering, no labels, no logos, no watermark, no collage, no menu typography. One individual asset only.",
+      "status": "generated"
+    },
+    {
+      "index": 63,
+      "category": "Slush",
+      "name": "Mango",
+      "page": 4,
+      "slug": "slush--mango",
+      "prompt": "Use case: product-mockup. Asset: a SINGLE square menu product photograph for Urban Café. Input reference: supplied Urban menu page; use its specific food shape, vessel and modest café serving style, NOT the poster layout. Subject: Third slush: one clear plastic café cup filled with golden orange mango slush, frosty granular mound above rim, two tiny fresh mango cubes beside cup. Style: hyperrealistic professional food studio photography, tangible fine textures, soft large side softbox and gentle natural grounded shadow; warm ivory seamless tabletop with very subtle pale blush light, consistent across a plum café menu. Composition: entire serving centered with 12 percent breathing room on every edge; subject occupies about 72 percent of square, slightly elevated three-quarter camera view, sharp product detail, clean restrained background. Preserve the actual reference serving style, no invented luxury side dishes. No people, no lettering, no labels, no logos, no watermark, no collage, no menu typography. One individual asset only.",
+      "status": "generated"
+    },
+    {
+      "index": 64,
+      "category": "Slush",
+      "name": "Pineapple",
+      "page": 4,
+      "slug": "slush--pineapple",
+      "prompt": "Use case: product-mockup. Asset: a SINGLE square menu product photograph for Urban Café. Input reference: supplied Urban menu page; use its specific food shape, vessel and modest café serving style, NOT the poster layout. Subject: Fourth slush: one clear plastic café cup filled with sunny yellow pineapple slush, frosty crushed icy crystals above rim, one small fresh pineapple wedge beside cup. Style: hyperrealistic professional food studio photography, tangible fine textures, soft large side softbox and gentle natural grounded shadow; warm ivory seamless tabletop with very subtle pale blush light, consistent across a plum café menu. Composition: entire serving centered with 12 percent breathing room on every edge; subject occupies about 72 percent of square, slightly elevated three-quarter camera view, sharp product detail, clean restrained background. Preserve the actual reference serving style, no invented luxury side dishes. No people, no lettering, no labels, no logos, no watermark, no collage, no menu typography. One individual asset only.",
+      "status": "generated"
+    },
+    {
+      "index": 65,
+      "category": "Slush",
+      "name": "Passion Fruit",
+      "page": 4,
+      "slug": "slush--passion-fruit",
+      "prompt": "Use case: product-mockup. Asset: a SINGLE square menu product photograph for Urban Café. Input reference: supplied Urban menu page; use its specific food shape, vessel and modest café serving style, NOT the poster layout. Subject: Fifth slush: one clear plastic café cup filled with golden yellow passion fruit slush, fine icy granular mound with occasional tiny black fruit seeds, one half passion fruit beside cup. Style: hyperrealistic professional food studio photography, tangible fine textures, soft large side softbox and gentle natural grounded shadow; warm ivory seamless tabletop with very subtle pale blush light, consistent across a plum café menu. Composition: entire serving centered with 12 percent breathing room on every edge; subject occupies about 72 percent of square, slightly elevated three-quarter camera view, sharp product detail, clean restrained background. Preserve the actual reference serving style, no invented luxury side dishes. No people, no lettering, no labels, no logos, no watermark, no collage, no menu typography. One individual asset only.",
+      "status": "generated"
+    },
+    {
+      "index": 66,
+      "category": "Slush",
+      "name": "Watermelon",
+      "page": 4,
+      "slug": "slush--watermelon",
+      "prompt": "Use case: product-mockup. Asset: a SINGLE square menu product photograph for Urban Café. Input reference: supplied Urban menu page; use its specific food shape, vessel and modest café serving style, NOT the poster layout. Subject: Sixth slush: one clear plastic café cup filled with watermelon-red slush, frosty crushed ice crystals heaped above rim, one small triangular watermelon wedge beside cup. Style: hyperrealistic professional food studio photography, tangible fine textures, soft large side softbox and gentle natural grounded shadow; warm ivory seamless tabletop with very subtle pale blush light, consistent across a plum café menu. Composition: entire serving centered with 12 percent breathing room on every edge; subject occupies about 72 percent of square, slightly elevated three-quarter camera view, sharp product detail, clean restrained background. Preserve the actual reference serving style, no invented luxury side dishes. No people, no lettering, no labels, no logos, no watermark, no collage, no menu typography. One individual asset only.",
+      "status": "generated"
+    },
+    {
+      "index": 67,
+      "category": "Fresh Juice",
+      "name": "Orange",
+      "page": 4,
+      "slug": "fresh-juice--orange",
+      "prompt": "Use case: product-mockup. Asset: a SINGLE square menu product photograph for Urban Café. Input reference: supplied Urban menu page; use its specific food shape, vessel and modest café serving style, NOT the poster layout. Subject: First juice: one clear plastic café cup of fresh vivid orange juice, fine real pulp visible, simple flat liquid surface, no frozen slush mound or milk, orange half beside cup, tiny natural condensation. Style: hyperrealistic professional food studio photography, tangible fine textures, soft large side softbox and gentle natural grounded shadow; warm ivory seamless tabletop with very subtle pale blush light, consistent across a plum café menu. Composition: entire serving centered with 12 percent breathing room on every edge; subject occupies about 72 percent of square, slightly elevated three-quarter camera view, sharp product detail, clean restrained background. Preserve the actual reference serving style, no invented luxury side dishes. No people, no lettering, no labels, no logos, no watermark, no collage, no menu typography. One individual asset only.",
+      "status": "generated"
+    },
+    {
+      "index": 68,
+      "category": "Fresh Juice",
+      "name": "Carrot",
+      "page": 4,
+      "slug": "fresh-juice--carrot",
+      "prompt": "Use case: product-mockup. Asset: a SINGLE square menu product photograph for Urban Café. Input reference: supplied Urban menu page; use its specific food shape, vessel and modest café serving style, NOT the poster layout. Subject: Second juice: one clear plastic café cup of fresh rich carrot-orange juice, smooth cloudy juice with subtle fine pulp, no slush or milk, two short fresh carrot pieces beside cup. Style: hyperrealistic professional food studio photography, tangible fine textures, soft large side softbox and gentle natural grounded shadow; warm ivory seamless tabletop with very subtle pale blush light, consistent across a plum café menu. Composition: entire serving centered with 12 percent breathing room on every edge; subject occupies about 72 percent of square, slightly elevated three-quarter camera view, sharp product detail, clean restrained background. Preserve the actual reference serving style, no invented luxury side dishes. No people, no lettering, no labels, no logos, no watermark, no collage, no menu typography. One individual asset only.",
+      "status": "generated"
+    },
+    {
+      "index": 69,
+      "category": "Fresh Juice",
+      "name": "Apple",
+      "page": 4,
+      "slug": "fresh-juice--apple",
+      "prompt": "Use case: product-mockup. Asset: a SINGLE square menu product photograph for Urban Café. Input reference: supplied Urban menu page; use its specific food shape, vessel and modest café serving style, NOT the poster layout. Subject: Third juice: one clear plastic café cup of fresh cloudy golden apple juice, natural opaque pulp tone, no slush or milk, one red apple wedge beside cup. Style: hyperrealistic professional food studio photography, tangible fine textures, soft large side softbox and gentle natural grounded shadow; warm ivory seamless tabletop with very subtle pale blush light, consistent across a plum café menu. Composition: entire serving centered with 12 percent breathing room on every edge; subject occupies about 72 percent of square, slightly elevated three-quarter camera view, sharp product detail, clean restrained background. Preserve the actual reference serving style, no invented luxury side dishes. No people, no lettering, no labels, no logos, no watermark, no collage, no menu typography. One individual asset only.",
+      "status": "generated"
+    }
+  ]
+}

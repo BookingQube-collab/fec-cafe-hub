@@ -1,0 +1,55 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1791495042254,
+      "tag": "0000_open_tigra",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1791560744263,
+      "tag": "0001_certain_lionheart",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1791571199479,
+      "tag": "0002_clammy_magneto",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1791573234425,
+      "tag": "0003_safe_mercury",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1791576000000,
+      "tag": "0004_cloud_services",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1791646349846,
+      "tag": "0005_stale_salo",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1791774618355,
+      "tag": "0006_lame_bedlam",
+      "breakpoints": true
+    }
+  ]
+}

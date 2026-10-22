@@ -1,0 +1,390 @@
+{
+  "cafeName": "Urban Café",
+  "currency": "QAR",
+  "timezone": "Asia/Qatar",
+  "theme": "plum",
+  "source": "https://urban-cafe-menu.lovable.app/__l5e/assets-v1/512cf112-3821-4eae-a01e-1de189647af1/urban-cafe-menu.pdf",
+  "pricePolicy": "English menu pages 1–4 used. Arabic pages contain conflicting entries. No offers or daily specials are inferred.",
+  "categories": [
+    {
+      "title": "Pizza",
+      "items": [
+        [
+          "Marguareita",
+          14
+        ],
+        [
+          "Creamy Mushroom",
+          15
+        ],
+        [
+          "BBR Chicken",
+          16
+        ],
+        [
+          "Pepperoni",
+          16
+        ],
+        [
+          "Four Cheese",
+          16
+        ]
+      ]
+    },
+    {
+      "title": "Hot Dogs",
+      "items": [
+        [
+          "Classic Hot Dog",
+          12
+        ],
+        [
+          "Cheesy Melt Hot Dog",
+          13
+        ],
+        [
+          "Sriracha Mayo Hot Dog",
+          14
+        ],
+        [
+          "Caeser Hot Dog",
+          15
+        ],
+        [
+          "Loaded Hot Dog",
+          15
+        ]
+      ]
+    },
+    {
+      "title": "Spiral Potato",
+      "items": [
+        [
+          "Classic Salted Spiral",
+          12
+        ],
+        [
+          "Chilli Lemon Spiral",
+          13
+        ],
+        [
+          "Sriracha Mayo Spiral",
+          14
+        ]
+      ]
+    },
+    {
+      "title": "Corn on the Cob",
+      "items": [
+        [
+          "Classic Butter Corn",
+          14
+        ],
+        [
+          "Mexican Style Corn",
+          15
+        ],
+        [
+          "Chessy Corn",
+          15
+        ]
+      ]
+    },
+    {
+      "title": "Combos",
+      "items": [
+        [
+          "UFO Beef Burger Combo",
+          30
+        ],
+        [
+          "UFO Chicken Burger Combo",
+          28
+        ]
+      ]
+    },
+    {
+      "title": "Nuggets & Fries",
+      "items": [
+        [
+          "Nuggets",
+          14
+        ],
+        [
+          "Fries",
+          12
+        ],
+        [
+          "Nuggets + Fries + Ketchup Combo",
+          24
+        ]
+      ]
+    },
+    {
+      "title": "Popcorn",
+      "items": [
+        [
+          "Salt",
+          12
+        ],
+        [
+          "Carame",
+          13
+        ],
+        [
+          "Cheese",
+          13
+        ]
+      ]
+    },
+    {
+      "title": "Soft Serve",
+      "items": [
+        [
+          "Chocolate Soft Serve (Cone)",
+          10
+        ],
+        [
+          "Vanilla Soft Serve (Cone)",
+          10
+        ]
+      ]
+    },
+    {
+      "title": "Hot Coffee",
+      "items": [
+        [
+          "Espresso Single/Double",
+          10,
+          [
+            {
+              "label": "Single",
+              "price": 10
+            },
+            {
+              "label": "Double",
+              "price": 12
+            }
+          ]
+        ],
+        [
+          "Americano",
+          12
+        ],
+        [
+          "Latte",
+          15
+        ],
+        [
+          "Cappuccino",
+          15
+        ],
+        [
+          "Flat White",
+          15
+        ],
+        [
+          "Spanish Latte",
+          17
+        ],
+        [
+          "Mocha",
+          17
+        ],
+        [
+          "Caramel Latte",
+          17
+        ],
+        [
+          "Vanilla Latte",
+          17
+        ],
+        [
+          "Hazelnut Latte",
+          17
+        ],
+        [
+          "Pistachio Latte",
+          17
+        ]
+      ]
+    },
+    {
+      "title": "Karak & Tea",
+      "items": [
+        [
+          "Karak",
+          5
+        ],
+        [
+          "Black/Green Tea",
+          4,
+          [
+            {
+              "label": "Black Tea",
+              "price": 4
+            },
+            {
+              "label": "Green Tea",
+              "price": 4
+            }
+          ]
+        ]
+      ]
+    },
+    {
+      "title": "Cold Coffee",
+      "items": [
+        [
+          "Iced Americano",
+          13
+        ],
+        [
+          "Iced Latte",
+          16
+        ],
+        [
+          "Iced Spanish Latte",
+          18
+        ],
+        [
+          "Iced Mocha",
+          18
+        ],
+        [
+          "Iced Caramel Latte",
+          18
+        ],
+        [
+          "Iced Vanilla Latte",
+          18
+        ],
+        [
+          "Iced Hazelnut Latte",
+          18
+        ],
+        [
+          "Iced Pistachio Latte",
+          19
+        ],
+        [
+          "Iced Rose Latte",
+          18
+        ],
+        [
+          "Iced Coconut Latte",
+          18
+        ]
+      ]
+    },
+    {
+      "title": "Matcha Latte",
+      "items": [
+        [
+          "Classic Hot Matcha Latte",
+          17
+        ],
+        [
+          "Hot Vanilla Matcha Latte",
+          18
+        ],
+        [
+          "Hot Pistachio Matcha Latte",
+          19
+        ],
+        [
+          "Hot Rose Matcha Latte",
+          18
+        ]
+      ]
+    },
+    {
+      "title": "Iced Matcha",
+      "items": [
+        [
+          "Iced Matcha Latte",
+          18
+        ],
+        [
+          "Iced Strawberry Matcha Latte",
+          19
+        ],
+        [
+          "Iced Rose Matcha Latte",
+          18
+        ]
+      ]
+    },
+    {
+      "title": "Mocktails",
+      "items": [
+        [
+          "Strawberry Mojito",
+          15
+        ],
+        [
+          "Passion Fruit Mojito",
+          15
+        ],
+        [
+          "Classic Mojito",
+          14
+        ],
+        [
+          "Blue Lagoon",
+          15
+        ],
+        [
+          "Pinna Colada",
+          16
+        ]
+      ]
+    },
+    {
+      "title": "Slush",
+      "items": [
+        [
+          "Lemon",
+          12
+        ],
+        [
+          "Strawberry",
+          12
+        ],
+        [
+          "Mango",
+          12
+        ],
+        [
+          "Pineapple",
+          12
+        ],
+        [
+          "Passion Fruit",
+          12
+        ],
+        [
+          "Watermelon",
+          12
+        ]
+      ]
+    },
+    {
+      "title": "Fresh Juice",
+      "items": [
+        [
+          "Orange",
+          17
+        ],
+        [
+          "Carrot",
+          16
+        ],
+        [
+          "Apple",
+          18
+        ]
+      ]
+    }
+  ]
+}
