@@ -21,7 +21,7 @@ Copy `.env.cloud.example` to private `.env.cloud` (or use `.env`). Required for 
 
 | Variable | Purpose |
 | --- | --- |
-| `DATABASE_URL` | Supabase Postgres connection string (**required on Vercel**) |
+| `DATABASE_URL` | Supabase Postgres URL (optional on Vercel if integration vars exist — see below) |
 | `SUPABASE_URL` | `https://YOUR_REF.supabase.co` |
 | `SUPABASE_SERVICE_ROLE_KEY` | Service role for private Storage |
 | `SESSION_SECRET` | Express session signing (≥ 48 chars) |
@@ -29,6 +29,28 @@ Copy `.env.cloud.example` to private `.env.cloud` (or use `.env`). Required for 
 | `PUBLIC_URL` | Absolute HTTPS origin for printed QR codes (your Vercel URL) |
 | `COOKIE_SECURE` | Set `true` in production HTTPS (auto-`true` on Vercel if unset) |
 | `TRUST_PROXY` | Set `true` behind Vercel (auto-`true` on Vercel if unset) |
+
+### Vercel + Supabase integration
+
+Connecting Supabase in the Vercel dashboard injects vars such as `POSTGRES_URL`, `POSTGRES_URL_NON_POOLING`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_ANON_KEY`, and often `NEXT_PUBLIC_*`. This app resolves the DB URL as:
+
+1. `DATABASE_URL` (explicit — optional)
+2. `POSTGRES_URL_NON_POOLING` (**preferred** for serverless here: direct / session-friendly for Drizzle migrate + `node-postgres`)
+3. `POSTGRES_URL` (often the transaction pooler — fine fallback)
+
+**Already enough from the integration (no rename needed):** `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, and a Postgres URL via the fallbacks above.
+
+**Add manually in Vercel → Settings → Environment Variables:**
+
+| Variable | Notes |
+| --- | --- |
+| `SESSION_SECRET` | ≥ 48 random characters |
+| `PUBLIC_URL` | `https://YOUR_PROJECT.vercel.app` (or custom domain) |
+| `STORAGE_BUCKET` | Optional; defaults to `cafe-media` if unset |
+
+**Unused by this app:** `NEXT_PUBLIC_*`, `SUPABASE_ANON_KEY`, `POSTGRES_PRISMA_URL` (safe to leave; ignored).
+
+**Yellow “Production Overrides (Install Command npm ci) differ from Project Settings”:** Harmless when `vercel.json` and the dashboard both use `npm ci`. Clear it by opening Build & Development Settings, ensuring Install Command matches (`npm ci` or blank to use the file), Save, and redeploy — or ignore; it does not break builds.
 
 Passwords use **bcryptjs** (pure JS; compatible with existing bcrypt hashes). Do not deploy or call the removed `cafe-passwords` edge function.
 
@@ -66,17 +88,15 @@ In the Vercel project → **Settings → General / Build & Development Settings*
 
 ### Environment variables (Production + Preview)
 
-Set all of:
+**From Supabase integration (enough as-is):** `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, plus `POSTGRES_URL_NON_POOLING` and/or `POSTGRES_URL` (or set `DATABASE_URL` yourself).
 
-- `DATABASE_URL`
-- `SUPABASE_URL`
-- `SUPABASE_SERVICE_ROLE_KEY`
+**Add manually:**
+
 - `SESSION_SECRET` (≥ 48 characters)
-- `STORAGE_BUCKET` = `cafe-media` (if not defaulting)
 - `PUBLIC_URL` = `https://YOUR_PROJECT.vercel.app` (or custom domain)
-- `COOKIE_SECURE` = `true` (optional; defaults on when `VERCEL=1`)
-- `TRUST_PROXY` = `true` (optional; defaults on when `VERCEL=1`)
-- `NODE_ENV` = `production` (usually set by Vercel)
+- `STORAGE_BUCKET` = `cafe-media` (optional; app defaults to this)
+
+**Optional / auto on Vercel:** `COOKIE_SECURE`, `TRUST_PROXY` (default on when `VERCEL=1`); `NODE_ENV` = `production` (usually set by Vercel).
 
 Redeploy after changing env vars.
 
@@ -113,7 +133,7 @@ Production on Vercel: HTTPS cookies and trust-proxy default on. Point `PUBLIC_UR
 - **Cold starts:** First request after idle can be slow (Express + DB migrate/check + pool).
 - **In-memory rate limits:** Login/upload buckets are per-instance; they reset on cold start and do not share across regions.
 - **Uploads:** Body size and function duration limits apply; very large images may need smaller files or a future direct-to-Storage upload.
-- **No PGlite / local disk:** Vercel requires `DATABASE_URL` and Supabase Storage for media.
+- **No PGlite / local disk:** Vercel requires a Postgres URL (`DATABASE_URL` or integration `POSTGRES_*`) and Supabase Storage for media.
 - **Connection churn:** Pool size is `1` on Vercel to protect Supabase connection limits.
 
 ## Recovery

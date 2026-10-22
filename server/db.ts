@@ -11,7 +11,26 @@ import { migrate as migratePg } from 'drizzle-orm/node-postgres/migrator';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import pg from 'pg';
 
-const databaseUrl = process.env.DATABASE_URL?.trim();
+/**
+ * Resolve Postgres URL for local + Vercel.
+ * Prefer DATABASE_URL when set. On Vercel Supabase integration, fall back to
+ * POSTGRES_URL_NON_POOLING (direct / session-friendly — preferred for serverless
+ * with Drizzle migrate + node-postgres) then POSTGRES_URL (often transaction pooler).
+ */
+function resolveDatabaseUrl(): string | undefined {
+  const candidates = [
+    process.env.DATABASE_URL,
+    process.env.POSTGRES_URL_NON_POOLING,
+    process.env.POSTGRES_URL,
+  ];
+  for (const value of candidates) {
+    const trimmed = value?.trim();
+    if (trimmed) return trimmed;
+  }
+  return undefined;
+}
+
+const databaseUrl = resolveDatabaseUrl();
 const migrationsFolder = path.resolve('migrations');
 const onVercel = process.env.VERCEL === '1';
 
@@ -21,7 +40,9 @@ export type AppDatabase = NodePgDatabase<typeof schema>;
 export const usingRemoteDatabase = Boolean(databaseUrl);
 
 if (!databaseUrl && onVercel) {
-  throw new Error('DATABASE_URL is required on Vercel. Configure Supabase Postgres; PGlite is local-only.');
+  throw new Error(
+    'Postgres URL missing on Vercel. Set DATABASE_URL, or connect Supabase so POSTGRES_URL_NON_POOLING / POSTGRES_URL exist. PGlite is local-only.',
+  );
 }
 
 let pool: { close(): Promise<void> };

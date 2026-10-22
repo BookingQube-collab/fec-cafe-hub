@@ -50,7 +50,7 @@ Search and filters, theme-aware presentation, English/Arabic, price options and 
 
 ## Persistence
 
-Without `DATABASE_URL`: database/sessions in `data/database`, photos in `data/uploads`. With Supabase: Postgres via `DATABASE_URL`, media via service-role Storage. On Vercel, `DATABASE_URL` is required (no PGlite). Keep `.env` / `.env.cloud`, credentials, and `data/` private.
+Without a Postgres URL: database/sessions in `data/database`, photos in `data/uploads`. With Supabase: Postgres via `DATABASE_URL` (or on Vercel, `POSTGRES_URL_NON_POOLING` / `POSTGRES_URL`), media via service-role Storage. On Vercel, PGlite is unavailable. Keep `.env` / `.env.cloud`, credentials, and `data/` private.
 
 ## Verification
 

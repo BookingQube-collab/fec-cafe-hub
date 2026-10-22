@@ -15,7 +15,9 @@ export function getVercelApp(): Promise<Express> {
       if (process.env.TRUST_PROXY === undefined) process.env.TRUST_PROXY = 'true';
       if (process.env.COOKIE_SECURE === undefined) process.env.COOKIE_SECURE = 'true';
       if (!usingRemoteDatabase) {
-        throw new Error('DATABASE_URL is required on Vercel (local PGlite is not supported in serverless)');
+        throw new Error(
+          'Postgres URL required on Vercel (DATABASE_URL or POSTGRES_URL_NON_POOLING / POSTGRES_URL). Local PGlite is not supported in serverless.',
+        );
       }
       if (!usingSupabaseMedia) {
         console.warn('Supabase Storage env incomplete; set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY for media');
