@@ -3,7 +3,8 @@ import fs from 'node:fs/promises';
 import assert from 'node:assert/strict';
 import { Client } from 'pg';
 config({path:'.env.cloud',quiet:true});
-assert.equal(process.env.SUPABASE_PROJECT_REF,'kfxdazzbnbbhzbkplpqf');
+assert.ok(/^[a-z]{20}$/.test(process.env.SUPABASE_PROJECT_REF || ''), 'SUPABASE_PROJECT_REF must be the 20-letter project ref');
+assert.equal(process.env.SUPABASE_URL, `https://${process.env.SUPABASE_PROJECT_REF}.supabase.co`);
 const tables=['users','restaurants','categories','menu_items','menu_item_price_variants','global_menu_items','payments','access_audit','sessions','media_objects','rate_limit_buckets'];
 const client=new Client({connectionString:process.env.DATABASE_URL,connectionTimeoutMillis:15000,statement_timeout:15000});
 try {

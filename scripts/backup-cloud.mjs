@@ -4,7 +4,9 @@ import { createHash } from 'node:crypto';
 import { Client } from 'pg';
 import { config } from 'dotenv';
 config({path:'.env.cloud',quiet:true});
-if(process.env.SUPABASE_PROJECT_REF!=='kfxdazzbnbbhzbkplpqf') throw new Error('Use the dedicated café project.');
+if(!/^[a-z]{20}$/.test(process.env.SUPABASE_PROJECT_REF || '') || process.env.SUPABASE_URL !== `https://${process.env.SUPABASE_PROJECT_REF}.supabase.co`) {
+  throw new Error('Configure .env.cloud with a matching SUPABASE_PROJECT_REF and SUPABASE_URL first.');
+}
 const stamp=new Date().toISOString().replace(/[-:]/g,'').replace(/\.\d+Z$/,'Z');
 const folder=path.resolve('data',`cloud-backup-${stamp}`);
 await fs.mkdir(folder,{recursive:false}); await fs.mkdir(path.join(folder,'media'));

@@ -1,5 +1,5 @@
-import 'dotenv/config';
-import { initializeDatabase, pool } from './db';
+import { initializeDatabase, pool, usingRemoteDatabase } from './db';
+import { usingSupabaseMedia } from './mediaStore';
 import { createApiApplication, mountErrorHandler } from './apiApplication';
 import { setupVite, serveStatic, log } from './vite';
 
@@ -18,5 +18,10 @@ import { setupVite, serveStatic, log } from './vite';
   };
   process.on('SIGTERM', shutdown); process.on('SIGINT', shutdown);
   const port = parseInt(process.env.PORT || '5000', 10);
-  server.listen({ port, host: '0.0.0.0' }, () => log(`serving on port ${port}`));
+  server.listen({ port, host: '0.0.0.0' }, () => {
+    log(`serving on port ${port}`);
+    log(usingRemoteDatabase
+      ? `database: Supabase Postgres via DATABASE_URL (media: ${usingSupabaseMedia ? 'Supabase Storage' : 'local data/uploads'})`
+      : 'database: local PGlite (data/database)');
+  });
 })().catch(error => { console.error('Server startup failed', { type: error.name, code: error.code }); process.exit(1); });

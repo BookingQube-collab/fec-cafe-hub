@@ -13,7 +13,7 @@ Use only the dedicated **Cafe Menu** Cloudflare account
 `69e2ef22efdd52ebbc1aefc3d8aa8980`. Public Worker `menu` uses `wrangler.jsonc`;
 management Worker `staff` uses `wrangler.staff.jsonc`. Preview URLs are disabled.
 Hyperdrive `2c0378c020ab47479092cbc19fa3c95e` connects to Supabase project
-`kfxdazzbnbbhzbkplpqf`. Keep Hyperdrive query caching disabled for fresh menu,
+your dedicated Supabase project ref from `.env.cloud`. Keep Hyperdrive query caching disabled for fresh menu,
 role and account-revocation checks. The retired Health Companion café URLs must
 not be restored. Each real café retains one permanent menu ID and QR.
 
