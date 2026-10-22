@@ -1,7 +1,7 @@
 import { type Express, type RequestHandler } from 'express';
 import { storage } from './storage';
 import { db } from './db';
-import { categories, restaurants, menuItems, menuItemPriceVariants, sessions, users, insertMenuItemSchema, insertPriceVariantSchema, cafeProfileSchema, passwordSchema } from '@shared/schema';
+import { categories, restaurants, menuItems, menuItemPriceVariants, menuDesigns, sessions, users, insertMenuItemSchema, insertPriceVariantSchema, cafeProfileSchema, passwordSchema } from '@shared/schema';
 import { eq, and, ne, sql } from 'drizzle-orm';
 import { isAuthenticated } from './localAuth';
 import bcrypt from './passwords';
@@ -161,11 +161,19 @@ export function mountCafeControls(app: Express) {
       const id = z.string().uuid().parse(req.params.id);
       const restaurant = await storage.getRestaurantById(id);
       if (!restaurant || restaurant.hidden || restaurant.status !== 'active') return res.status(404).json({ message: 'Café unavailable' });
-      const [cats, allItems, allVariants] = await Promise.all([storage.getCategoriesByRestaurantId(id), storage.getMenuItemsByRestaurantId(id), storage.getPriceVariantsByRestaurantId(id)]);
+      const [cats, allItems, allVariants, designRow] = await Promise.all([
+        storage.getCategoriesByRestaurantId(id),
+        storage.getMenuItemsByRestaurantId(id),
+        storage.getPriceVariantsByRestaurantId(id),
+        db.select().from(menuDesigns).where(eq(menuDesigns.restaurantId, id)).limit(1).then(rows => rows[0] ?? null),
+      ]);
       const items = allItems.filter(item => item.isAvailable);
       const visibleIds = new Set(items.map(item => item.id));
       const { name, theme, currency, timezone, logoUrl, coverMediaUrl, coverMediaType, cuisineType, address, phone, openingHours } = restaurant;
-      res.json({ restaurant: { id, name, theme, currency, timezone, logoUrl, coverMediaUrl, coverMediaType, cuisineType, address, phone, openingHours }, categories: cats, items, variants: allVariants.filter(v => visibleIds.has(v.menuItemId)) });
+      const design = designRow
+        ? { enabled: designRow.enabled, settings: (designRow.settings && typeof designRow.settings === 'object' && !Array.isArray(designRow.settings) ? designRow.settings : {}) as Record<string, unknown> }
+        : null;
+      res.json({ restaurant: { id, name, theme, currency, timezone, logoUrl, coverMediaUrl, coverMediaType, cuisineType, address, phone, openingHours }, categories: cats, items, variants: allVariants.filter(v => visibleIds.has(v.menuItemId)), design });
     } catch (e) { next(e); }
   });
   app.put('/api/categories/:id', isAuthenticated, async (req, res, next) => {

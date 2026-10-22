@@ -50,6 +50,13 @@
       "when": 1791774618355,
       "tag": "0006_lame_bedlam",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1792681031782,
+      "tag": "0007_acoustic_harpoon",
+      "breakpoints": true
     }
   ]
 }
