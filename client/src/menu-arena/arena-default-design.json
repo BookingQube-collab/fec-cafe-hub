@@ -1,8 +1,8 @@
 {
   "version": 1,
   "seo": {
-    "title": "Urban Arena | Menu",
-    "description": "The full Urban Arena Café menu: pizza, hot dogs, spiral potato, corn, combos, popcorn, soft serve, coffee, matcha, mocktails, slush and fresh juice."
+    "title": "Menu",
+    "description": "Browse the full café menu."
   },
   "theme": {
     "accent": "#fbcfe8",
@@ -13,19 +13,19 @@
   },
   "brand": {
     "logoUrl": null,
-    "logoAlt": "Urban Arena",
-    "socialLabel": "@urbanarenaqa",
-    "socialUrl": "https://www.instagram.com/urbanarenaqa",
-    "showSocial": true,
+    "logoAlt": "Café",
+    "socialLabel": "",
+    "socialUrl": null,
+    "showSocial": false,
     "footerText": "Follow us",
     "footerNote": "Prices in QR",
     "currency": "QR",
     "fallbackLogoUrl": "/assets/arena/brand/urban-arena-logo.png"
   },
   "hero": {
-    "titleLine1": "Urban",
-    "titleLine2": "Bites",
-    "description": "Pizza, hot dogs, spiral potato and corn.\nCoffee, matcha, mocktails and slush —\nall on one menu.",
+    "titleLine1": "Café",
+    "titleLine2": "Menu",
+    "description": "Explore food and drinks on one menu.",
     "ctaLabel": "Explore the Menu",
     "ctaIcon": "↓",
     "showBadge": true,

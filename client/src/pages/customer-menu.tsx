@@ -104,9 +104,11 @@ function CustomerMenuContent() {
     retry: (attempt, error) => attempt < 1 && (!(error instanceof MenuLoadError) || error.status === 0 || error.status === 429 || error.status >= 500) });
   const arenaConfig = useMemo(() => {
     const data = menuQuery.data;
-    if (!data?.design?.enabled) return null;
+    if (!data) return null;
+    // Arena is the default for every café. Classic only when enabled is explicitly false.
+    if (data.design?.enabled === false) return null;
     try {
-      return buildArenaConfig(data, data.design.settings, arenaHelpers);
+      return buildArenaConfig(data, data.design?.settings ?? {}, arenaHelpers);
     } catch (error) {
       console.error('Arena menu config failed; falling back to classic page', error);
       return null;

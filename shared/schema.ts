@@ -104,7 +104,9 @@ export const restaurants = pgTable("restaurants", {
 
 export const menuDesigns = pgTable('menu_designs', {
   restaurantId: varchar('restaurant_id').primaryKey().references(() => restaurants.id, { onDelete: 'cascade' }),
-  enabled: boolean('enabled').notNull().default(false),
+  // App treats a missing row as enabled=true; column default true for new inserts.
+  // Classic menu only when a café explicitly sets enabled=false.
+  enabled: boolean('enabled').notNull().default(true),
   settings: jsonb('settings').notNull().default(sql`'{}'::jsonb`),
   updatedAt: timestamp('updated_at').defaultNow(),
   updatedBy: varchar('updated_by'),
@@ -375,5 +377,6 @@ export interface PublicMenuData {
   categories: Category[];
   items: MenuItem[];
   variants: PriceVariant[];
-  design: { enabled: boolean; settings: Record<string, unknown> } | null;
+  /** Missing DB row is returned as enabled:true + empty settings. Classic when enabled:false. */
+  design: { enabled: boolean; settings: Record<string, unknown> };
 }

@@ -190,9 +190,12 @@ export function mountCafeControls(app: Express) {
       const items = allItems.filter(item => item.isAvailable);
       const visibleIds = new Set(items.map(item => item.id));
       const { name, theme, currency, timezone, logoUrl, coverMediaUrl, coverMediaType, cuisineType, address, phone, openingHours } = restaurant;
-      const design = designRow
-        ? { enabled: designRow.enabled, settings: (designRow.settings && typeof designRow.settings === 'object' && !Array.isArray(designRow.settings) ? designRow.settings : {}) as Record<string, unknown> }
-        : null;
+      // Missing menu_designs → Arena on with empty settings (defaults deep-merged client-side).
+      // Classic only when a row exists with enabled explicitly false.
+      const settings = designRow?.settings && typeof designRow.settings === 'object' && !Array.isArray(designRow.settings)
+        ? designRow.settings as Record<string, unknown>
+        : {};
+      const design = { enabled: designRow ? designRow.enabled : true, settings };
       res.json({ restaurant: { id, name, theme, currency, timezone, logoUrl, coverMediaUrl, coverMediaType, cuisineType, address, phone, openingHours }, categories: cats, items, variants: allVariants.filter(v => visibleIds.has(v.menuItemId)), design });
     } catch (e) { next(e); }
   });
@@ -238,7 +241,7 @@ export function mountCafeControls(app: Express) {
         : {};
       res.json({
         restaurantId: cafe.id,
-        enabled: row?.enabled ?? false,
+        enabled: row?.enabled ?? true,
         settings,
         updatedAt: row?.updatedAt ?? null,
         updatedBy: row?.updatedBy ?? null,
@@ -257,7 +260,7 @@ export function mountCafeControls(app: Express) {
       if (body.settings) await assertOwnedArenaAssets(cafe.userId, body.settings as Record<string, unknown>);
 
       const existing = (await db.select().from(menuDesigns).where(eq(menuDesigns.restaurantId, cafe.id)).limit(1))[0];
-      const nextEnabled = body.enabled ?? existing?.enabled ?? false;
+      const nextEnabled = body.enabled ?? existing?.enabled ?? true;
       const nextSettings = body.settings !== undefined
         ? body.settings
         : (existing?.settings && typeof existing.settings === 'object' && !Array.isArray(existing.settings) ? existing.settings : {});

@@ -145,7 +145,7 @@ var restaurants = pgTable("restaurants", {
 }, (table) => [uniqueIndex("restaurants_one_owner").on(table.userId), check("restaurants_status", sql`${table.status} in ('active','suspended','pending')`)]);
 var menuDesigns = pgTable("menu_designs", {
   restaurantId: varchar("restaurant_id").primaryKey().references(() => restaurants.id, { onDelete: "cascade" }),
-  enabled: boolean("enabled").notNull().default(false),
+  enabled: boolean("enabled").notNull().default(true),
   settings: jsonb("settings").notNull().default(sql`'{}'::jsonb`),
   updatedAt: timestamp("updated_at").defaultNow(),
   updatedBy: varchar("updated_by")
@@ -1699,7 +1699,8 @@ function mountCafeControls(app) {
       const items = allItems.filter((item) => item.isAvailable);
       const visibleIds = new Set(items.map((item) => item.id));
       const { name, theme, currency, timezone, logoUrl, coverMediaUrl, coverMediaType, cuisineType, address, phone, openingHours } = restaurant;
-      const design = designRow ? { enabled: designRow.enabled, settings: designRow.settings && typeof designRow.settings === "object" && !Array.isArray(designRow.settings) ? designRow.settings : {} } : null;
+      const settings = designRow?.settings && typeof designRow.settings === "object" && !Array.isArray(designRow.settings) ? designRow.settings : {};
+      const design = { enabled: designRow ? designRow.enabled : true, settings };
       res.json({ restaurant: { id, name, theme, currency, timezone, logoUrl, coverMediaUrl, coverMediaType, cuisineType, address, phone, openingHours }, categories: cats, items, variants: allVariants.filter((v) => visibleIds.has(v.menuItemId)), design });
     } catch (e) {
       next(e);
@@ -1754,7 +1755,7 @@ function mountCafeControls(app) {
       const settings = row?.settings && typeof row.settings === "object" && !Array.isArray(row.settings) ? row.settings : {};
       res.json({
         restaurantId: cafe.id,
-        enabled: row?.enabled ?? false,
+        enabled: row?.enabled ?? true,
         settings,
         updatedAt: row?.updatedAt ?? null,
         updatedBy: row?.updatedBy ?? null
@@ -1773,7 +1774,7 @@ function mountCafeControls(app) {
       const body = menuDesignPutSchema.parse(req.body);
       if (body.settings) await assertOwnedArenaAssets(cafe.userId, body.settings);
       const existing = (await db.select().from(menuDesigns).where(eq5(menuDesigns.restaurantId, cafe.id)).limit(1))[0];
-      const nextEnabled = body.enabled ?? existing?.enabled ?? false;
+      const nextEnabled = body.enabled ?? existing?.enabled ?? true;
       const nextSettings = body.settings !== void 0 ? body.settings : existing?.settings && typeof existing.settings === "object" && !Array.isArray(existing.settings) ? existing.settings : {};
       const [row] = await db.insert(menuDesigns).values({
         restaurantId: cafe.id,

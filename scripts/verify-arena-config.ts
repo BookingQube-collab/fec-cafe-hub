@@ -11,11 +11,11 @@ const menu: PublicMenu = {
   restaurant: { id: 'r1', name: 'Urban Café', currency: 'QAR', logoUrl: '/objects/logo' },
   categories: [cat('c3', 'Hot Coffee', 2), cat('c1', 'Pizza', 0), cat('c2', 'Desserts', 1), cat('c4', 'Empty', 3)],
   items: [
-    item('i2', 'c1', 'Pepperoni', '16.00', 1),
-    item('i1', 'c1', 'Margherita', '14.00', 0),
+    item('i2', 'c1', 'Pepperoni', '16.00', 1, { imageUrl: '/objects/pepperoni' }),
+    item('i1', 'c1', 'Margherita', '14.00', 0, { imageUrl: '/objects/margherita' }),
     item('i3', 'c1', 'Hidden pizza', '9.00', 2, { isAvailable: false }),
     item('i4', 'c2', 'Brownie', '12.00', 0, { discount: '25.00', imageUrl: '/objects/brownie' }),
-    item('i5', 'c3', 'Espresso', '10.00', 0, { hasMultiplePricing: true }),
+    item('i5', 'c3', 'Espresso', '10.00', 0, { hasMultiplePricing: true, imageUrl: '/objects/espresso' }),
   ],
   variants: [
     { menuItemId: 'i5', label: 'Double', price: '12.00', discount: '0.00', order: 1 },
@@ -40,14 +40,30 @@ const brownie = cfg.categories[1].items[0];
 assert.equal(brownie.price, 9, 'discount applied');
 assert.equal(brownie.tag, '-25%', 'discount tag');
 assert.equal(cfg.categories[1].iconUrl, '/objects/brownie', 'unknown category icon falls back to first item photo');
+assert.equal(cfg.categories[0].iconUrl, '/objects/margherita', 'live item photo preferred over hardcoded category icon');
 const esp = cfg.categories[2].items[0];
 assert.equal(esp.price, null); assert.equal(esp.priceText, '10 / 12', 'variants sorted and joined');
 assert.equal(esp.tag, 'Single · Double', 'variant labels shown when not in the name');
 assert.equal(cfg.brand.currency, 'QR'); assert.equal(cfg.brand.logoUrl, '/objects/logo', 'café logo used');
+assert.equal(cfg.venue.name, 'Urban Café', 'venue from public API');
+assert.equal(cfg.hero.titleLine1, 'Urban', 'hero derived from restaurant name when unset');
+assert.equal(cfg.hero.titleLine2, 'Café', 'hero second line from restaurant name');
+assert.equal(cfg.seo.title, 'Urban Café | Menu', 'SEO derived from restaurant name');
+assert.equal(cfg.brand.showSocial, false, 'Urban Instagram defaults not applied to other cafés');
+assert.equal(cfg.groups[0].floaters[0], '/objects/margherita', 'food floaters prefer live item photos');
+assert.equal(cfg.groups[0].card.imageUrl, '/objects/margherita', 'food card prefers first live photo');
+assert.equal(cfg.groups[1].floaters[0], '/objects/espresso', 'drinks floaters prefer live item photos');
+assert.ok(cfg.groups[0].floaters[3]?.startsWith('/assets/arena/'), 'remaining floater slots keep decorative defaults');
 
 const custom = buildArenaConfig(menu, { hero: { titleLine1: 'Hello' }, categories: { c2: { group: 'drinks', hue: '#123456' } } }, helpers);
 assert.equal(custom.hero.titleLine1, 'Hello', 'saved override applied');
-assert.equal(custom.hero.titleLine2, 'Bites', 'unsaved fields keep defaults');
+assert.equal(custom.hero.titleLine2, 'Café', 'unsaved hero fields still derive from venue');
 assert.equal(custom.categories.find((c) => c.nameEn === 'Desserts')!.group, 'drinks', 'category override applied');
 assert.equal(custom.categories.find((c) => c.nameEn === 'Desserts')!.hue, '#123456');
-console.log('PASS: arena config mapping (order, visibility, prices, discounts, variants, Arabic, visuals, overrides).');
+
+const other = buildArenaConfig({ ...menu, restaurant: { ...menu.restaurant, name: 'Drive Through Café', logoUrl: null } }, null, helpers);
+assert.equal(other.hero.titleLine1, 'Drive');
+assert.equal(other.hero.titleLine2, 'Through Café');
+assert.equal(other.seo.title, 'Drive Through Café | Menu');
+
+console.log('PASS: arena config mapping (order, visibility, prices, discounts, variants, Arabic, live photos, venue chrome, overrides).');

@@ -1,0 +1,363 @@
+{
+  "version": 1,
+  "seo": {
+    "title": "Menu",
+    "description": "Browse the full café menu."
+  },
+  "theme": {
+    "accent": "#fbcfe8",
+    "accentInk": "#011d17",
+    "fontHeading": "Galada",
+    "fontBody": "Inter",
+    "fontArabic": "Tajawal"
+  },
+  "brand": {
+    "logoUrl": null,
+    "logoAlt": "Café",
+    "socialLabel": "",
+    "socialUrl": null,
+    "showSocial": false,
+    "footerText": "Follow us",
+    "footerNote": "Prices in QR",
+    "currency": "QR",
+    "fallbackLogoUrl": "/assets/arena/brand/urban-arena-logo.png"
+  },
+  "hero": {
+    "titleLine1": "Café",
+    "titleLine2": "Menu",
+    "description": "Explore food and drinks on one menu.",
+    "ctaLabel": "Explore the Menu",
+    "ctaIcon": "↓",
+    "showBadge": true,
+    "badgeIcon": "☕",
+    "badgeTitle": "THE FULL MENU",
+    "badgeSubtitle": "{items} ITEMS · {categories} CATEGORIES",
+    "sideLine1": "Sip",
+    "sideLine2": "& Chill",
+    "showScrollCue": true,
+    "scrollCueLabel": "SCROLL"
+  },
+  "groups": [
+    {
+      "key": "food",
+      "label": "Food",
+      "railLabel": "FOOD",
+      "bg": {
+        "inner": "#0b8a78",
+        "mid": "#044e3b",
+        "outer": "#011411"
+      },
+      "canTextureUrl": "/assets/arena/3d/texture-food.jpg",
+      "card": {
+        "label": "Bites",
+        "countSuffix": "food items",
+        "imageUrl": "/assets/arena/cards/food.webp",
+        "imageAlt": "UFO burger combo"
+      },
+      "floaters": [
+        "/assets/arena/floaters/food-1.webp",
+        "/assets/arena/floaters/food-2.webp",
+        "/assets/arena/floaters/food-3.webp",
+        "/assets/arena/floaters/food-4.webp",
+        "/assets/arena/floaters/food-5.webp",
+        "/assets/arena/floaters/food-6.webp",
+        "/assets/arena/floaters/food-7.webp",
+        "/assets/arena/floaters/food-8.webp",
+        "/assets/arena/floaters/food-9.webp"
+      ]
+    },
+    {
+      "key": "drinks",
+      "label": "Drinks",
+      "railLabel": "DRINKS",
+      "bg": {
+        "inner": "#0b4f8a",
+        "mid": "#04294e",
+        "outer": "#010c14"
+      },
+      "canTextureUrl": "/assets/arena/3d/texture-drinks.jpg",
+      "card": {
+        "label": "Sips",
+        "countSuffix": "drinks",
+        "imageUrl": "/assets/arena/cards/drinks.webp",
+        "imageAlt": "Strawberry mojito"
+      },
+      "floaters": [
+        "/assets/arena/floaters/drinks-1.webp",
+        "/assets/arena/floaters/drinks-2.webp",
+        "/assets/arena/floaters/drinks-3.webp",
+        "/assets/arena/floaters/drinks-4.webp",
+        "/assets/arena/floaters/drinks-5.webp",
+        "/assets/arena/floaters/drinks-6.webp",
+        "/assets/arena/floaters/drinks-7.webp",
+        "/assets/arena/floaters/drinks-8.webp",
+        "/assets/arena/floaters/drinks-9.webp"
+      ]
+    }
+  ],
+  "product3d": {
+    "enabled": true,
+    "modelUrl": "/assets/arena/3d/can.glb",
+    "alt": "3D drink can",
+    "exposure": 1.5,
+    "tiltDeg": 25
+  },
+  "backFloaters": [
+    {
+      "imageUrl": "/assets/arena/back/back-1.webp",
+      "enabled": true
+    },
+    {
+      "imageUrl": "/assets/arena/back/back-2.webp",
+      "enabled": true
+    },
+    {
+      "imageUrl": "/assets/arena/back/back-3.webp",
+      "enabled": true
+    },
+    {
+      "imageUrl": "/assets/arena/back/back-4.webp",
+      "enabled": true
+    }
+  ],
+  "bubbles": {
+    "enabled": true,
+    "imageUrl": "/assets/arena/3d/bubble.png",
+    "intervalMs": 400
+  },
+  "marquee": {
+    "enabled": true,
+    "mode": "categories",
+    "separator": "✦",
+    "customItems": []
+  },
+  "menuIntro": {
+    "title": "The Menu",
+    "titleAr": "قائمة الطعام",
+    "subtitle": "All prices in Qatari Riyal (QR)"
+  },
+  "stats": [
+    {
+      "key": "items",
+      "label": "Menu items",
+      "enabled": true
+    },
+    {
+      "key": "categories",
+      "label": "Categories",
+      "enabled": true
+    },
+    {
+      "key": "minPrice",
+      "label": "QR · from",
+      "enabled": true
+    }
+  ],
+  "filters": {
+    "allLabel": "All",
+    "showGroupFilter": true
+  },
+  "labels": {
+    "itemsUpper": "ITEMS",
+    "itemsLower": "items",
+    "soldOut": "Sold out"
+  },
+  "effects": {
+    "reveal": true,
+    "countUp": true,
+    "tilt": true,
+    "cursorRepel": true
+  },
+  "categoryVisualsByTitle": {
+    "pizza": {
+      "group": "food",
+      "nameAr": "بيتزا",
+      "hue": "#f59e0b",
+      "bannerUrl": "/assets/arena/banners/pizza.webp",
+      "iconUrl": "/assets/arena/icons/pizza.webp"
+    },
+    "hot dogs": {
+      "group": "food",
+      "nameAr": "هوت دوغ",
+      "hue": "#ef4444",
+      "bannerUrl": "/assets/arena/banners/hotdogs.webp",
+      "iconUrl": "/assets/arena/icons/hotdogs.webp"
+    },
+    "spiral potato": {
+      "group": "food",
+      "nameAr": "بطاطس حلزونية",
+      "hue": "#fb923c",
+      "bannerUrl": "/assets/arena/banners/spiral.webp",
+      "iconUrl": "/assets/arena/icons/spiral.webp"
+    },
+    "corn on the cob": {
+      "group": "food",
+      "nameAr": "عرانيس ذرة",
+      "hue": "#facc15",
+      "bannerUrl": "/assets/arena/banners/corn.webp",
+      "iconUrl": "/assets/arena/icons/corn.webp"
+    },
+    "combos": {
+      "group": "food",
+      "nameAr": "الوجبات",
+      "hue": "#f97316",
+      "bannerUrl": "/assets/arena/banners/combos.webp",
+      "iconUrl": "/assets/arena/icons/combos.webp"
+    },
+    "nuggets & fries": {
+      "group": "food",
+      "nameAr": "ناجتس وبطاطس",
+      "hue": "#eab308",
+      "bannerUrl": "/assets/arena/banners/nuggets.webp",
+      "iconUrl": "/assets/arena/icons/nuggets.webp"
+    },
+    "popcorn": {
+      "group": "food",
+      "nameAr": "فشار",
+      "hue": "#fde68a",
+      "bannerUrl": "/assets/arena/banners/popcorn.webp",
+      "iconUrl": "/assets/arena/icons/popcorn.webp"
+    },
+    "soft serve": {
+      "group": "food",
+      "nameAr": "آيس كريم",
+      "hue": "#d4a373",
+      "bannerUrl": "/assets/arena/banners/softserve.webp",
+      "iconUrl": "/assets/arena/icons/softserve.webp"
+    },
+    "hot coffee": {
+      "group": "drinks",
+      "nameAr": "قهوة ساخنة",
+      "hue": "#c08457",
+      "bannerUrl": "/assets/arena/banners/hotcoffee.webp",
+      "iconUrl": "/assets/arena/icons/hotcoffee.webp"
+    },
+    "karak & tea": {
+      "group": "drinks",
+      "nameAr": "كرك وشاي",
+      "hue": "#e0a96d",
+      "bannerUrl": "/assets/arena/banners/karak.webp",
+      "iconUrl": "/assets/arena/icons/karak.webp"
+    },
+    "cold coffee": {
+      "group": "drinks",
+      "nameAr": "قهوة باردة",
+      "hue": "#a47148",
+      "bannerUrl": "/assets/arena/banners/coldcoffee.webp",
+      "iconUrl": "/assets/arena/icons/coldcoffee.webp"
+    },
+    "matcha latte": {
+      "group": "drinks",
+      "nameAr": "ماتشا لاتيه",
+      "hue": "#86efac",
+      "bannerUrl": "/assets/arena/banners/matcha.webp",
+      "iconUrl": "/assets/arena/icons/matcha.webp"
+    },
+    "iced matcha": {
+      "group": "drinks",
+      "nameAr": "آيس ماتشا",
+      "hue": "#a3e635",
+      "bannerUrl": "/assets/arena/banners/icedmatcha.webp",
+      "iconUrl": "/assets/arena/icons/icedmatcha.webp"
+    },
+    "mocktails": {
+      "group": "drinks",
+      "nameAr": "موهيتو وكوكتيلات",
+      "hue": "#38bdf8",
+      "bannerUrl": "/assets/arena/banners/mocktails.webp",
+      "iconUrl": "/assets/arena/icons/mocktails.webp"
+    },
+    "slush": {
+      "group": "drinks",
+      "nameAr": "سلاش",
+      "hue": "#f43f5e",
+      "bannerUrl": "/assets/arena/banners/slush.webp",
+      "iconUrl": "/assets/arena/icons/slush.webp"
+    },
+    "fresh juice": {
+      "group": "drinks",
+      "nameAr": "عصير طازج",
+      "hue": "#fb923c",
+      "bannerUrl": "/assets/arena/banners/juice.webp",
+      "iconUrl": "/assets/arena/icons/juice.webp"
+    }
+  },
+  "itemArabicByName": {
+    "margherita": "مارغريتا",
+    "creamy mushroom": "فطر بالكريمة",
+    "bbq chicken": "دجاج باربيكيو",
+    "pepperoni": "بيبروني",
+    "four cheese": "أربعة أجبان",
+    "classic hot dog": "هوت دوغ كلاسيك",
+    "cheesy melt hot dog": "هوت دوغ بجبنة ذائبة",
+    "sriracha mayo hot dog": "هوت دوغ سيراتشا مايو",
+    "caesar hot dog": "هوت دوغ سيزر",
+    "loaded hot dog": "لودد هوت دوغ (بالإضافات)",
+    "classic salted spiral": "حلزونية مملحة كلاسيك",
+    "chilli lemon spiral": "حلزونية بالفلفل والليمون",
+    "sriracha mayo spiral": "حلزونية سيراتشا مايو",
+    "classic butter corn": "ذرة بالزبدة كلاسيك",
+    "mexican style corn": "ذرة على الطريقة المكسيكية",
+    "cheesy corn": "ذرة بالجبنة",
+    "ufo beef burger combo": "وجبة برجر لحم (يو اف او)",
+    "ufo chicken burger combo": "وجبة برجر دجاج (يو اف او)",
+    "nuggets": "ناجتس",
+    "fries": "بطاطس",
+    "nuggets + fries + ketchup": "ناجتس + بطاطس + كاتشاب",
+    "salt": "ملح",
+    "caramel": "كراميل",
+    "cheese": "جبنة",
+    "chocolate soft serve (cone)": "آيس كريم شوكولاتة (بسكويت)",
+    "vanilla soft serve (cone)": "آيس كريم فانيليا (بسكويت)",
+    "espresso single / double": "إسبريسو سنغل/دبل",
+    "americano": "أمريكانو",
+    "latte": "لاتيه",
+    "cappuccino": "كابتشينو",
+    "flat white": "فلات وايت",
+    "spanish latte": "سبانش لاتيه",
+    "mocha": "موكا",
+    "caramel latte": "كراميل لاتيه",
+    "vanilla latte": "فانيليا لاتيه",
+    "hazelnut latte": "هازلنوت لاتيه",
+    "pistachio latte": "بيستاشيو لاتيه",
+    "karak": "كرك",
+    "black / green tea": "شاي أسود/أخضر",
+    "iced americano": "آيس أمريكانو",
+    "iced latte": "آيس لاتيه",
+    "iced spanish latte": "آيس سبانش لاتيه",
+    "iced mocha": "آيس موكا",
+    "iced caramel latte": "آيس كراميل لاتيه",
+    "iced vanilla latte": "آيس فانيليا لاتيه",
+    "iced hazelnut latte": "آيس هازلنوت لاتيه",
+    "iced pistachio latte": "آيس بيستاشيو لاتيه",
+    "iced rose latte": "آيس روز لاتيه",
+    "iced coconut latte": "آيس جوز هند لاتيه",
+    "classic hot matcha latte": "ماتشا لاتيه ساخن كلاسيك",
+    "hot vanilla matcha latte": "ماتشا لاتيه ساخن بالفانيليا",
+    "hot pistachio matcha latte": "ماتشا لاتيه ساخن بالبيستاشيو",
+    "hot rose matcha latte": "ماتشا لاتيه ساخن بالروز",
+    "iced matcha latte": "آيس ماتشا لاتيه",
+    "iced strawberry matcha latte": "آيس فراولة ماتشا لاتيه",
+    "iced rose matcha latte": "آيس روز ماتشا لاتيه",
+    "strawberry mojito": "موهيتو فراولة",
+    "passion fruit mojito": "موهيتو باشون فروت",
+    "classic mojito": "موهيتو كلاسيك",
+    "blue lagoon": "بلو لاغون",
+    "piña colada": "بينا كولادا",
+    "lemon": "ليمون",
+    "strawberry": "فراولة",
+    "mango": "مانجو",
+    "pineapple": "أناناس",
+    "passion fruit": "باشون فروت",
+    "watermelon": "رقي (بطيخ)",
+    "orange": "برتقال",
+    "carrot": "جزر",
+    "apple": "تفاح"
+  },
+  "categoryFallback": {
+    "group": "food",
+    "hue": "#fbcfe8",
+    "bannerUrl": null,
+    "iconUrl": null
+  }
+}

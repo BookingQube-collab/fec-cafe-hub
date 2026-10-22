@@ -223,7 +223,7 @@ export default function AdminMenuDesign() {
     staleTime: 0,
   });
 
-  const [enabled, setEnabled] = useState(false);
+  const [enabled, setEnabled] = useState(true);
   const [settings, setSettings] = useState<MenuDesignSettings>({});
   const [baseline, setBaseline] = useState('');
   const [error, setError] = useState('');
@@ -340,7 +340,7 @@ export default function AdminMenuDesign() {
         <div>
           <p className="manager-eyebrow">CUSTOMER MENU LOOK</p>
           <h1 className="text-3xl font-bold">Menu design</h1>
-          <p className="text-muted-foreground">Arena style overrides for this café. Only what you change is stored; the rest follows the shared defaults.</p>
+          <p className="text-muted-foreground">Arena is on by default for every café. Only what you change is stored; the rest follows shared defaults plus this café&apos;s live menu.</p>
         </div>
         <div className="flex flex-wrap gap-2">
           <Button type="button" variant="outline" asChild>
@@ -357,7 +357,7 @@ export default function AdminMenuDesign() {
       </div>
       {error && <p role="alert" className="manager-panel p-4 text-destructive">{error}</p>}
 
-      <Section title="1. Arena style" hint="Turn the animated Arena customer menu on or off for this café.">
+      <Section title="1. Arena style" hint="Arena is the default public menu. Turn it off only if this café should use the classic page.">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <Switch checked={enabled} onCheckedChange={setEnabled} id="arena-enabled" />

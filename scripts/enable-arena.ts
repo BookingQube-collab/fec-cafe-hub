@@ -1,17 +1,21 @@
 /**
- * Upsert menu_designs.enabled for a café.
- * Usage: npx tsx scripts/enable-arena.ts <restaurantId> [on|off]
+ * Upsert menu_designs.enabled for one café or every café.
+ * Usage:
+ *   npx tsx scripts/enable-arena.ts <restaurantId> [on|off]
+ *   npx tsx scripts/enable-arena.ts --all [on|off]
  *
  * Default: local PGlite only (clears DATABASE_URL so server/db does not pick up .env.cloud).
  * Cloud: set ALLOW_CLOUD_ARENA=1 after explicit approval.
  */
 import { config } from 'dotenv';
+import { sql } from 'drizzle-orm';
 config();
 
-const restaurantId = process.argv[2];
+const target = process.argv[2];
 const mode = (process.argv[3] || 'on').toLowerCase();
-if (!restaurantId || !/^[0-9a-f-]{36}$/i.test(restaurantId) || !['on', 'off'].includes(mode)) {
-  console.error('Usage: npx tsx scripts/enable-arena.ts <restaurantId> [on|off]');
+const all = target === '--all';
+if (!target || !['on', 'off'].includes(mode) || (!all && !/^[0-9a-f-]{36}$/i.test(target))) {
+  console.error('Usage: npx tsx scripts/enable-arena.ts <restaurantId|--all> [on|off]');
   process.exit(1);
 }
 
@@ -32,20 +36,35 @@ if (usingRemoteDatabase && !allowCloud) {
   console.error('Refusing remote write without ALLOW_CLOUD_ARENA=1');
   process.exit(2);
 }
-const { menuDesigns } = await import('../shared/schema');
+const { menuDesigns, restaurants, categories } = await import('../shared/schema');
 await initializeDatabase();
 
 const enabled = mode === 'on';
-await db.insert(menuDesigns).values({
-  restaurantId,
-  enabled,
-  settings: {},
-  updatedAt: new Date(),
-  updatedBy: null,
-}).onConflictDoUpdate({
-  target: menuDesigns.restaurantId,
-  set: { enabled, updatedAt: new Date() },
-});
+const restaurantIds = all
+  ? (await db
+      .select({ id: restaurants.id })
+      .from(restaurants)
+      .where(sql`exists (select 1 from ${categories} where ${categories.restaurantId} = ${restaurants.id})`))
+      .map((r) => r.id)
+  : [target];
 
-console.log(`menu_designs: restaurant ${restaurantId} enabled=${enabled} (remote=${usingRemoteDatabase})`);
+if (!restaurantIds.length) {
+  console.error(all ? 'No restaurants with menus found' : 'No restaurants found');
+  process.exit(3);
+}
+
+for (const restaurantId of restaurantIds) {
+  await db.insert(menuDesigns).values({
+    restaurantId,
+    enabled,
+    settings: {},
+    updatedAt: new Date(),
+    updatedBy: null,
+  }).onConflictDoUpdate({
+    target: menuDesigns.restaurantId,
+    set: { enabled, updatedAt: new Date() },
+  });
+}
+
+console.log(`menu_designs: ${restaurantIds.length} café(s) with menus enabled=${enabled} (remote=${usingRemoteDatabase})`);
 await pool.close();
