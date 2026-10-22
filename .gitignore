@@ -1,6 +1,7 @@
 node_modules
 .env
 data/
+backup/
 SETUP-CREDENTIALS.txt
 tmp-*.mjs
 dist
