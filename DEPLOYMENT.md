@@ -72,7 +72,7 @@ Never commit `.env`, `.env.cloud`, credentials, `data/`, or `backup/`.
 
 ## Hosting on Vercel (recommended)
 
-The SPA builds to `dist/public`. `api/index.js` is the Vercel serverless entry (bundled from `server/vercelEntry.ts`). It is committed so Vercel’s pre-build `functions` check matches, and `npm run build` regenerates it. A single CommonJS file avoids ESM `Cannot find module '../server/...'` under `/var/task`. `vercel.json` rewrites `/api/*` and `/objects/*` to that function and falls back to `index.html` for client routes.
+The SPA builds to `dist/public`. `api/index.js` is the Vercel serverless entry (ESM bundle from `server/vercelEntry.ts`). It is committed so Vercel’s pre-build `functions` check matches, and `npm run build` regenerates it. Bundling avoids extensionless `../server/...` imports under `/var/task`; format is ESM to match root `"type": "module"`. `vercel.json` rewrites `/api/*` and `/objects/*` to that function and falls back to `index.html` for client routes.
 
 ### Dashboard settings
 

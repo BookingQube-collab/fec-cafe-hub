@@ -1,41 +1,11 @@
-"use strict";
-var __create = Object.create;
 var __defProp = Object.defineProperty;
-var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
-var __getOwnPropNames = Object.getOwnPropertyNames;
-var __getProtoOf = Object.getPrototypeOf;
-var __hasOwnProp = Object.prototype.hasOwnProperty;
 var __export = (target, all) => {
   for (var name in all)
     __defProp(target, name, { get: all[name], enumerable: true });
 };
-var __copyProps = (to, from, except, desc2) => {
-  if (from && typeof from === "object" || typeof from === "function") {
-    for (let key of __getOwnPropNames(from))
-      if (!__hasOwnProp.call(to, key) && key !== except)
-        __defProp(to, key, { get: () => from[key], enumerable: !(desc2 = __getOwnPropDesc(from, key)) || desc2.enumerable });
-  }
-  return to;
-};
-var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
-  // If the importer is in node compatibility mode or this is not an ESM
-  // file that has been converted to a CommonJS file using a Babel-
-  // compatible transform (i.e. "__esModule" has not been set), then set
-  // "default" to the CommonJS "module.exports" for node compatibility.
-  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
-  mod
-));
-var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
-
-// server/vercelEntry.ts
-var vercelEntry_exports = {};
-__export(vercelEntry_exports, {
-  default: () => handler
-});
-module.exports = __toCommonJS(vercelEntry_exports);
 
 // server/db.ts
-var import_dotenv = require("dotenv");
+import { config } from "dotenv";
 
 // shared/schema.ts
 var schema_exports = {};
@@ -70,103 +40,115 @@ __export(schema_exports, {
   sessions: () => sessions,
   users: () => users
 });
-var import_drizzle_orm = require("drizzle-orm");
-var import_drizzle_orm2 = require("drizzle-orm");
-var import_pg_core = require("drizzle-orm/pg-core");
-var import_drizzle_zod = require("drizzle-zod");
-var import_zod = require("zod");
-var sessions = (0, import_pg_core.pgTable)(
+import { sql } from "drizzle-orm";
+import { relations } from "drizzle-orm";
+import {
+  index,
+  uniqueIndex,
+  check,
+  jsonb,
+  pgTable,
+  timestamp,
+  varchar,
+  text,
+  integer,
+  boolean,
+  decimal
+} from "drizzle-orm/pg-core";
+import { createInsertSchema } from "drizzle-zod";
+import { z } from "zod";
+var sessions = pgTable(
   "sessions",
   {
-    sid: (0, import_pg_core.varchar)("sid").primaryKey(),
-    sess: (0, import_pg_core.jsonb)("sess").notNull(),
-    expire: (0, import_pg_core.timestamp)("expire").notNull()
+    sid: varchar("sid").primaryKey(),
+    sess: jsonb("sess").notNull(),
+    expire: timestamp("expire").notNull()
   },
-  (table) => [(0, import_pg_core.index)("IDX_session_expire").on(table.expire)]
+  (table) => [index("IDX_session_expire").on(table.expire)]
 );
-var users = (0, import_pg_core.pgTable)("users", {
-  id: (0, import_pg_core.varchar)("id").primaryKey().default(import_drizzle_orm.sql`gen_random_uuid()`),
-  email: (0, import_pg_core.varchar)("email").unique().notNull(),
-  password: (0, import_pg_core.varchar)("password").notNull(),
-  firstName: (0, import_pg_core.varchar)("first_name"),
-  lastName: (0, import_pg_core.varchar)("last_name"),
-  profileImageUrl: (0, import_pg_core.varchar)("profile_image_url"),
-  role: (0, import_pg_core.varchar)("role").notNull().default("admin"),
+var users = pgTable("users", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  email: varchar("email").unique().notNull(),
+  password: varchar("password").notNull(),
+  firstName: varchar("first_name"),
+  lastName: varchar("last_name"),
+  profileImageUrl: varchar("profile_image_url"),
+  role: varchar("role").notNull().default("admin"),
   // "admin" or "super_admin"
-  accountStatus: (0, import_pg_core.varchar)("account_status").notNull().default("active"),
-  createdAt: (0, import_pg_core.timestamp)("created_at").defaultNow(),
-  updatedAt: (0, import_pg_core.timestamp)("updated_at").defaultNow()
-}, (table) => [(0, import_pg_core.uniqueIndex)("users_email_case_unique").on(import_drizzle_orm.sql`lower(${table.email})`), (0, import_pg_core.check)("users_management_role", import_drizzle_orm.sql`${table.role} in ('admin','super_admin')`), (0, import_pg_core.check)("users_account_status", import_drizzle_orm.sql`${table.accountStatus} in ('active','frozen','deleted')`)]);
-var mediaObjects = (0, import_pg_core.pgTable)("media_objects", {
-  id: (0, import_pg_core.varchar)("id").primaryKey(),
-  ownerId: (0, import_pg_core.varchar)("owner_id").notNull().references(() => users.id, { onDelete: "cascade" }),
-  mime: (0, import_pg_core.text)("mime").notNull(),
-  size: (0, import_pg_core.integer)("size").notNull(),
-  createdAt: (0, import_pg_core.timestamp)("created_at").notNull().defaultNow()
+  accountStatus: varchar("account_status").notNull().default("active"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+}, (table) => [uniqueIndex("users_email_case_unique").on(sql`lower(${table.email})`), check("users_management_role", sql`${table.role} in ('admin','super_admin')`), check("users_account_status", sql`${table.accountStatus} in ('active','frozen','deleted')`)]);
+var mediaObjects = pgTable("media_objects", {
+  id: varchar("id").primaryKey(),
+  ownerId: varchar("owner_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  mime: text("mime").notNull(),
+  size: integer("size").notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow()
 });
-var rateLimitBuckets = (0, import_pg_core.pgTable)("rate_limit_buckets", {
-  id: (0, import_pg_core.varchar)("id").primaryKey(),
-  count: (0, import_pg_core.integer)("count").notNull(),
-  resetAt: (0, import_pg_core.timestamp)("reset_at", { withTimezone: true }).notNull()
-}, (table) => [(0, import_pg_core.index)("rate_limit_buckets_expiry").on(table.resetAt)]);
-var emailSchema = import_zod.z.string().trim().toLowerCase().max(254).email("Invalid email address");
-var passwordSchema = import_zod.z.string().min(10, "Use at least 10 characters").max(72).refine((v) => new TextEncoder().encode(v).length <= 72, "Password must be at most 72 UTF-8 bytes");
-var registrationSchema = import_zod.z.object({
+var rateLimitBuckets = pgTable("rate_limit_buckets", {
+  id: varchar("id").primaryKey(),
+  count: integer("count").notNull(),
+  resetAt: timestamp("reset_at", { withTimezone: true }).notNull()
+}, (table) => [index("rate_limit_buckets_expiry").on(table.resetAt)]);
+var emailSchema = z.string().trim().toLowerCase().max(254).email("Invalid email address");
+var passwordSchema = z.string().min(10, "Use at least 10 characters").max(72).refine((v) => new TextEncoder().encode(v).length <= 72, "Password must be at most 72 UTF-8 bytes");
+var registrationSchema = z.object({
   email: emailSchema,
   password: passwordSchema,
-  firstName: import_zod.z.string().trim().min(1).max(100),
-  lastName: import_zod.z.string().trim().min(1).max(100),
-  restaurantName: import_zod.z.string().trim().min(1).max(150)
+  firstName: z.string().trim().min(1).max(100),
+  lastName: z.string().trim().min(1).max(100),
+  restaurantName: z.string().trim().min(1).max(150)
 }).strict();
-var loginSchema = import_zod.z.object({ email: emailSchema, password: import_zod.z.string().min(1).max(72).refine((v) => new TextEncoder().encode(v).length <= 72, "Password is too long") }).strict();
-var restaurants = (0, import_pg_core.pgTable)("restaurants", {
-  id: (0, import_pg_core.varchar)("id").primaryKey().default(import_drizzle_orm.sql`gen_random_uuid()`),
-  userId: (0, import_pg_core.varchar)("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
-  name: (0, import_pg_core.text)("name").notNull(),
-  theme: (0, import_pg_core.text)("theme").notNull().default("e3"),
-  currency: (0, import_pg_core.varchar)("currency").notNull().default("SAR"),
-  timezone: (0, import_pg_core.text)("timezone").notNull().default("Asia/Riyadh"),
-  logoUrl: (0, import_pg_core.text)("logo_url"),
-  coverMediaUrl: (0, import_pg_core.text)("cover_media_url"),
+var loginSchema = z.object({ email: emailSchema, password: z.string().min(1).max(72).refine((v) => new TextEncoder().encode(v).length <= 72, "Password is too long") }).strict();
+var restaurants = pgTable("restaurants", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  name: text("name").notNull(),
+  theme: text("theme").notNull().default("e3"),
+  currency: varchar("currency").notNull().default("SAR"),
+  timezone: text("timezone").notNull().default("Asia/Riyadh"),
+  logoUrl: text("logo_url"),
+  coverMediaUrl: text("cover_media_url"),
   // Cover media for menu display (video/GIF/image)
-  coverMediaType: (0, import_pg_core.varchar)("cover_media_type"),
+  coverMediaType: varchar("cover_media_type"),
   // "image", "video", "gif"
-  cuisineType: (0, import_pg_core.text)("cuisine_type"),
-  address: (0, import_pg_core.text)("address"),
-  phone: (0, import_pg_core.varchar)("phone"),
-  openingHours: (0, import_pg_core.text)("opening_hours"),
-  qrCodeUrl: (0, import_pg_core.text)("qr_code_url"),
-  status: (0, import_pg_core.varchar)("status").notNull().default("active"),
+  cuisineType: text("cuisine_type"),
+  address: text("address"),
+  phone: varchar("phone"),
+  openingHours: text("opening_hours"),
+  qrCodeUrl: text("qr_code_url"),
+  status: varchar("status").notNull().default("active"),
   // "active", "suspended", "pending"
-  hidden: (0, import_pg_core.boolean)("hidden").notNull().default(false),
+  hidden: boolean("hidden").notNull().default(false),
   // Super Admin can hide restaurants from public view
-  upiId: (0, import_pg_core.text)("upi_id"),
+  upiId: text("upi_id"),
   // UPI payment ID (e.g., merchant@upi)
-  upiQrCodeUrl: (0, import_pg_core.text)("upi_qr_code_url"),
+  upiQrCodeUrl: text("upi_qr_code_url"),
   // URL to uploaded UPI QR code image
   // Legacy billing fields retained for database compatibility; internal app does not use billing.
-  activeSince: (0, import_pg_core.timestamp)("active_since").defaultNow(),
-  subscriptionStatus: (0, import_pg_core.varchar)("subscription_status").notNull().default("trial"),
+  activeSince: timestamp("active_since").defaultNow(),
+  subscriptionStatus: varchar("subscription_status").notNull().default("trial"),
   // "trial", "active", "expired", "cancelled"
-  subscriptionPlan: (0, import_pg_core.varchar)("subscription_plan").default("monthly"),
+  subscriptionPlan: varchar("subscription_plan").default("monthly"),
   // "monthly", "quarterly", "annual"
-  monthlyFee: (0, import_pg_core.decimal)("monthly_fee", { precision: 10, scale: 2 }).default("999"),
+  monthlyFee: decimal("monthly_fee", { precision: 10, scale: 2 }).default("999"),
   // Subscription fee
-  lastPaymentDate: (0, import_pg_core.timestamp)("last_payment_date"),
-  nextPaymentDue: (0, import_pg_core.timestamp)("next_payment_due"),
-  suspensionReason: (0, import_pg_core.text)("suspension_reason"),
+  lastPaymentDate: timestamp("last_payment_date"),
+  nextPaymentDue: timestamp("next_payment_due"),
+  suspensionReason: text("suspension_reason"),
   // Reason for suspension (e.g., "Non-payment", "Policy violation")
-  createdAt: (0, import_pg_core.timestamp)("created_at").defaultNow(),
-  updatedAt: (0, import_pg_core.timestamp)("updated_at").defaultNow()
-}, (table) => [(0, import_pg_core.uniqueIndex)("restaurants_one_owner").on(table.userId), (0, import_pg_core.check)("restaurants_status", import_drizzle_orm.sql`${table.status} in ('active','suspended','pending')`)]);
-var restaurantsRelations = (0, import_drizzle_orm2.relations)(restaurants, ({ one, many }) => ({
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+}, (table) => [uniqueIndex("restaurants_one_owner").on(table.userId), check("restaurants_status", sql`${table.status} in ('active','suspended','pending')`)]);
+var restaurantsRelations = relations(restaurants, ({ one, many }) => ({
   user: one(users, {
     fields: [restaurants.userId],
     references: [users.id]
   }),
   categories: many(categories)
 }));
-var insertRestaurantSchema = (0, import_drizzle_zod.createInsertSchema)(restaurants).omit({
+var insertRestaurantSchema = createInsertSchema(restaurants).omit({
   id: true,
   createdAt: true,
   updatedAt: true,
@@ -185,10 +167,10 @@ var cafeProfileSchema = insertRestaurantSchema.pick({
   phone: true,
   openingHours: true
 }).extend({
-  name: import_zod.z.string().trim().min(1).max(150),
-  theme: import_zod.z.enum(["e3", "forest", "terracotta", "ocean", "plum"]).optional(),
-  currency: import_zod.z.enum(["SAR", "QAR", "INR", "AED", "USD", "EUR", "GBP"]).optional(),
-  timezone: import_zod.z.string().max(100).refine((v) => {
+  name: z.string().trim().min(1).max(150),
+  theme: z.enum(["e3", "forest", "terracotta", "ocean", "plum"]).optional(),
+  currency: z.enum(["SAR", "QAR", "INR", "AED", "USD", "EUR", "GBP"]).optional(),
+  timezone: z.string().max(100).refine((v) => {
     try {
       new Intl.DateTimeFormat("en", { timeZone: v });
       return true;
@@ -196,59 +178,59 @@ var cafeProfileSchema = insertRestaurantSchema.pick({
       return false;
     }
   }).optional(),
-  coverMediaType: import_zod.z.enum(["image", "video", "gif"]).nullable().optional(),
-  cuisineType: import_zod.z.string().trim().max(250).nullable().optional(),
-  address: import_zod.z.string().trim().max(1e3).nullable().optional(),
-  phone: import_zod.z.string().trim().max(40).nullable().optional(),
-  openingHours: import_zod.z.string().trim().max(250).nullable().optional()
+  coverMediaType: z.enum(["image", "video", "gif"]).nullable().optional(),
+  cuisineType: z.string().trim().max(250).nullable().optional(),
+  address: z.string().trim().max(1e3).nullable().optional(),
+  phone: z.string().trim().max(40).nullable().optional(),
+  openingHours: z.string().trim().max(250).nullable().optional()
 }).strict();
-var accessAudit = (0, import_pg_core.pgTable)("access_audit", {
-  id: (0, import_pg_core.varchar)("id").primaryKey().default(import_drizzle_orm.sql`gen_random_uuid()`),
-  actorId: (0, import_pg_core.varchar)("actor_id").notNull(),
-  actorEmail: (0, import_pg_core.text)("actor_email").notNull(),
-  actorRole: (0, import_pg_core.varchar)("actor_role").notNull(),
-  cafeId: (0, import_pg_core.varchar)("cafe_id"),
-  cafeName: (0, import_pg_core.text)("cafe_name"),
-  action: (0, import_pg_core.text)("action").notNull(),
-  status: (0, import_pg_core.integer)("status").notNull(),
-  createdAt: (0, import_pg_core.timestamp)("created_at").notNull().defaultNow()
-}, (table) => [(0, import_pg_core.index)("access_audit_recent").on(table.createdAt)]);
-var categories = (0, import_pg_core.pgTable)("categories", {
-  id: (0, import_pg_core.varchar)("id").primaryKey().default(import_drizzle_orm.sql`gen_random_uuid()`),
-  restaurantId: (0, import_pg_core.varchar)("restaurant_id").notNull().references(() => restaurants.id, { onDelete: "cascade" }),
-  title: (0, import_pg_core.text)("title").notNull(),
-  order: (0, import_pg_core.integer)("order").notNull().default(0),
-  createdAt: (0, import_pg_core.timestamp)("created_at").defaultNow()
-}, (table) => [(0, import_pg_core.uniqueIndex)("categories_cafe_name_unique").on(table.restaurantId, import_drizzle_orm.sql`lower(btrim(${table.title}))`)]);
-var categoriesRelations = (0, import_drizzle_orm2.relations)(categories, ({ one, many }) => ({
+var accessAudit = pgTable("access_audit", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  actorId: varchar("actor_id").notNull(),
+  actorEmail: text("actor_email").notNull(),
+  actorRole: varchar("actor_role").notNull(),
+  cafeId: varchar("cafe_id"),
+  cafeName: text("cafe_name"),
+  action: text("action").notNull(),
+  status: integer("status").notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow()
+}, (table) => [index("access_audit_recent").on(table.createdAt)]);
+var categories = pgTable("categories", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  restaurantId: varchar("restaurant_id").notNull().references(() => restaurants.id, { onDelete: "cascade" }),
+  title: text("title").notNull(),
+  order: integer("order").notNull().default(0),
+  createdAt: timestamp("created_at").defaultNow()
+}, (table) => [uniqueIndex("categories_cafe_name_unique").on(table.restaurantId, sql`lower(btrim(${table.title}))`)]);
+var categoriesRelations = relations(categories, ({ one, many }) => ({
   restaurant: one(restaurants, {
     fields: [categories.restaurantId],
     references: [restaurants.id]
   }),
   menuItems: many(menuItems)
 }));
-var insertCategorySchema = (0, import_drizzle_zod.createInsertSchema)(categories).omit({
+var insertCategorySchema = createInsertSchema(categories).omit({
   id: true,
   createdAt: true
-}).extend({ title: import_zod.z.string().trim().min(1).max(100), order: import_zod.z.number().int().min(0).optional() });
-var moneySchema = import_zod.z.string().or(import_zod.z.number()).refine((v) => /^\d+(?:\.\d{1,2})?$/.test(String(v)) && Number(v) <= 9999999999e-2, "Use a non-negative price with at most two decimal places");
-var discountSchema = import_zod.z.string().or(import_zod.z.number()).refine((v) => /^\d+(?:\.\d{1,2})?$/.test(String(v)) && Number(v) <= 100, "Discount must be between 0 and 100, with at most two decimal places");
-var arabicOptionLabel = import_zod.z.string().trim().max(80).optional();
-var menuModifierOptionSchema = import_zod.z.object({
-  id: import_zod.z.string().uuid(),
-  label: import_zod.z.string().trim().min(1).max(80),
+}).extend({ title: z.string().trim().min(1).max(100), order: z.number().int().min(0).optional() });
+var moneySchema = z.string().or(z.number()).refine((v) => /^\d+(?:\.\d{1,2})?$/.test(String(v)) && Number(v) <= 9999999999e-2, "Use a non-negative price with at most two decimal places");
+var discountSchema = z.string().or(z.number()).refine((v) => /^\d+(?:\.\d{1,2})?$/.test(String(v)) && Number(v) <= 100, "Discount must be between 0 and 100, with at most two decimal places");
+var arabicOptionLabel = z.string().trim().max(80).optional();
+var menuModifierOptionSchema = z.object({
+  id: z.string().uuid(),
+  label: z.string().trim().min(1).max(80),
   labelAr: arabicOptionLabel,
   price: moneySchema.transform(String),
-  isAvailable: import_zod.z.boolean().default(true)
+  isAvailable: z.boolean().default(true)
 }).strict();
-var menuModifierGroupSchema = import_zod.z.object({
-  id: import_zod.z.string().uuid(),
-  title: import_zod.z.string().trim().min(1).max(80),
+var menuModifierGroupSchema = z.object({
+  id: z.string().uuid(),
+  title: z.string().trim().min(1).max(80),
   titleAr: arabicOptionLabel,
-  selection: import_zod.z.enum(["single", "multiple"]),
-  minSelections: import_zod.z.number().int().min(0).max(20),
-  maxSelections: import_zod.z.number().int().min(1).max(20),
-  options: import_zod.z.array(menuModifierOptionSchema).min(1).max(20)
+  selection: z.enum(["single", "multiple"]),
+  minSelections: z.number().int().min(0).max(20),
+  maxSelections: z.number().int().min(1).max(20),
+  options: z.array(menuModifierOptionSchema).min(1).max(20)
 }).strict().superRefine((group, context) => {
   if (group.maxSelections < group.minSelections || group.maxSelections > group.options.length)
     context.addIssue({ code: "custom", message: "Selection limits must fit the number of options", path: ["maxSelections"] });
@@ -257,126 +239,126 @@ var menuModifierGroupSchema = import_zod.z.object({
   if (new Set(group.options.map((option) => option.id)).size !== group.options.length || new Set(group.options.map((option) => option.label.toLowerCase())).size !== group.options.length)
     context.addIssue({ code: "custom", message: "Give every option a unique name and identifier", path: ["options"] });
 });
-var menuModifierGroupsSchema = import_zod.z.array(menuModifierGroupSchema).max(8).superRefine((groups, context) => {
+var menuModifierGroupsSchema = z.array(menuModifierGroupSchema).max(8).superRefine((groups, context) => {
   if (new Set(groups.map((group) => group.id)).size !== groups.length || new Set(groups.map((group) => group.title.toLowerCase())).size !== groups.length)
     context.addIssue({ code: "custom", message: "Give every option group a unique name and identifier" });
   const optionIds = groups.flatMap((group) => group.options.map((option) => option.id));
   if (new Set(optionIds).size !== optionIds.length) context.addIssue({ code: "custom", message: "Every choice must have a unique identifier within the item" });
 });
-var menuItems = (0, import_pg_core.pgTable)("menu_items", {
-  id: (0, import_pg_core.varchar)("id").primaryKey().default(import_drizzle_orm.sql`gen_random_uuid()`),
-  categoryId: (0, import_pg_core.varchar)("category_id").notNull().references(() => categories.id, { onDelete: "cascade" }),
-  name: (0, import_pg_core.text)("name").notNull(),
-  description: (0, import_pg_core.text)("description"),
-  price: (0, import_pg_core.decimal)("price", { precision: 10, scale: 2 }).notNull(),
-  discount: (0, import_pg_core.decimal)("discount", { precision: 5, scale: 2 }).default("0"),
-  unit: (0, import_pg_core.text)("unit").notNull().default("plate"),
+var menuItems = pgTable("menu_items", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  categoryId: varchar("category_id").notNull().references(() => categories.id, { onDelete: "cascade" }),
+  name: text("name").notNull(),
+  description: text("description"),
+  price: decimal("price", { precision: 10, scale: 2 }).notNull(),
+  discount: decimal("discount", { precision: 5, scale: 2 }).default("0"),
+  unit: text("unit").notNull().default("plate"),
   // e.g., "plate", "piece", "kg", "gram", "liter", "ml", "half", "quarter", "full"
-  imageUrl: (0, import_pg_core.text)("image_url"),
-  isAvailable: (0, import_pg_core.boolean)("is_available").notNull().default(true),
-  specialDate: (0, import_pg_core.varchar)("special_date"),
-  hasMultiplePricing: (0, import_pg_core.boolean)("has_multiple_pricing").notNull().default(false),
-  modifierGroups: (0, import_pg_core.jsonb)("modifier_groups").$type().notNull().default(import_drizzle_orm.sql`'[]'::jsonb`),
-  tags: (0, import_pg_core.text)("tags").array().default(import_drizzle_orm.sql`ARRAY[]::text[]`),
-  order: (0, import_pg_core.integer)("order").notNull().default(0),
-  createdAt: (0, import_pg_core.timestamp)("created_at").defaultNow(),
-  updatedAt: (0, import_pg_core.timestamp)("updated_at").defaultNow()
-}, (table) => [(0, import_pg_core.check)("menu_price_valid", import_drizzle_orm.sql`${table.price} >= 0`), (0, import_pg_core.check)("menu_discount_valid", import_drizzle_orm.sql`${table.discount} between 0 and 100`), (0, import_pg_core.check)("menu_modifier_groups_array", import_drizzle_orm.sql`jsonb_typeof(${table.modifierGroups}) = 'array' and jsonb_array_length(${table.modifierGroups}) <= 8`)]);
-var menuItemsRelations = (0, import_drizzle_orm2.relations)(menuItems, ({ one, many }) => ({
+  imageUrl: text("image_url"),
+  isAvailable: boolean("is_available").notNull().default(true),
+  specialDate: varchar("special_date"),
+  hasMultiplePricing: boolean("has_multiple_pricing").notNull().default(false),
+  modifierGroups: jsonb("modifier_groups").$type().notNull().default(sql`'[]'::jsonb`),
+  tags: text("tags").array().default(sql`ARRAY[]::text[]`),
+  order: integer("order").notNull().default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+}, (table) => [check("menu_price_valid", sql`${table.price} >= 0`), check("menu_discount_valid", sql`${table.discount} between 0 and 100`), check("menu_modifier_groups_array", sql`jsonb_typeof(${table.modifierGroups}) = 'array' and jsonb_array_length(${table.modifierGroups}) <= 8`)]);
+var menuItemsRelations = relations(menuItems, ({ one, many }) => ({
   category: one(categories, {
     fields: [menuItems.categoryId],
     references: [categories.id]
   }),
   priceVariants: many(menuItemPriceVariants)
 }));
-var menuItemPriceVariants = (0, import_pg_core.pgTable)("menu_item_price_variants", {
-  id: (0, import_pg_core.varchar)("id").primaryKey().default(import_drizzle_orm.sql`gen_random_uuid()`),
-  menuItemId: (0, import_pg_core.varchar)("menu_item_id").notNull().references(() => menuItems.id, { onDelete: "cascade" }),
-  label: (0, import_pg_core.text)("label").notNull(),
+var menuItemPriceVariants = pgTable("menu_item_price_variants", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  menuItemId: varchar("menu_item_id").notNull().references(() => menuItems.id, { onDelete: "cascade" }),
+  label: text("label").notNull(),
   // e.g., "Full Plate", "Half Plate", "1 Kg"
-  price: (0, import_pg_core.decimal)("price", { precision: 10, scale: 2 }).notNull(),
-  discount: (0, import_pg_core.decimal)("discount", { precision: 5, scale: 2 }).default("0"),
-  unit: (0, import_pg_core.text)("unit").notNull(),
+  price: decimal("price", { precision: 10, scale: 2 }).notNull(),
+  discount: decimal("discount", { precision: 5, scale: 2 }).default("0"),
+  unit: text("unit").notNull(),
   // e.g., "plate", "kg", "gram", "liter", "ml", "piece"
-  order: (0, import_pg_core.integer)("order").notNull().default(0),
-  createdAt: (0, import_pg_core.timestamp)("created_at").defaultNow()
-}, (table) => [(0, import_pg_core.check)("option_price_valid", import_drizzle_orm.sql`${table.price} >= 0`), (0, import_pg_core.check)("option_discount_valid", import_drizzle_orm.sql`${table.discount} between 0 and 100`), (0, import_pg_core.uniqueIndex)("option_item_label_unique").on(table.menuItemId, import_drizzle_orm.sql`lower(btrim(${table.label}))`)]);
-var menuItemPriceVariantsRelations = (0, import_drizzle_orm2.relations)(menuItemPriceVariants, ({ one }) => ({
+  order: integer("order").notNull().default(0),
+  createdAt: timestamp("created_at").defaultNow()
+}, (table) => [check("option_price_valid", sql`${table.price} >= 0`), check("option_discount_valid", sql`${table.discount} between 0 and 100`), uniqueIndex("option_item_label_unique").on(table.menuItemId, sql`lower(btrim(${table.label}))`)]);
+var menuItemPriceVariantsRelations = relations(menuItemPriceVariants, ({ one }) => ({
   menuItem: one(menuItems, {
     fields: [menuItemPriceVariants.menuItemId],
     references: [menuItems.id]
   })
 }));
-var insertMenuItemSchema = (0, import_drizzle_zod.createInsertSchema)(menuItems).omit({
+var insertMenuItemSchema = createInsertSchema(menuItems).omit({
   id: true,
   createdAt: true,
   updatedAt: true
 }).extend({
-  name: import_zod.z.string().trim().min(1).max(150),
-  categoryId: import_zod.z.string().uuid(),
-  description: import_zod.z.string().trim().max(2e3).nullable().optional(),
-  tags: import_zod.z.array(import_zod.z.string().trim().min(1).max(40)).max(10).refine((v) => new Set(v.map((t) => t.toLowerCase())).size === v.length, "Tags must be unique").nullable().optional(),
-  order: import_zod.z.number().int().min(0).optional(),
+  name: z.string().trim().min(1).max(150),
+  categoryId: z.string().uuid(),
+  description: z.string().trim().max(2e3).nullable().optional(),
+  tags: z.array(z.string().trim().min(1).max(40)).max(10).refine((v) => new Set(v.map((t) => t.toLowerCase())).size === v.length, "Tags must be unique").nullable().optional(),
+  order: z.number().int().min(0).optional(),
   price: moneySchema,
-  unit: import_zod.z.string().trim().min(1).max(30).optional(),
+  unit: z.string().trim().min(1).max(30).optional(),
   discount: discountSchema.optional(),
   modifierGroups: menuModifierGroupsSchema.optional(),
-  specialDate: import_zod.z.string().regex(/^\d{4}-\d{2}-\d{2}$/).refine((v) => !Number.isNaN(Date.parse(v)) && new Date(v).toISOString().slice(0, 10) === v, "Invalid date").nullable().optional()
+  specialDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).refine((v) => !Number.isNaN(Date.parse(v)) && new Date(v).toISOString().slice(0, 10) === v, "Invalid date").nullable().optional()
 }).strict();
-var insertPriceVariantSchema = (0, import_drizzle_zod.createInsertSchema)(menuItemPriceVariants).omit({
+var insertPriceVariantSchema = createInsertSchema(menuItemPriceVariants).omit({
   id: true,
   createdAt: true
 }).extend({
-  menuItemId: import_zod.z.string().uuid(),
-  label: import_zod.z.string().trim().min(1).max(80),
+  menuItemId: z.string().uuid(),
+  label: z.string().trim().min(1).max(80),
   price: moneySchema,
-  unit: import_zod.z.string().trim().min(1).max(30),
+  unit: z.string().trim().min(1).max(30),
   discount: discountSchema.optional(),
-  order: import_zod.z.number().int().min(0).optional()
+  order: z.number().int().min(0).optional()
 }).strict();
-var globalMenuItems = (0, import_pg_core.pgTable)("global_menu_items", {
-  id: (0, import_pg_core.varchar)("id").primaryKey().default(import_drizzle_orm.sql`gen_random_uuid()`),
-  sourceItemId: (0, import_pg_core.varchar)("source_item_id").unique().references(() => menuItems.id, { onDelete: "set null" }),
-  publisherId: (0, import_pg_core.varchar)("publisher_id").references(() => users.id, { onDelete: "set null" }),
-  sourceCafe: (0, import_pg_core.text)("source_cafe").notNull(),
-  currency: (0, import_pg_core.varchar)("currency").notNull(),
-  categoryTitle: (0, import_pg_core.text)("category_title").notNull(),
-  name: (0, import_pg_core.text)("name").notNull(),
-  description: (0, import_pg_core.text)("description"),
-  price: (0, import_pg_core.decimal)("price", { precision: 10, scale: 2 }).notNull(),
-  unit: (0, import_pg_core.text)("unit").notNull(),
-  imageUrl: (0, import_pg_core.text)("image_url"),
-  sourceImageUrl: (0, import_pg_core.text)("source_image_url"),
-  tags: (0, import_pg_core.text)("tags").array().notNull().default(import_drizzle_orm.sql`ARRAY[]::text[]`),
-  variants: (0, import_pg_core.jsonb)("variants").$type().notNull().default(import_drizzle_orm.sql`'[]'::jsonb`),
-  modifierGroups: (0, import_pg_core.jsonb)("modifier_groups").$type().notNull().default(import_drizzle_orm.sql`'[]'::jsonb`),
-  archived: (0, import_pg_core.boolean)("archived").notNull().default(false),
-  createdAt: (0, import_pg_core.timestamp)("created_at").defaultNow(),
-  updatedAt: (0, import_pg_core.timestamp)("updated_at").defaultNow()
+var globalMenuItems = pgTable("global_menu_items", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  sourceItemId: varchar("source_item_id").unique().references(() => menuItems.id, { onDelete: "set null" }),
+  publisherId: varchar("publisher_id").references(() => users.id, { onDelete: "set null" }),
+  sourceCafe: text("source_cafe").notNull(),
+  currency: varchar("currency").notNull(),
+  categoryTitle: text("category_title").notNull(),
+  name: text("name").notNull(),
+  description: text("description"),
+  price: decimal("price", { precision: 10, scale: 2 }).notNull(),
+  unit: text("unit").notNull(),
+  imageUrl: text("image_url"),
+  sourceImageUrl: text("source_image_url"),
+  tags: text("tags").array().notNull().default(sql`ARRAY[]::text[]`),
+  variants: jsonb("variants").$type().notNull().default(sql`'[]'::jsonb`),
+  modifierGroups: jsonb("modifier_groups").$type().notNull().default(sql`'[]'::jsonb`),
+  archived: boolean("archived").notNull().default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
 });
-var payments = (0, import_pg_core.pgTable)("payments", {
-  id: (0, import_pg_core.varchar)("id").primaryKey().default(import_drizzle_orm.sql`gen_random_uuid()`),
-  restaurantId: (0, import_pg_core.varchar)("restaurant_id").notNull().references(() => restaurants.id, { onDelete: "cascade" }),
-  amount: (0, import_pg_core.decimal)("amount", { precision: 10, scale: 2 }).notNull(),
-  paymentDate: (0, import_pg_core.timestamp)("payment_date").notNull().defaultNow(),
-  paymentMethod: (0, import_pg_core.varchar)("payment_method").notNull(),
+var payments = pgTable("payments", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  restaurantId: varchar("restaurant_id").notNull().references(() => restaurants.id, { onDelete: "cascade" }),
+  amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
+  paymentDate: timestamp("payment_date").notNull().defaultNow(),
+  paymentMethod: varchar("payment_method").notNull(),
   // "cash", "upi", "bank_transfer", "card"
-  transactionId: (0, import_pg_core.varchar)("transaction_id"),
+  transactionId: varchar("transaction_id"),
   // Reference ID from payment gateway
-  requestKey: (0, import_pg_core.varchar)("request_key").unique(),
-  status: (0, import_pg_core.varchar)("status").notNull().default("completed"),
+  requestKey: varchar("request_key").unique(),
+  status: varchar("status").notNull().default("completed"),
   // "completed", "pending", "failed"
-  periodStart: (0, import_pg_core.timestamp)("period_start").notNull(),
+  periodStart: timestamp("period_start").notNull(),
   // Subscription period start
-  periodEnd: (0, import_pg_core.timestamp)("period_end").notNull(),
+  periodEnd: timestamp("period_end").notNull(),
   // Subscription period end
-  notes: (0, import_pg_core.text)("notes"),
+  notes: text("notes"),
   // Additional notes from super admin
-  recordedBy: (0, import_pg_core.varchar)("recorded_by").references(() => users.id),
+  recordedBy: varchar("recorded_by").references(() => users.id),
   // Super admin who recorded the payment
-  createdAt: (0, import_pg_core.timestamp)("created_at").defaultNow()
+  createdAt: timestamp("created_at").defaultNow()
 });
-var paymentsRelations = (0, import_drizzle_orm2.relations)(payments, ({ one }) => ({
+var paymentsRelations = relations(payments, ({ one }) => ({
   restaurant: one(restaurants, {
     fields: [payments.restaurantId],
     references: [restaurants.id]
@@ -386,20 +368,20 @@ var paymentsRelations = (0, import_drizzle_orm2.relations)(payments, ({ one }) =
     references: [users.id]
   })
 }));
-var insertPaymentSchema = (0, import_drizzle_zod.createInsertSchema)(payments).omit({
+var insertPaymentSchema = createInsertSchema(payments).omit({
   id: true,
   createdAt: true
 }).extend({
-  amount: import_zod.z.string().or(import_zod.z.number())
+  amount: z.string().or(z.number())
 });
 
 // server/db.ts
-var import_node_path = __toESM(require("node:path"), 1);
-var import_node_postgres = require("drizzle-orm/node-postgres");
-var import_migrator = require("drizzle-orm/node-postgres/migrator");
-var import_pg = __toESM(require("pg"), 1);
-(0, import_dotenv.config)();
-(0, import_dotenv.config)({ path: ".env.cloud", quiet: true });
+import path from "node:path";
+import { drizzle as drizzlePg } from "drizzle-orm/node-postgres";
+import { migrate as migratePg } from "drizzle-orm/node-postgres/migrator";
+import pg from "pg";
+config();
+config({ path: ".env.cloud", quiet: true });
 function resolveDatabaseUrl() {
   const candidates = [
     process.env.DATABASE_URL,
@@ -413,7 +395,7 @@ function resolveDatabaseUrl() {
   return void 0;
 }
 function resolveMigrationsFolder() {
-  return import_node_path.default.resolve(process.cwd(), "migrations");
+  return path.resolve(process.cwd(), "migrations");
 }
 var databaseUrl = resolveDatabaseUrl();
 var migrationsFolder = resolveMigrationsFolder();
@@ -424,7 +406,7 @@ var db;
 var initializeDatabase;
 if (databaseUrl) {
   const ssl = onVercel || /supabase\.co|sslmode=require/i.test(databaseUrl) ? { rejectUnauthorized: false } : void 0;
-  const pgPool = new import_pg.default.Pool({
+  const pgPool = new pg.Pool({
     connectionString: databaseUrl,
     ssl,
     // Serverless: keep the pool tiny so cold starts do not exhaust Supabase slots.
@@ -432,7 +414,7 @@ if (databaseUrl) {
     idleTimeoutMillis: onVercel ? 5e3 : 3e4,
     connectionTimeoutMillis: 15e3
   });
-  const remote = (0, import_node_postgres.drizzle)(pgPool, { schema: schema_exports });
+  const remote = drizzlePg(pgPool, { schema: schema_exports });
   pool = { close: () => pgPool.end() };
   db = remote;
   initializeDatabase = async () => {
@@ -440,7 +422,7 @@ if (databaseUrl) {
     const runMigrate = !onVercel || process.env.RUN_MIGRATE_ON_BOOT === "true";
     if (!runMigrate) return;
     try {
-      await (0, import_migrator.migrate)(remote, { migrationsFolder });
+      await migratePg(remote, { migrationsFolder });
     } catch (error) {
       console.error("Drizzle migrate failed on boot", {
         type: error?.name,
@@ -487,36 +469,36 @@ function databaseEnvProbe() {
 }
 
 // server/apiApplication.ts
-var import_express2 = __toESM(require("express"), 1);
+import express2 from "express";
 
 // server/routes.ts
-var import_http = require("http");
+import { createServer } from "http";
 
 // server/storage.ts
-var import_drizzle_orm3 = require("drizzle-orm");
+import { eq, sql as sql2 } from "drizzle-orm";
 
 // server/passwords.ts
-var import_bcryptjs = __toESM(require("bcryptjs"), 1);
+import { default as default2 } from "bcryptjs";
 
 // server/storage.ts
 var DatabaseStorage = class {
   async getUser(id) {
-    const [user] = await db.select().from(users).where((0, import_drizzle_orm3.eq)(users.id, id));
+    const [user] = await db.select().from(users).where(eq(users.id, id));
     return user;
   }
   async getUserByEmail(email) {
-    const [user] = await db.select().from(users).where(import_drizzle_orm3.sql`lower(${users.email}) = ${email.trim().toLowerCase()}`);
+    const [user] = await db.select().from(users).where(sql2`lower(${users.email}) = ${email.trim().toLowerCase()}`);
     return user;
   }
   async getUserById(id) {
-    const [user] = await db.select().from(users).where((0, import_drizzle_orm3.eq)(users.id, id));
+    const [user] = await db.select().from(users).where(eq(users.id, id));
     return user;
   }
   async updateUserPassword(userId, hashedPassword) {
-    await db.update(users).set({ password: hashedPassword, updatedAt: /* @__PURE__ */ new Date() }).where((0, import_drizzle_orm3.eq)(users.id, userId));
+    await db.update(users).set({ password: hashedPassword, updatedAt: /* @__PURE__ */ new Date() }).where(eq(users.id, userId));
   }
   async createUser(userData) {
-    const hashedPassword = await import_bcryptjs.default.hash(userData.password, 10);
+    const hashedPassword = await default2.hash(userData.password, 10);
     const [user] = await db.insert(users).values({
       ...userData,
       password: hashedPassword
@@ -524,7 +506,7 @@ var DatabaseStorage = class {
     return user;
   }
   async deleteUser(id) {
-    await db.delete(users).where((0, import_drizzle_orm3.eq)(users.id, id));
+    await db.delete(users).where(eq(users.id, id));
   }
   async getAllUsers() {
     return await db.select().from(users);
@@ -532,9 +514,9 @@ var DatabaseStorage = class {
   async updateUser(id, userData) {
     const updateData = { ...userData };
     if (updateData.password) {
-      updateData.password = await import_bcryptjs.default.hash(updateData.password, 10);
+      updateData.password = await default2.hash(updateData.password, 10);
     }
-    const [user] = await db.update(users).set({ ...updateData, updatedAt: /* @__PURE__ */ new Date() }).where((0, import_drizzle_orm3.eq)(users.id, id)).returning();
+    const [user] = await db.update(users).set({ ...updateData, updatedAt: /* @__PURE__ */ new Date() }).where(eq(users.id, id)).returning();
     return user;
   }
   async upsertUser(userData) {
@@ -548,54 +530,54 @@ var DatabaseStorage = class {
     return user;
   }
   async getRestaurantByUserId(userId) {
-    const [restaurant] = await db.select().from(restaurants).where((0, import_drizzle_orm3.eq)(restaurants.userId, userId)).limit(1);
+    const [restaurant] = await db.select().from(restaurants).where(eq(restaurants.userId, userId)).limit(1);
     return restaurant;
   }
   async getRestaurantById(id) {
-    const [restaurant] = await db.select().from(restaurants).where((0, import_drizzle_orm3.eq)(restaurants.id, id));
+    const [restaurant] = await db.select().from(restaurants).where(eq(restaurants.id, id));
     return restaurant;
   }
   async createRestaurant(restaurant) {
-    const [existing] = await db.select().from(restaurants).where((0, import_drizzle_orm3.eq)(restaurants.userId, restaurant.userId)).limit(1);
+    const [existing] = await db.select().from(restaurants).where(eq(restaurants.userId, restaurant.userId)).limit(1);
     if (existing) {
-      const [updated] = await db.update(restaurants).set({ ...restaurant, updatedAt: /* @__PURE__ */ new Date() }).where((0, import_drizzle_orm3.eq)(restaurants.id, existing.id)).returning();
+      const [updated] = await db.update(restaurants).set({ ...restaurant, updatedAt: /* @__PURE__ */ new Date() }).where(eq(restaurants.id, existing.id)).returning();
       return updated;
     }
     const [newRestaurant] = await db.insert(restaurants).values(restaurant).returning();
     return newRestaurant;
   }
   async updateRestaurant(id, restaurant) {
-    const [updated] = await db.update(restaurants).set({ ...restaurant, updatedAt: /* @__PURE__ */ new Date() }).where((0, import_drizzle_orm3.eq)(restaurants.id, id)).returning();
+    const [updated] = await db.update(restaurants).set({ ...restaurant, updatedAt: /* @__PURE__ */ new Date() }).where(eq(restaurants.id, id)).returning();
     return updated;
   }
   async getAllRestaurants() {
     return await db.select().from(restaurants);
   }
   async deleteRestaurant(id) {
-    await db.delete(restaurants).where((0, import_drizzle_orm3.eq)(restaurants.id, id));
+    await db.delete(restaurants).where(eq(restaurants.id, id));
   }
   async getCategoriesByRestaurantId(restaurantId) {
-    return await db.select().from(categories).where((0, import_drizzle_orm3.eq)(categories.restaurantId, restaurantId)).orderBy(categories.order, categories.id);
+    return await db.select().from(categories).where(eq(categories.restaurantId, restaurantId)).orderBy(categories.order, categories.id);
   }
   async createCategory(category) {
     const [newCategory] = await db.insert(categories).values(category).returning();
     return newCategory;
   }
   async updateCategory(id, category) {
-    const [updated] = await db.update(categories).set(category).where((0, import_drizzle_orm3.eq)(categories.id, id)).returning();
+    const [updated] = await db.update(categories).set(category).where(eq(categories.id, id)).returning();
     return updated;
   }
   async deleteCategory(id) {
-    await db.delete(categories).where((0, import_drizzle_orm3.eq)(categories.id, id));
+    await db.delete(categories).where(eq(categories.id, id));
   }
   async getMenuItemsByRestaurantId(restaurantId) {
     const result = await db.select({
       menuItem: menuItems
-    }).from(menuItems).innerJoin(categories, (0, import_drizzle_orm3.eq)(menuItems.categoryId, categories.id)).where((0, import_drizzle_orm3.eq)(categories.restaurantId, restaurantId)).orderBy(menuItems.order, menuItems.id);
+    }).from(menuItems).innerJoin(categories, eq(menuItems.categoryId, categories.id)).where(eq(categories.restaurantId, restaurantId)).orderBy(menuItems.order, menuItems.id);
     return result.map((r) => r.menuItem);
   }
   async getMenuItemsByCategoryId(categoryId) {
-    return await db.select().from(menuItems).where((0, import_drizzle_orm3.eq)(menuItems.categoryId, categoryId)).orderBy(menuItems.order, menuItems.id);
+    return await db.select().from(menuItems).where(eq(menuItems.categoryId, categoryId)).orderBy(menuItems.order, menuItems.id);
   }
   async createMenuItem(item) {
     const itemData = {
@@ -614,19 +596,19 @@ var DatabaseStorage = class {
     if (item.discount !== void 0) {
       itemData.discount = typeof item.discount === "number" ? String(item.discount) : item.discount;
     }
-    const [updated] = await db.update(menuItems).set(itemData).where((0, import_drizzle_orm3.eq)(menuItems.id, id)).returning();
+    const [updated] = await db.update(menuItems).set(itemData).where(eq(menuItems.id, id)).returning();
     return updated;
   }
   async deleteMenuItem(id) {
-    await db.delete(menuItems).where((0, import_drizzle_orm3.eq)(menuItems.id, id));
+    await db.delete(menuItems).where(eq(menuItems.id, id));
   }
   async getPriceVariantsByMenuItemId(menuItemId) {
-    return await db.select().from(menuItemPriceVariants).where((0, import_drizzle_orm3.eq)(menuItemPriceVariants.menuItemId, menuItemId)).orderBy(menuItemPriceVariants.order, menuItemPriceVariants.id);
+    return await db.select().from(menuItemPriceVariants).where(eq(menuItemPriceVariants.menuItemId, menuItemId)).orderBy(menuItemPriceVariants.order, menuItemPriceVariants.id);
   }
   async getPriceVariantsByRestaurantId(restaurantId) {
     const result = await db.select({
       variant: menuItemPriceVariants
-    }).from(menuItemPriceVariants).innerJoin(menuItems, (0, import_drizzle_orm3.eq)(menuItemPriceVariants.menuItemId, menuItems.id)).innerJoin(categories, (0, import_drizzle_orm3.eq)(menuItems.categoryId, categories.id)).where((0, import_drizzle_orm3.eq)(categories.restaurantId, restaurantId)).orderBy(menuItemPriceVariants.order, menuItemPriceVariants.menuItemId, menuItemPriceVariants.id);
+    }).from(menuItemPriceVariants).innerJoin(menuItems, eq(menuItemPriceVariants.menuItemId, menuItems.id)).innerJoin(categories, eq(menuItems.categoryId, categories.id)).where(eq(categories.restaurantId, restaurantId)).orderBy(menuItemPriceVariants.order, menuItemPriceVariants.menuItemId, menuItemPriceVariants.id);
     return result.map((r) => r.variant);
   }
   async createPriceVariant(variant) {
@@ -646,18 +628,18 @@ var DatabaseStorage = class {
     if (variant.discount !== void 0) {
       variantData.discount = typeof variant.discount === "number" ? String(variant.discount) : variant.discount;
     }
-    const [updated] = await db.update(menuItemPriceVariants).set(variantData).where((0, import_drizzle_orm3.eq)(menuItemPriceVariants.id, id)).returning();
+    const [updated] = await db.update(menuItemPriceVariants).set(variantData).where(eq(menuItemPriceVariants.id, id)).returning();
     return updated;
   }
   async deletePriceVariant(id) {
-    await db.delete(menuItemPriceVariants).where((0, import_drizzle_orm3.eq)(menuItemPriceVariants.id, id));
+    await db.delete(menuItemPriceVariants).where(eq(menuItemPriceVariants.id, id));
   }
   async deletePriceVariantsByMenuItemId(menuItemId) {
-    await db.delete(menuItemPriceVariants).where((0, import_drizzle_orm3.eq)(menuItemPriceVariants.menuItemId, menuItemId));
+    await db.delete(menuItemPriceVariants).where(eq(menuItemPriceVariants.menuItemId, menuItemId));
   }
   async replacePriceVariants(menuItemId, variants) {
     return await db.transaction(async (tx) => {
-      await tx.delete(menuItemPriceVariants).where((0, import_drizzle_orm3.eq)(menuItemPriceVariants.menuItemId, menuItemId));
+      await tx.delete(menuItemPriceVariants).where(eq(menuItemPriceVariants.menuItemId, menuItemId));
       if (variants.length === 0) {
         return [];
       }
@@ -675,9 +657,9 @@ var DatabaseStorage = class {
 var storage = new DatabaseStorage();
 
 // server/localAuth.ts
-var import_express_session = __toESM(require("express-session"), 1);
-var import_drizzle_orm4 = require("drizzle-orm");
-var import_zod_validation_error = require("zod-validation-error");
+import session from "express-session";
+import { eq as eq2, lt } from "drizzle-orm";
+import { fromZodError } from "zod-validation-error";
 
 // server/securityHeaders.ts
 var CONTENT_SECURITY_POLICY = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self'; object-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'";
@@ -757,22 +739,22 @@ function sessionCookieName() {
 }
 function getSession() {
   const sessionTtl = 7 * 24 * 60 * 60 * 1e3;
-  class DatabaseSessionStore extends import_express_session.default.Store {
+  class DatabaseSessionStore extends session.Store {
     get(sid, callback) {
-      db.select().from(sessions).where((0, import_drizzle_orm4.eq)(sessions.sid, sid)).then(([row]) => callback(null, row && row.expire > /* @__PURE__ */ new Date() ? row.sess : null)).catch(callback);
+      db.select().from(sessions).where(eq2(sessions.sid, sid)).then(([row]) => callback(null, row && row.expire > /* @__PURE__ */ new Date() ? row.sess : null)).catch(callback);
     }
     set(sid, data, callback) {
       const expire = new Date(data.cookie.expires || Date.now() + sessionTtl);
       db.insert(sessions).values({ sid, sess: data, expire }).onConflictDoUpdate({ target: sessions.sid, set: { sess: data, expire } }).then(() => callback?.()).catch((err) => callback?.(err));
     }
     destroy(sid, callback) {
-      db.delete(sessions).where((0, import_drizzle_orm4.eq)(sessions.sid, sid)).then(() => callback?.()).catch((err) => callback?.(err));
+      db.delete(sessions).where(eq2(sessions.sid, sid)).then(() => callback?.()).catch((err) => callback?.(err));
     }
   }
   if (!process.env.SESSION_SECRET || process.env.SESSION_SECRET.length < 48) throw new Error("Configure a session secret of at least 48 characters");
   const sessionStore = new DatabaseSessionStore();
-  db.delete(sessions).where((0, import_drizzle_orm4.lt)(sessions.expire, /* @__PURE__ */ new Date())).catch((error) => console.error("Session cleanup failed", safeError(error)));
-  return (0, import_express_session.default)({
+  db.delete(sessions).where(lt(sessions.expire, /* @__PURE__ */ new Date())).catch((error) => console.error("Session cleanup failed", safeError(error)));
+  return session({
     name: sessionCookieName(),
     secret: process.env.SESSION_SECRET,
     store: sessionStore,
@@ -795,7 +777,7 @@ async function setupAuth(app) {
     try {
       const validationResult = loginSchema.safeParse(req.body);
       if (!validationResult.success) {
-        const validationError = (0, import_zod_validation_error.fromZodError)(validationResult.error);
+        const validationError = fromZodError(validationResult.error);
         return res.status(400).json({ message: validationError.message });
       }
       const { email, password } = validationResult.data;
@@ -803,7 +785,7 @@ async function setupAuth(app) {
       if (!user || user.accountStatus !== "active" || !["admin", "super_admin"].includes(user.role)) {
         return res.status(401).json({ message: "Invalid email or password" });
       }
-      const isValidPassword = await import_bcryptjs.default.compare(password, user.password);
+      const isValidPassword = await default2.compare(password, user.password);
       if (!isValidPassword) {
         return res.status(401).json({ message: "Invalid email or password" });
       }
@@ -865,12 +847,12 @@ var isSuperAdmin = async (req, res, next) => {
 };
 
 // server/localObjects.ts
-var import_express = __toESM(require("express"), 1);
-var import_node_crypto = require("node:crypto");
+import express from "express";
+import { randomUUID, createHmac, timingSafeEqual } from "node:crypto";
 
 // server/accessControl.ts
-var import_drizzle_orm5 = require("drizzle-orm");
-var import_zod2 = require("zod");
+import { desc } from "drizzle-orm";
+import { z as z2 } from "zod";
 
 // server/requestTasks.ts
 function deferRequestTask(task) {
@@ -915,7 +897,7 @@ function mountAccessControl(app) {
         if (!["GET", "HEAD", "OPTIONS"].includes(req.method)) {
           res.once("finish", () => {
             const candidate = req.platformCafe?.id || req.managedCafe?.id || (requestPath === "/api/super-admin/cafe-access" ? req.session?.cafeId || req.body?.restaurantId : null) || (requestPath.startsWith("/api/menu-library/") ? req.body?.restaurantId : null);
-            const cafeId = typeof candidate === "string" && import_zod2.z.string().uuid().safeParse(candidate).success ? candidate : null;
+            const cafeId = typeof candidate === "string" && z2.string().uuid().safeParse(candidate).success ? candidate : null;
             deferRequestTask((async () => {
               const affected = req.platformCafe || req.managedCafe || (cafeId ? await storage.getRestaurantById(cafeId) : void 0);
               await db.insert(accessAudit).values({
@@ -950,7 +932,7 @@ function mountAccessControl(app) {
   });
   app.post("/api/super-admin/cafe-access", isSuperAdmin, async (req, res, next) => {
     try {
-      const { restaurantId } = import_zod2.z.object({ restaurantId: import_zod2.z.string().uuid() }).strict().parse(req.body);
+      const { restaurantId } = z2.object({ restaurantId: z2.string().uuid() }).strict().parse(req.body);
       const cafe = await storage.getRestaurantById(restaurantId);
       if (!cafe) return res.status(404).json({ message: "Caf\xE9 not found" });
       const owner = await storage.getUser(cafe.userId);
@@ -977,7 +959,7 @@ function mountAccessControl(app) {
   });
   app.get("/api/super-admin/access-audit", isSuperAdmin, async (_req, res, next) => {
     try {
-      res.json(await db.select().from(accessAudit).orderBy((0, import_drizzle_orm5.desc)(accessAudit.createdAt)).limit(200));
+      res.json(await db.select().from(accessAudit).orderBy(desc(accessAudit.createdAt)).limit(200));
     } catch (e) {
       next(e);
     }
@@ -985,12 +967,12 @@ function mountAccessControl(app) {
 }
 
 // server/mediaStore.ts
-var import_promises = __toESM(require("node:fs/promises"), 1);
-var import_node_path2 = __toESM(require("node:path"), 1);
-var import_node_stream = require("node:stream");
-var import_promises2 = require("node:stream/promises");
-var import_drizzle_orm6 = require("drizzle-orm");
-var root = import_node_path2.default.resolve("data/uploads");
+import fs from "node:fs/promises";
+import path2 from "node:path";
+import { Readable } from "node:stream";
+import { pipeline } from "node:stream/promises";
+import { eq as eq3 } from "drizzle-orm";
+var root = path2.resolve("data/uploads");
 var supabaseUrl = process.env.SUPABASE_URL?.replace(/\/$/, "") || "";
 var serviceRole = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
 var storageBucket = process.env.STORAGE_BUCKET || "cafe-media";
@@ -1018,30 +1000,30 @@ async function deleteStorageObject(id) {
   if (!response.ok) throw new Error("Unable to remove photo");
 }
 async function putLocal(id, body, owner, mime) {
-  await import_promises.default.mkdir(root, { recursive: true });
-  await import_promises.default.writeFile(import_node_path2.default.join(root, id), body, { flag: "wx" });
+  await fs.mkdir(root, { recursive: true });
+  await fs.writeFile(path2.join(root, id), body, { flag: "wx" });
   try {
-    await import_promises.default.writeFile(import_node_path2.default.join(root, id + ".json"), JSON.stringify({ owner, mime }), { flag: "wx" });
+    await fs.writeFile(path2.join(root, id + ".json"), JSON.stringify({ owner, mime }), { flag: "wx" });
   } catch (error) {
-    await import_promises.default.unlink(import_node_path2.default.join(root, id));
+    await fs.unlink(path2.join(root, id));
     throw error;
   }
 }
 async function getLocal(id) {
-  const meta = JSON.parse(await import_promises.default.readFile(import_node_path2.default.join(root, id + ".json"), "utf8"));
-  return { id, owner: meta.owner, mime: meta.mime, filename: import_node_path2.default.join(root, id) };
+  const meta = JSON.parse(await fs.readFile(path2.join(root, id + ".json"), "utf8"));
+  return { id, owner: meta.owner, mime: meta.mime, filename: path2.join(root, id) };
 }
 async function copyLocal(source, id, owner) {
-  await import_promises.default.copyFile(source.filename, import_node_path2.default.join(root, id), 1);
+  await fs.copyFile(source.filename, path2.join(root, id), 1);
   try {
-    await import_promises.default.writeFile(import_node_path2.default.join(root, id + ".json"), JSON.stringify({ owner, mime: source.mime }), { flag: "wx" });
+    await fs.writeFile(path2.join(root, id + ".json"), JSON.stringify({ owner, mime: source.mime }), { flag: "wx" });
   } catch (error) {
-    await import_promises.default.unlink(import_node_path2.default.join(root, id));
+    await fs.unlink(path2.join(root, id));
     throw error;
   }
 }
 async function removeLocal(id) {
-  await Promise.allSettled([import_promises.default.unlink(import_node_path2.default.join(root, id)), import_promises.default.unlink(import_node_path2.default.join(root, id + ".json"))]);
+  await Promise.allSettled([fs.unlink(path2.join(root, id)), fs.unlink(path2.join(root, id + ".json"))]);
 }
 async function sendLocal(file, res) {
   res.setHeader("Content-Type", file.mime);
@@ -1066,7 +1048,7 @@ async function putRemote(id, body, owner, mime) {
   }
 }
 async function getRemote(id) {
-  const [meta] = await db.select().from(mediaObjects).where((0, import_drizzle_orm6.eq)(mediaObjects.id, id));
+  const [meta] = await db.select().from(mediaObjects).where(eq3(mediaObjects.id, id));
   if (!meta) throw Object.assign(new Error("Media not found"), { status: 404, code: "ENOENT" });
   return { id, owner: meta.ownerId, mime: meta.mime };
 }
@@ -1078,7 +1060,7 @@ async function copyRemote(source, id, owner) {
   });
   if (!response.ok) throw new Error("Unable to copy menu photo");
   try {
-    const [meta] = await db.select().from(mediaObjects).where((0, import_drizzle_orm6.eq)(mediaObjects.id, source.id));
+    const [meta] = await db.select().from(mediaObjects).where(eq3(mediaObjects.id, source.id));
     if (!meta) throw new Error("Source photo not found");
     await db.insert(mediaObjects).values({ id, ownerId: owner, mime: source.mime, size: meta.size });
   } catch (error) {
@@ -1088,7 +1070,7 @@ async function copyRemote(source, id, owner) {
 }
 async function removeRemote(id) {
   await deleteStorageObject(id);
-  await db.delete(mediaObjects).where((0, import_drizzle_orm6.eq)(mediaObjects.id, id));
+  await db.delete(mediaObjects).where(eq3(mediaObjects.id, id));
 }
 async function sendRemote(file, res) {
   const range = res.req.get("Range");
@@ -1114,7 +1096,7 @@ async function sendRemote(file, res) {
     res.end();
     return;
   }
-  await (0, import_promises2.pipeline)(import_node_stream.Readable.fromWeb(response.body), res);
+  await pipeline(Readable.fromWeb(response.body), res);
 }
 async function putMedia(id, body, owner, mime) {
   return useSupabaseStorage ? putRemote(id, body, owner, mime) : putLocal(id, body, owner, mime);
@@ -1190,10 +1172,10 @@ function imageDimensionsValid(body, mime) {
 var ObjectNotFoundError = class extends Error {
 };
 function token(id, owner, actor, version, expiry) {
-  return (0, import_node_crypto.createHmac)("sha256", process.env.SESSION_SECRET).update(`${id}:${owner}:${actor}:${version}:${expiry}`).digest("hex");
+  return createHmac("sha256", process.env.SESSION_SECRET).update(`${id}:${owner}:${actor}:${version}:${expiry}`).digest("hex");
 }
 function signedUploadURL(owner, actor) {
-  const id = (0, import_node_crypto.randomUUID)(), expiry = Date.now() + 6e5;
+  const id = randomUUID(), expiry = Date.now() + 6e5;
   const version = actor.updatedAt?.getTime() || 0;
   return `/objects/${id}?owner=${owner}&actor=${actor.id}&version=${version}&expiry=${expiry}&token=${token(id, owner, actor.id, version, expiry)}`;
 }
@@ -1211,7 +1193,7 @@ function mountLocalUploads(app) {
       const { owner, actor, version, expiry, token: signature } = req.query;
       if (!/^[a-f0-9-]{36}$/.test(req.params.id) || typeof owner !== "string" || typeof actor !== "string" || !Number.isFinite(Number(version)) || typeof signature !== "string" || !/^[a-f0-9]{64}$/.test(signature) || Number(expiry) < Date.now() || !Number.isFinite(Number(expiry))) return res.sendStatus(403);
       const expected = token(req.params.id, owner, actor, Number(version), Number(expiry));
-      if (!(0, import_node_crypto.timingSafeEqual)(Buffer.from(expected), Buffer.from(signature))) return res.sendStatus(403);
+      if (!timingSafeEqual(Buffer.from(expected), Buffer.from(signature))) return res.sendStatus(403);
       if (!await storage.getUser(owner)) return res.sendStatus(403);
       const uploader = await storage.getUser(actor);
       if (!uploader || uploader.accountStatus !== "active" || !["admin", "super_admin"].includes(uploader.role) || (uploader.updatedAt?.getTime() || 0) !== Number(version)) return res.sendStatus(403);
@@ -1219,7 +1201,7 @@ function mountLocalUploads(app) {
     } catch (error) {
       next(error);
     }
-  }, import_express.default.raw({ type: () => true, limit: "5mb" }), async (req, res, next) => {
+  }, express.raw({ type: () => true, limit: "5mb" }), async (req, res, next) => {
     try {
       const owner = req.query.owner;
       const body = req.body;
@@ -1248,7 +1230,7 @@ var ObjectStorageService = class {
   }
   async copyForOwner(url, owner) {
     const source = await this.getObjectEntityFile(url);
-    const id = (0, import_node_crypto.randomUUID)();
+    const id = randomUUID();
     await copyMedia(source, id, owner);
     return `/objects/${id}`;
   }
@@ -1285,14 +1267,14 @@ var ObjectStorageService = class {
 };
 
 // server/cafeControls.ts
-var import_drizzle_orm8 = require("drizzle-orm");
-var import_zod4 = require("zod");
+import { eq as eq5, and, ne, sql as sql3 } from "drizzle-orm";
+import { z as z4 } from "zod";
 
 // server/pricingControls.ts
-var import_drizzle_orm7 = require("drizzle-orm");
-var import_zod3 = require("zod");
+import { eq as eq4 } from "drizzle-orm";
+import { z as z3 } from "zod";
 var conflict = (message) => Object.assign(new Error(message), { status: 400 });
-var optionsSchema = import_zod3.z.array(insertPriceVariantSchema.omit({ menuItemId: true })).max(3).refine((v) => new Set(v.map((o) => o.label.toLowerCase())).size === v.length, "Price option labels must be unique");
+var optionsSchema = z3.array(insertPriceVariantSchema.omit({ menuItemId: true })).max(3).refine((v) => new Set(v.map((o) => o.label.toLowerCase())).size === v.length, "Price option labels must be unique");
 function mountPricingControls(app) {
   app.post("/api/menu-items", async (req, res, next) => {
     try {
@@ -1310,7 +1292,7 @@ function mountPricingControls(app) {
       const data = insertMenuItemSchema.partial().parse(req.body);
       if (!Object.keys(data).length) throw conflict("Choose a menu field to update");
       const item = await db.transaction(async (tx) => {
-        const [current] = await tx.select().from(menuItems).where((0, import_drizzle_orm7.eq)(menuItems.id, req.params.id)).for("update");
+        const [current] = await tx.select().from(menuItems).where(eq4(menuItems.id, req.params.id)).for("update");
         if (!current) throw Object.assign(new Error("Item not found"), { status: 404 });
         if (data.hasMultiplePricing !== void 0 && data.hasMultiplePricing !== current.hasMultiplePricing) throw conflict("Use the complete menu editor to change price options");
         const [updated] = await tx.update(menuItems).set({
@@ -1318,7 +1300,7 @@ function mountPricingControls(app) {
           price: data.price === void 0 ? void 0 : String(data.price),
           discount: data.discount === void 0 ? void 0 : String(data.discount),
           updatedAt: /* @__PURE__ */ new Date()
-        }).where((0, import_drizzle_orm7.eq)(menuItems.id, current.id)).returning();
+        }).where(eq4(menuItems.id, current.id)).returning();
         return updated;
       });
       res.json(item);
@@ -1330,15 +1312,15 @@ function mountPricingControls(app) {
     try {
       const options = optionsSchema.parse(req.body);
       const result = await db.transaction(async (tx) => {
-        const [item] = await tx.select().from(menuItems).where((0, import_drizzle_orm7.eq)(menuItems.id, req.params.id)).for("update");
+        const [item] = await tx.select().from(menuItems).where(eq4(menuItems.id, req.params.id)).for("update");
         if (!item) throw Object.assign(new Error("Item not found"), { status: 404 });
-        await tx.delete(menuItemPriceVariants).where((0, import_drizzle_orm7.eq)(menuItemPriceVariants.menuItemId, item.id));
+        await tx.delete(menuItemPriceVariants).where(eq4(menuItemPriceVariants.menuItemId, item.id));
         const created = options.length ? await tx.insert(menuItemPriceVariants).values(options.map((v, order) => ({ ...v, menuItemId: item.id, price: String(v.price), discount: String(v.discount || 0), order }))).returning() : [];
         await tx.update(menuItems).set({
           hasMultiplePricing: !!options.length,
           ...options.length ? { price: String(Math.min(...options.map((v) => Number(v.price)))) } : {},
           updatedAt: /* @__PURE__ */ new Date()
-        }).where((0, import_drizzle_orm7.eq)(menuItems.id, item.id));
+        }).where(eq4(menuItems.id, item.id));
         return created;
       });
       res.json(result);
@@ -1350,19 +1332,19 @@ function mountPricingControls(app) {
     try {
       const data = method === "post" ? insertPriceVariantSchema.parse(req.body) : method === "put" ? insertPriceVariantSchema.omit({ menuItemId: true }).partial().parse(req.body) : void 0;
       const result = await db.transaction(async (tx) => {
-        const [old] = method === "post" ? [] : await tx.select().from(menuItemPriceVariants).where((0, import_drizzle_orm7.eq)(menuItemPriceVariants.id, req.params.id));
+        const [old] = method === "post" ? [] : await tx.select().from(menuItemPriceVariants).where(eq4(menuItemPriceVariants.id, req.params.id));
         const itemId = method === "post" ? data.menuItemId : old?.menuItemId;
         if (!itemId) throw Object.assign(new Error("Price option not found"), { status: 404 });
-        const [item] = await tx.select().from(menuItems).where((0, import_drizzle_orm7.eq)(menuItems.id, itemId)).for("update");
+        const [item] = await tx.select().from(menuItems).where(eq4(menuItems.id, itemId)).for("update");
         if (!item?.hasMultiplePricing) throw conflict("Use the complete menu editor to enable price options");
-        const options = await tx.select().from(menuItemPriceVariants).where((0, import_drizzle_orm7.eq)(menuItemPriceVariants.menuItemId, itemId));
+        const options = await tx.select().from(menuItemPriceVariants).where(eq4(menuItemPriceVariants.menuItemId, itemId));
         if (old && !options.some((v) => v.id === old.id)) throw Object.assign(new Error("Price option not found"), { status: 404 });
         const nextOptions = method === "post" ? [...options, data] : method === "put" ? options.map((v) => v.id === old.id ? { ...v, ...data } : v) : options.filter((v) => v.id !== old.id);
         if (!nextOptions.length) throw conflict("Use the complete menu editor to switch to a single price");
         optionsSchema.parse(nextOptions.map((v) => ({ label: v.label, price: v.price, discount: v.discount || "0", unit: v.unit })));
         const values = data ? { ...data, price: data.price === void 0 ? void 0 : String(data.price), discount: data.discount === void 0 ? void 0 : String(data.discount) } : {};
-        const [updated] = method === "post" ? await tx.insert(menuItemPriceVariants).values({ ...values, menuItemId: itemId }).returning() : method === "put" ? await tx.update(menuItemPriceVariants).set(values).where((0, import_drizzle_orm7.eq)(menuItemPriceVariants.id, old.id)).returning() : await tx.delete(menuItemPriceVariants).where((0, import_drizzle_orm7.eq)(menuItemPriceVariants.id, old.id)).returning();
-        await tx.update(menuItems).set({ price: String(Math.min(...nextOptions.map((v) => Number(v.price)))), updatedAt: /* @__PURE__ */ new Date() }).where((0, import_drizzle_orm7.eq)(menuItems.id, itemId));
+        const [updated] = method === "post" ? await tx.insert(menuItemPriceVariants).values({ ...values, menuItemId: itemId }).returning() : method === "put" ? await tx.update(menuItemPriceVariants).set(values).where(eq4(menuItemPriceVariants.id, old.id)).returning() : await tx.delete(menuItemPriceVariants).where(eq4(menuItemPriceVariants.id, old.id)).returning();
+        await tx.update(menuItems).set({ price: String(Math.min(...nextOptions.map((v) => Number(v.price)))), updatedAt: /* @__PURE__ */ new Date() }).where(eq4(menuItems.id, itemId));
         return method === "delete" ? { success: true } : updated;
       });
       res.json(result);
@@ -1415,7 +1397,7 @@ function mountCafeControls(app) {
             }
           }
           if ("coverMediaUrl" in parsed && !parsed.coverMediaUrl) parsed.coverMediaType = null;
-          const expectedUpdatedAt = req.body.expectedUpdatedAt === void 0 ? void 0 : import_zod4.z.string().datetime().parse(req.body.expectedUpdatedAt);
+          const expectedUpdatedAt = req.body.expectedUpdatedAt === void 0 ? void 0 : z4.string().datetime().parse(req.body.expectedUpdatedAt);
           req.body = { ...parsed, userId: cafe?.userId || user.id, expectedUpdatedAt };
         }
         return next();
@@ -1428,7 +1410,7 @@ function mountCafeControls(app) {
         id && resource[1] === "price-variants" && req.method !== "GET" ? storage.getPriceVariantsByRestaurantId(cafe.id) : Promise.resolve([])
       ]);
       if (resource[1] === "categories" && ["POST", "PUT"].includes(req.method)) {
-        req.body.title = import_zod4.z.string().trim().min(1).max(100).parse(req.body.title);
+        req.body.title = z4.string().trim().min(1).max(100).parse(req.body.title);
         if (cats.some((c) => c.id !== id && c.title.toLowerCase() === req.body.title.toLowerCase())) return res.status(400).json({ message: "A category with this name already exists" });
       }
       if (req.body?.restaurantId && req.body.restaurantId !== cafe.id) return res.sendStatus(403);
@@ -1449,7 +1431,7 @@ function mountCafeControls(app) {
       }
       next();
     } catch (error) {
-      if (error instanceof import_zod4.z.ZodError) return res.status(400).json({ message: error.issues.map((i) => i.message).join(", ") });
+      if (error instanceof z4.ZodError) return res.status(400).json({ message: error.issues.map((i) => i.message).join(", ") });
       next(error);
     }
   };
@@ -1460,9 +1442,9 @@ function mountCafeControls(app) {
       const { userId, expectedUpdatedAt, ...profile } = req.body;
       const data = cafeProfileSchema.parse(profile);
       const result = await db.transaction(async (tx) => {
-        const [current] = await tx.select().from(restaurants).where((0, import_drizzle_orm8.eq)(restaurants.userId, userId)).for("update");
+        const [current] = await tx.select().from(restaurants).where(eq5(restaurants.userId, userId)).for("update");
         if (current && expectedUpdatedAt && current.updatedAt?.getTime() !== new Date(expectedUpdatedAt).getTime()) throw Object.assign(new Error("This caf\xE9 profile changed after you opened it. Reload before saving."), { status: 409 });
-        const [cafe] = current ? await tx.update(restaurants).set({ ...data, updatedAt: /* @__PURE__ */ new Date() }).where((0, import_drizzle_orm8.eq)(restaurants.id, current.id)).returning() : await tx.insert(restaurants).values({ ...data, userId }).returning();
+        const [cafe] = current ? await tx.update(restaurants).set({ ...data, updatedAt: /* @__PURE__ */ new Date() }).where(eq5(restaurants.id, current.id)).returning() : await tx.insert(restaurants).values({ ...data, userId }).returning();
         return cafe;
       });
       res.json(result);
@@ -1484,7 +1466,7 @@ function mountCafeControls(app) {
     try {
       const cafe = await getManagedCafe(req);
       if (!cafe) return res.status(404).json({ message: "Set up your caf\xE9 first" });
-      const data = insertMenuItemSchema.extend({ order: import_zod4.z.number().int().min(0).optional() }).parse(req.body.item);
+      const data = insertMenuItemSchema.extend({ order: z4.number().int().min(0).optional() }).parse(req.body.item);
       if (data.imageUrl) {
         try {
           const media3 = new ObjectStorageService();
@@ -1498,26 +1480,26 @@ function mountCafeControls(app) {
       if (!cats.some((c) => c.id === data.categoryId)) return res.status(403).json({ message: "Choose a category from your caf\xE9" });
       const id = req.body.id;
       if (id && !(await storage.getMenuItemsByRestaurantId(cafe.id)).some((i) => i.id === id)) return res.status(404).json({ message: "Item not found" });
-      const options = import_zod4.z.array(insertPriceVariantSchema.omit({ menuItemId: true })).max(3).parse(req.body.variants || []);
+      const options = z4.array(insertPriceVariantSchema.omit({ menuItemId: true })).max(3).parse(req.body.variants || []);
       if (data.hasMultiplePricing && !options.length) return res.status(400).json({ message: "Add at least one price option" });
       if (!data.hasMultiplePricing && options.length) return res.status(400).json({ message: "Enable multiple pricing to save price options" });
       if (new Set(options.map((v) => v.label.toLowerCase())).size !== options.length) return res.status(400).json({ message: "Price option labels must be unique" });
       const values = { ...data, price: String(data.price), discount: String(data.discount || 0) };
-      const revision = req.body.expectedUpdatedAt === void 0 ? void 0 : import_zod4.z.string().datetime().parse(req.body.expectedUpdatedAt);
+      const revision = req.body.expectedUpdatedAt === void 0 ? void 0 : z4.string().datetime().parse(req.body.expectedUpdatedAt);
       const result = await db.transaction(async (tx) => {
         if (id) {
-          const [current] = await tx.select().from(menuItems).where((0, import_drizzle_orm8.eq)(menuItems.id, id)).for("update");
+          const [current] = await tx.select().from(menuItems).where(eq5(menuItems.id, id)).for("update");
           if (!current) throw Object.assign(new Error("Item not found"), { status: 404 });
           if (revision && current.updatedAt?.getTime() !== new Date(revision).getTime()) throw Object.assign(new Error("This item changed after you opened it. Close the editor, refresh, and try again."), { status: 409 });
         }
-        const [item] = id ? await tx.update(menuItems).set({ ...values, updatedAt: /* @__PURE__ */ new Date() }).where((0, import_drizzle_orm8.eq)(menuItems.id, id)).returning() : await tx.insert(menuItems).values(values).returning();
-        await tx.delete(menuItemPriceVariants).where((0, import_drizzle_orm8.eq)(menuItemPriceVariants.menuItemId, item.id));
+        const [item] = id ? await tx.update(menuItems).set({ ...values, updatedAt: /* @__PURE__ */ new Date() }).where(eq5(menuItems.id, id)).returning() : await tx.insert(menuItems).values(values).returning();
+        await tx.delete(menuItemPriceVariants).where(eq5(menuItemPriceVariants.menuItemId, item.id));
         const variants = options.length ? await tx.insert(menuItemPriceVariants).values(options.map((v, order) => ({ ...v, menuItemId: item.id, price: String(v.price), discount: String(v.discount || 0), order }))).returning() : [];
         return { ...item, variants };
       });
       res.json(result);
     } catch (e) {
-      if (e instanceof import_zod4.z.ZodError) return res.status(400).json({ message: e.issues.map((i) => i.message).join(", ") });
+      if (e instanceof z4.ZodError) return res.status(400).json({ message: e.issues.map((i) => i.message).join(", ") });
       next(e);
     }
   });
@@ -1525,11 +1507,11 @@ function mountCafeControls(app) {
     try {
       const cafe = await getManagedCafe(req);
       if (!cafe) return res.sendStatus(404);
-      const ids = import_zod4.z.array(import_zod4.z.string()).parse(req.body.ids);
+      const ids = z4.array(z4.string()).parse(req.body.ids);
       const owned = await storage.getCategoriesByRestaurantId(cafe.id);
       if (ids.length !== owned.length || new Set(ids).size !== ids.length || ids.some((id) => !owned.some((c) => c.id === id))) return res.status(400).json({ message: "Order must contain every category from your caf\xE9 once" });
       await db.transaction(async (tx) => {
-        for (let order = 0; order < ids.length; order++) await tx.update(categories).set({ order }).where((0, import_drizzle_orm8.eq)(categories.id, ids[order]));
+        for (let order = 0; order < ids.length; order++) await tx.update(categories).set({ order }).where(eq5(categories.id, ids[order]));
       });
       res.json({ success: true });
     } catch (e) {
@@ -1545,7 +1527,7 @@ function mountCafeControls(app) {
   });
   app.get("/api/menu/public/:id", async (req, res, next) => {
     try {
-      const id = import_zod4.z.string().uuid().parse(req.params.id);
+      const id = z4.string().uuid().parse(req.params.id);
       const restaurant = await storage.getRestaurantById(id);
       if (!restaurant || restaurant.hidden || restaurant.status !== "active") return res.status(404).json({ message: "Caf\xE9 unavailable" });
       const [cats, allItems, allVariants] = await Promise.all([storage.getCategoriesByRestaurantId(id), storage.getMenuItemsByRestaurantId(id), storage.getPriceVariantsByRestaurantId(id)]);
@@ -1559,7 +1541,7 @@ function mountCafeControls(app) {
   });
   app.put("/api/categories/:id", isAuthenticated, async (req, res, next) => {
     try {
-      res.json(await storage.updateCategory(req.params.id, import_zod4.z.object({ title: import_zod4.z.string().trim().min(1), order: import_zod4.z.number().int().min(0).optional() }).parse(req.body)));
+      res.json(await storage.updateCategory(req.params.id, z4.object({ title: z4.string().trim().min(1), order: z4.number().int().min(0).optional() }).parse(req.body)));
     } catch (e) {
       next(e);
     }
@@ -1578,7 +1560,7 @@ function mountCafeControls(app) {
       if (req.body.confirmation !== "CLEAR MENU") return res.status(400).json({ message: "Type CLEAR MENU to confirm" });
       const cafe = await getManagedCafe(req);
       if (!cafe) return res.sendStatus(404);
-      await db.delete(categories).where((0, import_drizzle_orm8.eq)(categories.restaurantId, cafe.id));
+      await db.delete(categories).where(eq5(categories.restaurantId, cafe.id));
       res.json({ success: true });
     } catch (e) {
       next(e);
@@ -1586,12 +1568,12 @@ function mountCafeControls(app) {
   });
   app.put("/api/account/password", isAuthenticated, rateLimit(5, 15 * 60 * 1e3, (req) => req.user.id), async (req, res, next) => {
     try {
-      const data = import_zod4.z.object({ currentPassword: import_zod4.z.string().max(72), newPassword: passwordSchema }).strict().parse(req.body);
-      if (!await import_bcryptjs.default.compare(data.currentPassword, req.user.password)) return res.status(400).json({ message: "Current password is incorrect" });
-      const password = await import_bcryptjs.default.hash(data.newPassword, 12);
+      const data = z4.object({ currentPassword: z4.string().max(72), newPassword: passwordSchema }).strict().parse(req.body);
+      if (!await default2.compare(data.currentPassword, req.user.password)) return res.status(400).json({ message: "Current password is incorrect" });
+      const password = await default2.hash(data.newPassword, 12);
       await db.transaction(async (tx) => {
-        await tx.update(users).set({ password, updatedAt: /* @__PURE__ */ new Date() }).where((0, import_drizzle_orm8.eq)(users.id, req.user.id));
-        await tx.delete(sessions).where((0, import_drizzle_orm8.and)(import_drizzle_orm8.sql`${sessions.sess}->>'userId' = ${req.user.id}`, (0, import_drizzle_orm8.ne)(sessions.sid, req.sessionID)));
+        await tx.update(users).set({ password, updatedAt: /* @__PURE__ */ new Date() }).where(eq5(users.id, req.user.id));
+        await tx.delete(sessions).where(and(sql3`${sessions.sess}->>'userId' = ${req.user.id}`, ne(sessions.sid, req.sessionID)));
       });
       res.json({ success: true });
     } catch (e) {
@@ -1601,16 +1583,16 @@ function mountCafeControls(app) {
 }
 
 // server/menuLibrary.ts
-var import_drizzle_orm9 = require("drizzle-orm");
-var import_zod5 = require("zod");
+import { and as and2, asc, eq as eq6, inArray } from "drizzle-orm";
+import { z as z5 } from "zod";
 var normalize = (value) => value.trim().replace(/\s+/g, " ").toLocaleLowerCase();
-var idSchema = import_zod5.z.string().uuid();
-var itemIdsSchema = import_zod5.z.array(idSchema).min(1).max(500).refine((ids) => new Set(ids).size === ids.length, "Select each item once");
+var idSchema = z5.string().uuid();
+var itemIdsSchema = z5.array(idSchema).min(1).max(500).refine((ids) => new Set(ids).size === ids.length, "Select each item once");
 var media = new ObjectStorageService();
 function mountMenuLibrary(app) {
   app.get("/api/menu-library", isAuthenticated, async (req, res, next) => {
     try {
-      const items = await db.select().from(globalMenuItems).where((0, import_drizzle_orm9.eq)(globalMenuItems.archived, false)).orderBy((0, import_drizzle_orm9.asc)(globalMenuItems.categoryTitle), (0, import_drizzle_orm9.asc)(globalMenuItems.name));
+      const items = await db.select().from(globalMenuItems).where(eq6(globalMenuItems.archived, false)).orderBy(asc(globalMenuItems.categoryTitle), asc(globalMenuItems.name));
       res.json(items.map(({ sourceImageUrl, ...item }) => ({ ...item, canManage: req.user.role === "super_admin" || item.publisherId === req.user.id })));
     } catch (e) {
       next(e);
@@ -1618,8 +1600,8 @@ function mountMenuLibrary(app) {
   });
   app.get("/api/menu-library/targets", isAuthenticated, async (req, res, next) => {
     try {
-      const targets = await db.select({ id: restaurants.id, name: restaurants.name, currency: restaurants.currency, theme: restaurants.theme }).from(restaurants).where(req.user.role === "super_admin" ? void 0 : (0, import_drizzle_orm9.eq)(restaurants.userId, req.user.id)).orderBy((0, import_drizzle_orm9.asc)(restaurants.name));
-      const cats = targets.length ? await db.select().from(categories).where((0, import_drizzle_orm9.inArray)(categories.restaurantId, targets.map((c) => c.id))).orderBy((0, import_drizzle_orm9.asc)(categories.order)) : [];
+      const targets = await db.select({ id: restaurants.id, name: restaurants.name, currency: restaurants.currency, theme: restaurants.theme }).from(restaurants).where(req.user.role === "super_admin" ? void 0 : eq6(restaurants.userId, req.user.id)).orderBy(asc(restaurants.name));
+      const cats = targets.length ? await db.select().from(categories).where(inArray(categories.restaurantId, targets.map((c) => c.id))).orderBy(asc(categories.order)) : [];
       res.json(targets.map((c) => ({ ...c, categories: cats.filter((cat) => cat.restaurantId === c.id) })));
     } catch (e) {
       next(e);
@@ -1628,15 +1610,15 @@ function mountMenuLibrary(app) {
   app.post("/api/menu-library/publish", isAuthenticated, async (req, res, next) => {
     const copies = [];
     try {
-      const input = import_zod5.z.object({ restaurantId: idSchema, itemIds: itemIdsSchema.optional() }).parse(req.body);
+      const input = z5.object({ restaurantId: idSchema, itemIds: itemIdsSchema.optional() }).parse(req.body);
       const result = await db.transaction(async (tx) => {
-        const [cafe] = await tx.select().from(restaurants).where((0, import_drizzle_orm9.eq)(restaurants.id, input.restaurantId)).for("update");
+        const [cafe] = await tx.select().from(restaurants).where(eq6(restaurants.id, input.restaurantId)).for("update");
         if (!cafe || req.user.role !== "super_admin" && cafe.userId !== req.user.id) return null;
-        const source = await tx.select({ item: menuItems, category: categories }).from(menuItems).innerJoin(categories, (0, import_drizzle_orm9.eq)(menuItems.categoryId, categories.id)).where((0, import_drizzle_orm9.and)((0, import_drizzle_orm9.eq)(categories.restaurantId, cafe.id), input.itemIds ? (0, import_drizzle_orm9.inArray)(menuItems.id, input.itemIds) : void 0)).orderBy((0, import_drizzle_orm9.asc)(categories.order), (0, import_drizzle_orm9.asc)(menuItems.order));
+        const source = await tx.select({ item: menuItems, category: categories }).from(menuItems).innerJoin(categories, eq6(menuItems.categoryId, categories.id)).where(and2(eq6(categories.restaurantId, cafe.id), input.itemIds ? inArray(menuItems.id, input.itemIds) : void 0)).orderBy(asc(categories.order), asc(menuItems.order));
         if (input.itemIds && source.length !== input.itemIds.length) throw new Error("Choose items from this caf\xE9");
-        const variants = source.length ? await tx.select().from(menuItemPriceVariants).where((0, import_drizzle_orm9.inArray)(menuItemPriceVariants.menuItemId, source.map((s) => s.item.id))).orderBy((0, import_drizzle_orm9.asc)(menuItemPriceVariants.order)) : [];
+        const variants = source.length ? await tx.select().from(menuItemPriceVariants).where(inArray(menuItemPriceVariants.menuItemId, source.map((s) => s.item.id))).orderBy(asc(menuItemPriceVariants.order)) : [];
         for (const { item, category } of source) {
-          const [existing] = await tx.select().from(globalMenuItems).where((0, import_drizzle_orm9.eq)(globalMenuItems.sourceItemId, item.id));
+          const [existing] = await tx.select().from(globalMenuItems).where(eq6(globalMenuItems.sourceItemId, item.id));
           let imageUrl = existing?.sourceImageUrl === item.imageUrl ? existing.imageUrl : null;
           if (item.imageUrl && !imageUrl) {
             imageUrl = await media.copyForOwner(item.imageUrl, cafe.userId);
@@ -1675,22 +1657,22 @@ function mountMenuLibrary(app) {
   app.post("/api/menu-library/import", isAuthenticated, async (req, res, next) => {
     const copies = [];
     try {
-      const input = import_zod5.z.object({
+      const input = z5.object({
         restaurantId: idSchema,
         itemIds: itemIdsSchema,
         categoryId: idSchema.optional(),
-        isAvailable: import_zod5.z.boolean().default(false),
-        acceptCurrencyDifference: import_zod5.z.boolean().default(false)
+        isAvailable: z5.boolean().default(false),
+        acceptCurrencyDifference: z5.boolean().default(false)
       }).parse(req.body);
       const result = await db.transaction(async (tx) => {
-        const [cafe] = await tx.select().from(restaurants).where((0, import_drizzle_orm9.eq)(restaurants.id, input.restaurantId)).for("update");
+        const [cafe] = await tx.select().from(restaurants).where(eq6(restaurants.id, input.restaurantId)).for("update");
         if (!cafe || req.user.role !== "super_admin" && cafe.userId !== req.user.id) return { error: "Choose a caf\xE9 you manage", status: 403 };
-        const templates = await tx.select().from(globalMenuItems).where((0, import_drizzle_orm9.and)((0, import_drizzle_orm9.inArray)(globalMenuItems.id, input.itemIds), (0, import_drizzle_orm9.eq)(globalMenuItems.archived, false))).orderBy((0, import_drizzle_orm9.asc)(globalMenuItems.categoryTitle), (0, import_drizzle_orm9.asc)(globalMenuItems.name));
+        const templates = await tx.select().from(globalMenuItems).where(and2(inArray(globalMenuItems.id, input.itemIds), eq6(globalMenuItems.archived, false))).orderBy(asc(globalMenuItems.categoryTitle), asc(globalMenuItems.name));
         if (templates.length !== input.itemIds.length) return { error: "Some library items are no longer available. Refresh and try again.", status: 400 };
         if (!input.acceptCurrencyDifference && templates.some((i) => i.currency !== cafe.currency)) return { error: `Confirm copying prices into ${cafe.currency}. Currency conversion is not automatic.`, status: 400 };
-        const cats = await tx.select().from(categories).where((0, import_drizzle_orm9.eq)(categories.restaurantId, cafe.id));
+        const cats = await tx.select().from(categories).where(eq6(categories.restaurantId, cafe.id));
         if (input.categoryId && !cats.some((c) => c.id === input.categoryId)) return { error: "Choose a category from the destination caf\xE9", status: 400 };
-        const existing = cats.length ? await tx.select().from(menuItems).where((0, import_drizzle_orm9.inArray)(menuItems.categoryId, cats.map((c) => c.id))) : [];
+        const existing = cats.length ? await tx.select().from(menuItems).where(inArray(menuItems.categoryId, cats.map((c) => c.id))) : [];
         const names = new Set(existing.map((i) => `${i.categoryId}:${normalize(i.name)}`));
         const createdIds = [], createdCategoryIds = [];
         let skipped = 0, categoryOrder = Math.max(-1, ...cats.map((c) => c.order)) + 1;
@@ -1745,7 +1727,7 @@ function mountMenuLibrary(app) {
   app.delete("/api/menu-library/:id", isAuthenticated, async (req, res, next) => {
     try {
       const id = idSchema.parse(req.params.id);
-      const [item] = await db.update(globalMenuItems).set({ archived: true, updatedAt: /* @__PURE__ */ new Date() }).where((0, import_drizzle_orm9.and)((0, import_drizzle_orm9.eq)(globalMenuItems.id, id), req.user.role === "super_admin" ? void 0 : (0, import_drizzle_orm9.eq)(globalMenuItems.publisherId, req.user.id))).returning({ id: globalMenuItems.id });
+      const [item] = await db.update(globalMenuItems).set({ archived: true, updatedAt: /* @__PURE__ */ new Date() }).where(and2(eq6(globalMenuItems.id, id), req.user.role === "super_admin" ? void 0 : eq6(globalMenuItems.publisherId, req.user.id))).returning({ id: globalMenuItems.id });
       if (!item) return res.status(404).json({ message: "Library item not found or belongs to another manager" });
       res.json({ success: true });
     } catch (e) {
@@ -1755,13 +1737,13 @@ function mountMenuLibrary(app) {
 }
 
 // server/platformControls.ts
-var import_drizzle_orm10 = require("drizzle-orm");
-var import_zod6 = require("zod");
+import { and as and3, eq as eq7, sql as sql4 } from "drizzle-orm";
+import { z as z6 } from "zod";
 var profileSchema = cafeProfileSchema.partial().extend({
-  name: import_zod6.z.string().trim().min(1).max(150).optional(),
-  theme: import_zod6.z.enum(["e3", "forest", "terracotta", "ocean", "plum"]).optional(),
-  currency: import_zod6.z.enum(["SAR", "QAR", "INR", "AED", "USD", "EUR", "GBP"]).optional(),
-  timezone: import_zod6.z.string().refine((v) => {
+  name: z6.string().trim().min(1).max(150).optional(),
+  theme: z6.enum(["e3", "forest", "terracotta", "ocean", "plum"]).optional(),
+  currency: z6.enum(["SAR", "QAR", "INR", "AED", "USD", "EUR", "GBP"]).optional(),
+  timezone: z6.string().refine((v) => {
     try {
       new Intl.DateTimeFormat("en", { timeZone: v });
       return true;
@@ -1769,8 +1751,8 @@ var profileSchema = cafeProfileSchema.partial().extend({
       return false;
     }
   }).optional(),
-  status: import_zod6.z.enum(["active", "suspended", "pending"]).optional(),
-  hidden: import_zod6.z.boolean().optional()
+  status: z6.enum(["active", "suspended", "pending"]).optional(),
+  hidden: z6.boolean().optional()
 }).strict();
 var media2 = new ObjectStorageService();
 async function mediaForCafe(url, cafeOwner, actorId) {
@@ -1790,18 +1772,18 @@ function mountPlatformControls(app) {
   });
   app.post("/api/super-admin/users", isSuperAdmin, async (req, res, next) => {
     try {
-      const input = import_zod6.z.object({
+      const input = z6.object({
         email: emailSchema,
         password: passwordSchema,
-        firstName: import_zod6.z.string().trim().min(1).max(100),
-        lastName: import_zod6.z.string().trim().min(1).max(100),
-        role: import_zod6.z.enum(["admin", "super_admin"]),
-        restaurantName: import_zod6.z.string().trim().min(1).max(150).optional()
+        firstName: z6.string().trim().min(1).max(100),
+        lastName: z6.string().trim().min(1).max(100),
+        role: z6.enum(["admin", "super_admin"]),
+        restaurantName: z6.string().trim().min(1).max(150).optional()
       }).strict().refine(
         (v) => v.role === "super_admin" ? !v.restaurantName : !!v.restaurantName,
         "Caf\xE9 managers need a restaurant name; super admins do not."
       ).parse(req.body);
-      const password = await import_bcryptjs.default.hash(input.password, 12);
+      const password = await default2.hash(input.password, 12);
       const result = await db.transaction(async (tx) => {
         const [created] = await tx.insert(users).values({ email: input.email, password, firstName: input.firstName, lastName: input.lastName, role: input.role }).returning();
         let cafe;
@@ -1818,18 +1800,18 @@ function mountPlatformControls(app) {
   });
   const changeAccountStatus = (accountStatus, restore = false) => async (req, res, next) => {
     try {
-      if (!import_zod6.z.string().uuid().safeParse(req.params.id).success) return res.status(400).json({ message: "Choose a valid account" });
+      if (!z6.string().uuid().safeParse(req.params.id).success) return res.status(400).json({ message: "Choose a valid account" });
       const result = await db.transaction(async (tx) => {
-        const platformAdmins = await tx.select().from(users).where((0, import_drizzle_orm10.eq)(users.role, "super_admin")).orderBy(users.id).for("update");
-        const [target] = await tx.select().from(users).where((0, import_drizzle_orm10.eq)(users.id, req.params.id)).for("update");
+        const platformAdmins = await tx.select().from(users).where(eq7(users.role, "super_admin")).orderBy(users.id).for("update");
+        const [target] = await tx.select().from(users).where(eq7(users.id, req.params.id)).for("update");
         if (!target) return { error: "Account not found", status: 404 };
         if (accountStatus !== "active" && target.id === req.user.id) return { error: "You cannot freeze or delete your own account", status: 400 };
         if (accountStatus !== "active" && target.role === "super_admin" && target.accountStatus === "active" && platformAdmins.filter((u) => u.accountStatus === "active").length <= 1)
           return { error: "Keep at least one active super admin account", status: 400 };
         if (target.accountStatus === "deleted" && accountStatus !== "deleted" && !restore) return { error: "Restore this deleted account first", status: 409 };
         if (restore && target.accountStatus !== "deleted") return { error: "Only deleted accounts can be restored", status: 409 };
-        const [updated] = await tx.update(users).set({ accountStatus, updatedAt: /* @__PURE__ */ new Date() }).where((0, import_drizzle_orm10.eq)(users.id, target.id)).returning();
-        await tx.delete(sessions).where(import_drizzle_orm10.sql`${sessions.sess}->>'userId' = ${target.id}`);
+        const [updated] = await tx.update(users).set({ accountStatus, updatedAt: /* @__PURE__ */ new Date() }).where(eq7(users.id, target.id)).returning();
+        await tx.delete(sessions).where(sql4`${sessions.sess}->>'userId' = ${target.id}`);
         const { password: hidden, ...user } = updated;
         return { user };
       });
@@ -1852,11 +1834,11 @@ function mountPlatformControls(app) {
         const categoryMatch = req.path.match(/^\/api\/super-admin\/categories\/([^/]+)$/);
         const itemMatch = req.path.match(/^\/api\/super-admin\/menu-items\/([^/]+)$/);
         if (categoryMatch) {
-          const [cat] = await db.select().from(categories).where((0, import_drizzle_orm10.eq)(categories.id, categoryMatch[1]));
+          const [cat] = await db.select().from(categories).where(eq7(categories.id, categoryMatch[1]));
           cafeId = cat?.restaurantId;
         }
         if (itemMatch) {
-          const [row] = await db.select({ cafeId: categories.restaurantId }).from(menuItems).innerJoin(categories, (0, import_drizzle_orm10.eq)(menuItems.categoryId, categories.id)).where((0, import_drizzle_orm10.eq)(menuItems.id, itemMatch[1]));
+          const [row] = await db.select({ cafeId: categories.restaurantId }).from(menuItems).innerJoin(categories, eq7(menuItems.categoryId, categories.id)).where(eq7(menuItems.id, itemMatch[1]));
           cafeId = row?.cafeId;
         }
         if ((categoryMatch || itemMatch) && !cafeId) return res.status(404).json({ message: "Item not found" });
@@ -1881,23 +1863,23 @@ function mountPlatformControls(app) {
   });
   app.put("/api/super-admin/users/:id", isSuperAdmin, async (req, res, next) => {
     try {
-      const data = import_zod6.z.object({
+      const data = z6.object({
         email: emailSchema.optional(),
-        firstName: import_zod6.z.string().trim().max(100).nullable().optional(),
-        lastName: import_zod6.z.string().trim().max(100).nullable().optional(),
-        role: import_zod6.z.enum(["admin", "super_admin"]).optional(),
+        firstName: z6.string().trim().max(100).nullable().optional(),
+        lastName: z6.string().trim().max(100).nullable().optional(),
+        role: z6.enum(["admin", "super_admin"]).optional(),
         password: passwordSchema.optional()
       }).strict().refine((v) => Object.keys(v).length > 0, "Choose an account field to update").parse(req.body);
-      const password = data.password ? await import_bcryptjs.default.hash(data.password, 12) : void 0;
+      const password = data.password ? await default2.hash(data.password, 12) : void 0;
       const result = await db.transaction(async (tx) => {
-        const superAdmins = await tx.select().from(users).where((0, import_drizzle_orm10.eq)(users.role, "super_admin")).orderBy(users.id).for("update");
-        const [target] = await tx.select().from(users).where((0, import_drizzle_orm10.eq)(users.id, req.params.id)).for("update");
+        const superAdmins = await tx.select().from(users).where(eq7(users.role, "super_admin")).orderBy(users.id).for("update");
+        const [target] = await tx.select().from(users).where(eq7(users.id, req.params.id)).for("update");
         if (!target) return { error: "Account not found", status: 404 };
         if (target.accountStatus === "deleted") return { error: "Restore this deleted account before editing it", status: 409 };
-        if (data.email && (await tx.select().from(users).where((0, import_drizzle_orm10.and)(import_drizzle_orm10.sql`lower(${users.email}) = ${data.email}`, import_drizzle_orm10.sql`${users.id} <> ${target.id}`))).length) return { error: "An account with this email already exists", status: 409 };
+        if (data.email && (await tx.select().from(users).where(and3(sql4`lower(${users.email}) = ${data.email}`, sql4`${users.id} <> ${target.id}`))).length) return { error: "An account with this email already exists", status: 409 };
         if (target.role === "super_admin" && target.accountStatus === "active" && data.role === "admin" && superAdmins.filter((u) => u.accountStatus === "active").length <= 1) return { error: "Keep at least one active super admin account", status: 400 };
-        const [updated] = await tx.update(users).set({ ...data, ...password ? { password } : {}, updatedAt: /* @__PURE__ */ new Date() }).where((0, import_drizzle_orm10.eq)(users.id, target.id)).returning();
-        if (password || data.role && data.role !== target.role) await tx.delete(sessions).where(import_drizzle_orm10.sql`${sessions.sess}->>'userId' = ${target.id}`);
+        const [updated] = await tx.update(users).set({ ...data, ...password ? { password } : {}, updatedAt: /* @__PURE__ */ new Date() }).where(eq7(users.id, target.id)).returning();
+        if (password || data.role && data.role !== target.role) await tx.delete(sessions).where(sql4`${sessions.sess}->>'userId' = ${target.id}`);
         const { password: hidden, ...safe } = updated;
         return { user: safe };
       });
@@ -1929,10 +1911,10 @@ function mountPlatformControls(app) {
       const cafe = await storage.getRestaurantById(req.params.id);
       if (!cafe) return res.status(404).json({ message: "Caf\xE9 not found" });
       await db.transaction(async (tx) => {
-        await tx.delete(restaurants).where((0, import_drizzle_orm10.eq)(restaurants.id, cafe.id));
-        const [owner] = await tx.select().from(users).where((0, import_drizzle_orm10.eq)(users.id, cafe.userId));
-        if (owner?.role === "admin") await tx.delete(sessions).where(import_drizzle_orm10.sql`${sessions.sess}->>'userId' = ${cafe.userId}`);
-        await tx.delete(users).where((0, import_drizzle_orm10.and)((0, import_drizzle_orm10.eq)(users.id, cafe.userId), (0, import_drizzle_orm10.eq)(users.role, "admin")));
+        await tx.delete(restaurants).where(eq7(restaurants.id, cafe.id));
+        const [owner] = await tx.select().from(users).where(eq7(users.id, cafe.userId));
+        if (owner?.role === "admin") await tx.delete(sessions).where(sql4`${sessions.sess}->>'userId' = ${cafe.userId}`);
+        await tx.delete(users).where(and3(eq7(users.id, cafe.userId), eq7(users.role, "admin")));
       });
       res.json({ success: true });
     } catch (e) {
@@ -1941,13 +1923,13 @@ function mountPlatformControls(app) {
   });
   app.put("/api/super-admin/restaurants/:id/password", isSuperAdmin, async (req, res, next) => {
     try {
-      const { newPassword } = import_zod6.z.object({ newPassword: passwordSchema }).strict().parse(req.body);
+      const { newPassword } = z6.object({ newPassword: passwordSchema }).strict().parse(req.body);
       const cafe = await storage.getRestaurantById(req.params.id);
       if (!cafe) return res.status(404).json({ message: "Caf\xE9 not found" });
-      const password = await import_bcryptjs.default.hash(newPassword, 12);
+      const password = await default2.hash(newPassword, 12);
       await db.transaction(async (tx) => {
-        await tx.update(users).set({ password, updatedAt: /* @__PURE__ */ new Date() }).where((0, import_drizzle_orm10.eq)(users.id, cafe.userId));
-        await tx.delete(sessions).where(import_drizzle_orm10.sql`${sessions.sess}->>'userId' = ${cafe.userId}`);
+        await tx.update(users).set({ password, updatedAt: /* @__PURE__ */ new Date() }).where(eq7(users.id, cafe.userId));
+        await tx.delete(sessions).where(sql4`${sessions.sess}->>'userId' = ${cafe.userId}`);
       });
       res.json({ success: true, message: "Manager password reset. Previous sessions signed out." });
     } catch (e) {
@@ -1956,7 +1938,7 @@ function mountPlatformControls(app) {
   });
   app.put("/api/super-admin/restaurants/:id/cover-media", isSuperAdmin, async (req, res, next) => {
     try {
-      const data = import_zod6.z.object({ coverMediaUrl: import_zod6.z.string(), coverMediaType: import_zod6.z.enum(["image", "video", "gif"]).nullable() }).strict().parse(req.body);
+      const data = z6.object({ coverMediaUrl: z6.string(), coverMediaType: z6.enum(["image", "video", "gif"]).nullable() }).strict().parse(req.body);
       const cafe = await storage.getRestaurantById(req.params.id);
       if (!cafe) return res.status(404).json({ message: "Caf\xE9 not found" });
       const url = data.coverMediaUrl ? await mediaForCafe(data.coverMediaUrl.split("?")[0], cafe.userId, req.user.id) : null;
@@ -1992,7 +1974,7 @@ function mountPlatformControls(app) {
   });
   app.put("/api/super-admin/categories/:id", isSuperAdmin, async (req, res, next) => {
     try {
-      const [category] = await db.select().from(categories).where((0, import_drizzle_orm10.eq)(categories.id, req.params.id));
+      const [category] = await db.select().from(categories).where(eq7(categories.id, req.params.id));
       if (!category) return res.status(404).json({ message: "Category not found" });
       const data = insertCategorySchema.pick({ title: true, order: true }).partial().strict().parse(req.body);
       const cats = await storage.getCategoriesByRestaurantId(category.restaurantId);
@@ -2020,9 +2002,9 @@ function mountPlatformControls(app) {
   });
   app.put("/api/super-admin/menu-items/:id", isSuperAdmin, async (req, res, next) => {
     try {
-      const [item] = await db.select().from(menuItems).where((0, import_drizzle_orm10.eq)(menuItems.id, req.params.id));
+      const [item] = await db.select().from(menuItems).where(eq7(menuItems.id, req.params.id));
       if (!item) return res.status(404).json({ message: "Menu item not found" });
-      const [category] = await db.select().from(categories).where((0, import_drizzle_orm10.eq)(categories.id, item.categoryId));
+      const [category] = await db.select().from(categories).where(eq7(categories.id, item.categoryId));
       const cafe = await storage.getRestaurantById(category.restaurantId);
       const data = insertMenuItemSchema.partial().parse(req.body);
       if (data.categoryId && !(await storage.getCategoriesByRestaurantId(category.restaurantId)).some((c) => c.id === data.categoryId)) return res.status(400).json({ message: "Use the library to copy items to another caf\xE9" });
@@ -2039,8 +2021,8 @@ function mountPlatformControls(app) {
 }
 
 // server/routes.ts
-var import_zod_validation_error2 = require("zod-validation-error");
-var import_zod7 = require("zod");
+import { fromZodError as fromZodError2 } from "zod-validation-error";
+import { z as z7 } from "zod";
 async function registerRoutes(app) {
   await setupAuth(app);
   app.post("/api/register-restaurant", (_req, res) => res.status(410).json({ message: "Restaurant accounts are created by the super admin." }));
@@ -2053,7 +2035,7 @@ async function registerRoutes(app) {
     try {
       const validationResult = registrationSchema.safeParse(req.body);
       if (!validationResult.success) {
-        const validationError = (0, import_zod_validation_error2.fromZodError)(validationResult.error);
+        const validationError = fromZodError2(validationResult.error);
         return res.status(400).json({ message: validationError.message });
       }
       const { email, password, firstName, lastName, restaurantName } = validationResult.data;
@@ -2061,7 +2043,7 @@ async function registerRoutes(app) {
       if (existingUser) {
         return res.status(409).json({ message: "Email already registered" });
       }
-      const hashedPassword = await import_bcryptjs.default.hash(password, 12);
+      const hashedPassword = await default2.hash(password, 12);
       const created = await db.transaction(async (tx) => {
         const [user] = await tx.insert(users).values({ email, password: hashedPassword, firstName, lastName, role: "admin" }).returning();
         const [cafe] = await tx.insert(restaurants).values({ userId: user.id, name: restaurantName }).returning();
@@ -2153,8 +2135,8 @@ async function registerRoutes(app) {
   });
   app.put("/api/super-admin/restaurants/:id/suspend", isSuperAdmin, async (req, res) => {
     try {
-      const suspendSchema = import_zod7.z.object({
-        reason: import_zod7.z.string().min(5, "Suspension reason must be at least 5 characters")
+      const suspendSchema = z7.object({
+        reason: z7.string().min(5, "Suspension reason must be at least 5 characters")
       });
       const validatedData = suspendSchema.parse(req.body);
       const restaurant = await storage.updateRestaurant(req.params.id, {
@@ -2164,7 +2146,7 @@ async function registerRoutes(app) {
       res.json(restaurant);
     } catch (error) {
       console.error("Error suspending restaurant:", safeError(error));
-      if (error instanceof import_zod7.z.ZodError) {
+      if (error instanceof z7.ZodError) {
         return res.status(400).json({ message: "Invalid suspension data", errors: error.errors });
       }
       res.status(500).json({ message: "Failed to suspend restaurant" });
@@ -2201,15 +2183,15 @@ async function registerRoutes(app) {
   });
   app.put("/api/super-admin/restaurants/:id/visibility", isSuperAdmin, async (req, res) => {
     try {
-      const visibilitySchema = import_zod7.z.object({
-        hidden: import_zod7.z.boolean()
+      const visibilitySchema = z7.object({
+        hidden: z7.boolean()
       });
       const validatedData = visibilitySchema.parse(req.body);
       const restaurant = await storage.updateRestaurant(req.params.id, validatedData);
       res.json(restaurant);
     } catch (error) {
       console.error("Error updating visibility:", safeError(error));
-      if (error instanceof import_zod7.z.ZodError) {
+      if (error instanceof z7.ZodError) {
         return res.status(400).json({ message: "Invalid visibility data", errors: error.errors });
       }
       res.status(500).json({ message: "Failed to update visibility" });
@@ -2281,9 +2263,9 @@ async function registerRoutes(app) {
   });
   app.put("/api/restaurant/cover-media", isAuthenticated, async (req, res) => {
     try {
-      const coverMediaSchema = import_zod7.z.object({
-        coverMediaUrl: import_zod7.z.string(),
-        coverMediaType: import_zod7.z.enum(["image", "video", "gif"]).nullable()
+      const coverMediaSchema = z7.object({
+        coverMediaUrl: z7.string(),
+        coverMediaType: z7.enum(["image", "video", "gif"]).nullable()
       });
       const validatedData = coverMediaSchema.parse(req.body);
       const userId = await mediaOwner(req);
@@ -2314,7 +2296,7 @@ async function registerRoutes(app) {
       res.status(200).json({ objectPath: objectPath2, coverMediaType });
     } catch (error) {
       console.error("Error setting cover media:", safeError(error));
-      if (error instanceof import_zod7.z.ZodError) {
+      if (error instanceof z7.ZodError) {
         return res.status(400).json({ error: "Invalid cover media data", details: error.errors });
       }
       res.status(500).json({ error: "Internal server error" });
@@ -2346,7 +2328,7 @@ async function registerRoutes(app) {
     try {
       const validationResult = insertCategorySchema.safeParse(req.body);
       if (!validationResult.success) {
-        const validationError = (0, import_zod_validation_error2.fromZodError)(validationResult.error);
+        const validationError = fromZodError2(validationResult.error);
         return res.status(400).json({ message: validationError.message });
       }
       const category = await storage.createCategory(validationResult.data);
@@ -2388,13 +2370,13 @@ async function registerRoutes(app) {
     }
   });
   app.put("/api/menu-items/image", isAuthenticated, async (req, res) => {
-    const schema = import_zod7.z.object({
-      imageUrl: import_zod7.z.string(),
-      menuItemId: import_zod7.z.string().optional()
+    const schema = z7.object({
+      imageUrl: z7.string(),
+      menuItemId: z7.string().optional()
     });
     const validationResult = schema.safeParse(req.body);
     if (!validationResult.success) {
-      const validationError = (0, import_zod_validation_error2.fromZodError)(validationResult.error);
+      const validationError = fromZodError2(validationResult.error);
       console.error("[menu-items/image] Validation failed:", validationError.message);
       return res.status(400).json({ message: validationError.message });
     }
@@ -2487,17 +2469,17 @@ async function registerRoutes(app) {
     }
   });
   app.use("/api", (_req, res) => res.status(404).json({ message: "Endpoint not found" }));
-  const httpServer = (0, import_http.createServer)(app);
+  const httpServer = createServer(app);
   return httpServer;
 }
 
 // server/apiApplication.ts
 async function createApiApplication() {
-  const app = (0, import_express2.default)();
+  const app = express2();
   mountHttpSecurity(app);
-  const json = import_express2.default.json({ limit: "1mb" });
+  const json = express2.json({ limit: "1mb" });
   app.use((req, res, next) => req.path.startsWith("/objects/") ? next() : json(req, res, next));
-  app.use(import_express2.default.urlencoded({ extended: false, limit: "100kb" }));
+  app.use(express2.urlencoded({ extended: false, limit: "100kb" }));
   app.use((req, res, next) => {
     if (req.path.startsWith("/api/") && !["GET", "HEAD", "OPTIONS"].includes(req.method) && (req.body === null || typeof req.body !== "object" || Array.isArray(req.body))) return res.status(400).json({ message: "Send a JSON object" });
     next();
@@ -2577,3 +2559,6 @@ async function handler(req, res) {
     }
   }
 }
+export {
+  handler as default
+};
