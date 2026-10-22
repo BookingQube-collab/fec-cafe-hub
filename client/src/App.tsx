@@ -40,6 +40,7 @@ const AccessHistory = lazy(() => import('@/pages/access-history'));
 import { returnToPlatform } from '@/lib/cafeAccess';
 import { useToast } from '@/hooks/use-toast';
 const AdminQRCode = lazy(() => import('@/pages/admin-qrcode'));
+const AdminMenuDesign = lazy(() => import('@/pages/admin-menu-design'));
 const SuperAdminDashboard = lazy(() => import('@/pages/super-admin-dashboard'));
 const SuperAdminRestaurantDetail = lazy(() => import('@/pages/super-admin-restaurant-detail'));
 const CustomerMenu = lazy(() => import('@/pages/customer-menu'));
@@ -217,6 +218,11 @@ function StaffRouter() {
         <Route path="/admin/menu">
           <AdminLayout>
             <AdminMenu />
+          </AdminLayout>
+        </Route>
+        <Route path="/admin/menu-design">
+          <AdminLayout>
+            <AdminMenuDesign />
           </AdminLayout>
         </Route>
         <Route path="/admin/settings"><AdminLayout><CafeSettings /></AdminLayout></Route>
