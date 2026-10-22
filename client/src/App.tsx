@@ -137,12 +137,15 @@ function AdminLayout({ children }: { children: React.ReactNode }) {
 function Router() {
   const [location] = useLocation();
   // Guest shell: dedicated public host (PUBLIC_URL) or any /menu/:id path on the unified Node app.
+  // w-full is required: SidebarProvider is a flex row; without it guest pages shrink to content width.
   if ((PUBLIC_MENU_ORIGIN && window.location.origin === PUBLIC_MENU_ORIGIN) || location.startsWith('/menu/')) return (
-    <Switch>
-      <Route path="/menu/:id" component={CustomerMenu}/>
-      <Route path="/" component={Home}/>
-      <Route component={NotFound}/>
-    </Switch>
+    <div className="w-full min-w-0">
+      <Switch>
+        <Route path="/menu/:id" component={CustomerMenu}/>
+        <Route path="/" component={Home}/>
+        <Route component={NotFound}/>
+      </Switch>
+    </div>
   );
   return <StaffThemeProvider><StaffRouter/></StaffThemeProvider>;
 }
