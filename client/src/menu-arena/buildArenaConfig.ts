@@ -50,6 +50,23 @@ export function deepMerge<T>(base: T, over: unknown): T {
   return out as T;
 }
 
+/**
+ * Design settings merge for admin + Arena. `deepMerge` replaces arrays wholesale, so a
+ * partial `groups: [{ key, floaters }]` save would wipe bg/card/label chrome and crash
+ * the menu-design editor on `group.bg.*`. Merge groups by key instead.
+ */
+export function mergeDesignSettings(base: Record<string, any>, over: unknown): Record<string, any> {
+  const o = isObj(over) ? over : {};
+  const merged = deepMerge(base, o) as Record<string, any>;
+  if (Array.isArray(base.groups)) {
+    const overByKey = new Map(
+      (Array.isArray(o.groups) ? o.groups : []).map((g: any) => [g.key, g]),
+    );
+    merged.groups = base.groups.map((g: any) => deepMerge(g, overByKey.get(g.key) || {}));
+  }
+  return merged;
+}
+
 const num = (v: unknown) => (v === null || v === undefined || v === '' ? 0 : Number(v));
 const finalPrice = (price: unknown, discount: unknown) => {
   const p = num(price) * (1 - num(discount) / 100);
@@ -105,7 +122,7 @@ export function blendFloaters(
 
 export function buildArenaConfig(menu: PublicMenu, saved: DesignSettings | null | undefined, h: ArenaHelpers): MenuConfig {
   const { categoryVisualsByTitle, itemArabicByName, categoryFallback, ...baseDesign } = defaults as any;
-  const d = deepMerge(baseDesign, saved ?? {}) as any;
+  const d = mergeDesignSettings(baseDesign, saved ?? {}) as any;
   const overrides: Record<string, CategoryVisual> = (saved?.categories ?? {}) as any;
   const savedGroups = new Map<string, any>(
     (Array.isArray(saved?.groups) ? saved!.groups : []).map((g: any) => [g.key, g]),

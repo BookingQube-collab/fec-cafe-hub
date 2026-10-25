@@ -9,7 +9,7 @@ import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest, queryClient } from '@/lib/queryClient';
 import { refreshCafe, uploadMedia, useManagerMenu } from '@/lib/managerMenu';
-import { deepMerge } from '@/menu-arena/buildArenaConfig';
+import { deepMerge, mergeDesignSettings } from '@/menu-arena/buildArenaConfig';
 import defaultsJson from '@/menu-arena/arena-default-design.json';
 import type { MenuDesignSettings } from '@shared/menuDesignSettings';
 import UnsavedChanges from '@/components/unsaved-changes';
@@ -257,7 +257,8 @@ export default function AdminMenuDesign() {
     setBaseline(JSON.stringify({ enabled: designQuery.data.enabled, settings: next }));
   }, [designQuery.data, cafe?.id]);
 
-  const effective = useMemo(() => deepMerge(clone(designDefaults), settings) as any, [settings]);
+  // mergeDesignSettings (not deepMerge): partial groups[] from floater saves must not wipe bg/card.
+  const effective = useMemo(() => mergeDesignSettings(clone(designDefaults), settings) as any, [settings]);
   const dirty = baseline !== '' && JSON.stringify({ enabled, settings }) !== baseline;
 
   function patchSettings(patch: MenuDesignSettings) {
@@ -340,7 +341,8 @@ export default function AdminMenuDesign() {
   });
 
   const accentContrast = contrastRatio(effective.theme?.accent || '#fbcfe8', effective.theme?.accentInk || '#011d17');
-  const group = (effective.groups as any[]).find((g) => g.key === groupTab) || effective.groups[0];
+  const groups = Array.isArray(effective.groups) ? (effective.groups as any[]) : [];
+  const group = groups.find((g) => g.key === groupTab) || groups[0];
 
   if (menu.isLoading || designQuery.isLoading) return <p role="status">Loading menu design…</p>;
   if (menu.isError || designQuery.isError) {
@@ -566,7 +568,7 @@ export default function AdminMenuDesign() {
                   <Input
                     type="color"
                     className="h-10 p-1 w-full"
-                    value={group.bg[k]}
+                    value={group.bg?.[k] || '#000000'}
                     onChange={(e) => updateGroup(groupTab, { bg: { ...group.bg, [k]: e.target.value } })}
                   />
                 </Field>

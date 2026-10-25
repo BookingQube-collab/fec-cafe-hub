@@ -1,7 +1,7 @@
 // Run: npx tsx scripts/verify-arena-config.ts   (add to "npm test")
 // Checks the payload -> Arena config mapping with an API-shaped fixture. Uses stub helpers, so it needs no server or DB.
 import assert from 'node:assert/strict';
-import { blendFloaters, buildArenaConfig, type PublicMenu } from '../client/src/menu-arena/buildArenaConfig';
+import { blendFloaters, buildArenaConfig, mergeDesignSettings, type PublicMenu } from '../client/src/menu-arena/buildArenaConfig';
 import designDefaults from '../client/src/menu-arena/arena-default-design.json';
 
 const cat = (id: string, title: string, order: number) => ({ id, title, order });
@@ -84,6 +84,23 @@ assert.equal(floaterOverride.groups[0].floaters[1], '/objects/margherita', 'empt
 assert.equal(floaterOverride.groups[0].floaters[2], '/assets/arena/floaters/food-3.webp', 'second saved floater slot wins');
 assert.equal(floaterOverride.groups[0].floaters[3], '/objects/pepperoni', 'later empty slots keep consuming live photos');
 assert.ok(floaterOverride.groups[0].floaters[5]?.startsWith('/assets/arena/'), 'leftover slots keep decorative defaults');
+
+// Partial groups[] (floater-only save) must keep default bg/card chrome — admin editor reads group.bg.
+const floaterOnlySettings = {
+  groups: [
+    { key: 'food', floaters: ['/assets/arena/floaters/food-9.webp', null, null, null, null, null, null, null, null] },
+    { key: 'drinks', floaters: Array(9).fill(null) },
+  ],
+};
+const { categoryVisualsByTitle: _cv, itemArabicByName: _ia, categoryFallback: _cf, ...designChrome } = designDefaults as any;
+void _cv; void _ia; void _cf;
+const partialMerged = mergeDesignSettings(designChrome, floaterOnlySettings);
+assert.equal(partialMerged.groups[0].bg.inner, (designDefaults as any).groups[0].bg.inner, 'partial groups merge keeps bg');
+assert.equal(partialMerged.groups[0].card.label, (designDefaults as any).groups[0].card.label, 'partial groups merge keeps card');
+assert.equal(partialMerged.groups[0].floaters[0], '/assets/arena/floaters/food-9.webp', 'partial groups merge keeps floater override');
+const partialCfg = buildArenaConfig(menu, floaterOnlySettings, helpers);
+assert.equal(partialCfg.groups[0].bg.inner, (designDefaults as any).groups[0].bg.inner, 'buildArenaConfig keeps group chrome with floater-only save');
+assert.equal(partialCfg.groups[0].floaters[0], '/assets/arena/floaters/food-9.webp', 'floater-only save still wins slot 0');
 
 const custom = buildArenaConfig(menu, { hero: { titleLine1: 'Hello' }, categories: { c2: { group: 'drinks', hue: '#123456' } } }, helpers);
 assert.equal(custom.hero.titleLine1, 'Hello', 'saved override applied');
