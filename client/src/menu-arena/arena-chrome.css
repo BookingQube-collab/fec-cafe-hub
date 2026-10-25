@@ -1,0 +1,13 @@
+/*
+ * Arena chrome overrides — keep OUTSIDE arena.css / arena-engine.ts / arena-markup.html.
+ *
+ * Tailwind's utility class `.outline` sets `outline-style: solid`. Arena markup reuses
+ * that class name for hero title colour (Urban / Sip), so the utility paints a white
+ * rectangular frame around those words. Kill the outline inside the Arena root only.
+ */
+.arena-root .title-line.outline,
+.arena-root span.outline {
+  outline: none !important;
+  outline-width: 0 !important;
+  outline-style: none !important;
+}

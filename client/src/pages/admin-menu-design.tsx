@@ -48,6 +48,21 @@ function clone<T>(v: T): T {
   return JSON.parse(JSON.stringify(v));
 }
 
+/** Persist the floater URLs the editor shows (deep-merged defaults), so public matches admin. */
+function withEffectiveFloaters(settings: MenuDesignSettings, effective: { groups?: Array<{ key: string; floaters?: Array<string | null> }> }): MenuDesignSettings {
+  const next = clone(settings);
+  const effGroups = Array.isArray(effective.groups) ? effective.groups : [];
+  if (!effGroups.length) return next;
+  const existingByKey = new Map((Array.isArray(next.groups) ? next.groups : []).map((g: any) => [g.key, g]));
+  next.groups = effGroups.map((eg) => {
+    const prev = existingByKey.get(eg.key) || { key: eg.key as 'food' | 'drinks' };
+    const floaters = [...(eg.floaters || [])];
+    while (floaters.length < 9) floaters.push(null);
+    return { ...prev, key: eg.key as 'food' | 'drinks', floaters: floaters.slice(0, 9) };
+  });
+  return next;
+}
+
 function contrastRatio(a: string, b: string): number {
   const lum = (hex: string) => {
     const n = parseInt(hex.slice(1), 16);
@@ -299,7 +314,10 @@ export default function AdminMenuDesign() {
   const save = useMutation({
     mutationKey: ['cafe-menu-write'],
     mutationFn: async () => {
-      return (await apiRequest('PUT', '/api/admin/menu-design', { enabled, settings })).json() as Promise<DesignResponse>;
+      // Admin UI deep-merges defaults for display; without this, Save can omit floaters and
+      // public blendFloaters still fills empty slots from live menu photos (pizza, etc.).
+      const payload = withEffectiveFloaters(settings, effective);
+      return (await apiRequest('PUT', '/api/admin/menu-design', { enabled, settings: payload })).json() as Promise<DesignResponse>;
     },
     onSuccess: (result) => {
       setEnabled(result.enabled);

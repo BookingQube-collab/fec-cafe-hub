@@ -2,6 +2,7 @@
 import { useEffect, useMemo, useRef } from 'react';
 import markup from './arena-markup.html?raw';
 import './arena.css';
+import './arena-chrome.css';
 import { mountArenaMenu } from './arena-engine';
 import type { MenuConfig } from './config';
 
