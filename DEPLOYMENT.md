@@ -34,9 +34,18 @@ Copy `.env.cloud.example` to private `.env.cloud` (or use `.env`). Required for 
 
 Connecting Supabase in the Vercel dashboard injects vars such as `POSTGRES_URL`, `POSTGRES_URL_NON_POOLING`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_ANON_KEY`, and often `NEXT_PUBLIC_*`. This app resolves the DB URL as:
 
+**On Vercel** (default; migrate-on-boot off):
+
+1. `DATABASE_URL` if set and not a session pooler
+2. Transaction pooler among `DATABASE_URL` / `POSTGRES_URL` / `POSTGRES_URL_NON_POOLING` (port `6543` or `pgbouncer=true`)
+3. Session pooler URLs rewritten to transaction (`*.pooler.*:5432` → `:6543`) — avoids `EMAXCONNSESSION`
+4. Otherwise first available URL
+
+**Local / `RUN_MIGRATE_ON_BOOT=true`:**
+
 1. `DATABASE_URL` (explicit — optional)
-2. `POSTGRES_URL_NON_POOLING` (**preferred** for serverless here: direct / session-friendly for Drizzle migrate + `node-postgres`)
-3. `POSTGRES_URL` (often the transaction pooler — fine fallback)
+2. `POSTGRES_URL_NON_POOLING` (direct / session — better for Drizzle migrate)
+3. `POSTGRES_URL` (transaction pooler fallback)
 
 **Already enough from the integration (no rename needed):** `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, and a Postgres URL via the fallbacks above.
 

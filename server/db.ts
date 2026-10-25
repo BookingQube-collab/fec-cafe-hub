@@ -11,22 +11,99 @@ import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import pg from 'pg';
 
 /**
+ * True when the URL is Supabase/PgBouncer session pooler (port 5432 on *.pooler.*).
+ * Session mode caps ~15 clients — fatal under Vercel concurrency (EMAXCONNSESSION).
+ */
+function isSessionPoolerUrl(url: string): boolean {
+  try {
+    const parsed = new URL(url);
+    const host = parsed.hostname.toLowerCase();
+    const port = parsed.port || (parsed.protocol === 'postgres:' || parsed.protocol === 'postgresql:' ? '5432' : '');
+    return host.includes('pooler') && port === '5432';
+  } catch {
+    return false;
+  }
+}
+
+/** Transaction pooler (Supavisor :6543 or ?pgbouncer=true) — correct for serverless. */
+function isTransactionPoolerUrl(url: string): boolean {
+  try {
+    const parsed = new URL(url);
+    const port = parsed.port;
+    if (port === '6543') return true;
+    return parsed.searchParams.get('pgbouncer') === 'true';
+  } catch {
+    return /[?&]pgbouncer=true\b/i.test(url) || /:6543(?:\/|$|\?)/.test(url);
+  }
+}
+
+/**
+ * Rewrite Supabase session pooler (:5432 on *.pooler.*) → transaction (:6543 + pgbouncer).
+ * Needed when POSTGRES_URL_NON_POOLING is IPv4/"direct" via session pooler (EMAXCONNSESSION).
+ */
+function sessionPoolerToTransaction(url: string): string | undefined {
+  if (!isSessionPoolerUrl(url)) return undefined;
+  try {
+    const parsed = new URL(url);
+    parsed.port = '6543';
+    parsed.searchParams.set('pgbouncer', 'true');
+    return parsed.toString();
+  } catch {
+    return undefined;
+  }
+}
+
+/**
  * Resolve Postgres URL for local + Vercel.
- * Prefer DATABASE_URL when set. On Vercel Supabase integration, fall back to
- * POSTGRES_URL_NON_POOLING (direct / session-friendly — preferred for serverless
- * with Drizzle migrate + node-postgres) then POSTGRES_URL (often transaction pooler).
+ * Prefer DATABASE_URL when set.
+ * On Vercel (migrate-on-boot off): prefer transaction pooler so concurrent lambdas
+ * do not exhaust session-mode slots (EMAXCONNSESSION / pool_size ≈ 15).
+ * Local / migrate-on-boot: prefer POSTGRES_URL_NON_POOLING (direct) then POSTGRES_URL.
  */
 function resolveDatabaseUrl(): string | undefined {
-  const candidates = [
-    process.env.DATABASE_URL,
-    process.env.POSTGRES_URL_NON_POOLING,
-    process.env.POSTGRES_URL,
-  ];
-  for (const value of candidates) {
-    const trimmed = value?.trim();
-    if (trimmed) return normalizePostgresUrl(trimmed);
+  const onVercel = process.env.VERCEL === '1';
+  const migrateOnBoot = process.env.RUN_MIGRATE_ON_BOOT === 'true';
+  const preferTransactionPooler = onVercel && !migrateOnBoot;
+
+  const databaseUrl = process.env.DATABASE_URL?.trim();
+  const postgresUrl = process.env.POSTGRES_URL?.trim();
+  const nonPooling = process.env.POSTGRES_URL_NON_POOLING?.trim();
+
+  if (preferTransactionPooler) {
+    const candidates = [databaseUrl, postgresUrl, nonPooling].filter((v): v is string => Boolean(v));
+    if (!candidates.length) return undefined;
+
+    // Explicit non-session DATABASE_URL wins.
+    if (databaseUrl && !isSessionPoolerUrl(databaseUrl) && !isTransactionPoolerUrl(databaseUrl)) {
+      return normalizePostgresUrl(databaseUrl);
+    }
+    if (databaseUrl && isTransactionPoolerUrl(databaseUrl)) {
+      return normalizePostgresUrl(databaseUrl);
+    }
+
+    const transaction = candidates.find(isTransactionPoolerUrl);
+    if (transaction) return normalizePostgresUrl(transaction);
+
+    for (const candidate of candidates) {
+      const rewritten = sessionPoolerToTransaction(candidate);
+      if (rewritten) return normalizePostgresUrl(rewritten);
+    }
+
+    const nonSession = candidates.find((u) => !isSessionPoolerUrl(u));
+    return normalizePostgresUrl(nonSession || candidates[0]);
+  }
+
+  for (const value of [databaseUrl, nonPooling, postgresUrl]) {
+    if (value) return normalizePostgresUrl(value);
   }
   return undefined;
+}
+
+function describePoolerMode(url: string | undefined): 'transaction' | 'session' | 'direct' | null {
+  if (!url) return null;
+  if (isTransactionPoolerUrl(url)) return 'transaction';
+  if (isSessionPoolerUrl(url)) return 'session';
+  return 'direct';
 }
 
 /**
@@ -72,10 +149,11 @@ if (databaseUrl) {
   const pgPool = new pg.Pool({
     connectionString: databaseUrl,
     ssl,
-    // Serverless: keep the pool tiny so cold starts do not exhaust Supabase slots.
+    // Serverless: one client per isolate; release idle sockets quickly so Supavisor slots free up.
     max: onVercel ? 1 : 10,
-    idleTimeoutMillis: onVercel ? 5_000 : 30_000,
+    idleTimeoutMillis: onVercel ? 1_000 : 30_000,
     connectionTimeoutMillis: 15_000,
+    allowExitOnIdle: onVercel,
   });
   const remote = drizzlePg(pgPool, { schema });
   pool = { close: () => pgPool.end() };
@@ -132,6 +210,7 @@ export function databaseEnvProbe() {
     hasPostgresUrl: Boolean(process.env.POSTGRES_URL?.trim()),
     hasPostgresNonPooling: Boolean(process.env.POSTGRES_URL_NON_POOLING?.trim()),
     usingRemoteDatabase,
+    poolerMode: describePoolerMode(databaseUrl),
     sessionSecretOk: Boolean(process.env.SESSION_SECRET && process.env.SESSION_SECRET.length >= 48),
     hasSupabaseUrl: Boolean(process.env.SUPABASE_URL?.trim()),
     hasServiceRoleKey: Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY?.trim()),
