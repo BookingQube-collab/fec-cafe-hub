@@ -5,7 +5,7 @@ import { useManagerMenu } from '@/lib/managerMenu';
 import './staff-theme.css';
 import { StaffThemeProvider, StaffThemeToggle } from '@/components/staff-theme';
 import './manager.css';
-import { PUBLIC_MENU_ORIGIN, MANAGEMENT_ORIGIN } from '@shared/menuIdentity';
+import { isDedicatedPublicMenuHost, MANAGEMENT_ORIGIN } from '@shared/menuIdentity';
 const CafeSettings = lazy(() => import('@/pages/cafe-settings'));
 import { Switch, Route, Redirect, useLocation } from "wouter";
 import { useSessionSync } from '@/lib/sessionSync';
@@ -137,9 +137,10 @@ function AdminLayout({ children }: { children: React.ReactNode }) {
 
 function Router() {
   const [location] = useLocation();
-  // Guest shell: dedicated public host (PUBLIC_URL) or any /menu/:id path on the unified Node app.
+  // Guest shell: split public host (PUBLIC_URL ≠ MANAGEMENT_ORIGIN) or any /menu/:id path.
+  // Unified hosts (PUBLIC_URL set to this same Vercel URL) must keep /login and /admin.
   // w-full is required: SidebarProvider is a flex row; without it guest pages shrink to content width.
-  if ((PUBLIC_MENU_ORIGIN && window.location.origin === PUBLIC_MENU_ORIGIN) || location.startsWith('/menu/')) return (
+  if (isDedicatedPublicMenuHost() || location.startsWith('/menu/')) return (
     <div className="w-full min-w-0">
       <Switch>
         <Route path="/menu/:id" component={CustomerMenu}/>
@@ -161,6 +162,7 @@ function StaffRouter() {
         <Switch>
           <Route path="/menu/:id" component={CustomerMenu} />
           <Route path="/register"><Redirect to="/login"/></Route>
+          <Route path="/admin/login"><Redirect to="/login"/></Route>
           <Route path="/login" component={Login} />
           <Route path="/" component={Home} />
           <Route component={Home} />
@@ -176,6 +178,7 @@ function StaffRouter() {
         <Switch>
           <Route path="/menu/:id" component={CustomerMenu} />
           <Route path="/register"><Redirect to="/login"/></Route>
+          <Route path="/admin/login"><Redirect to="/login"/></Route>
           <Route path="/login" component={Login} />
           <Route path="/" component={Home} />
           <Route component={Home} />
@@ -193,6 +196,7 @@ function StaffRouter() {
     <div className="w-full">
       <Switch>
         <Route path="/menu/:id" component={CustomerMenu} />
+        <Route path="/admin/login"><Redirect to={isSuperAdmin ? '/super-admin' : '/admin'}/></Route>
         <Route path="/login"><Redirect to={isSuperAdmin ? '/super-admin' : '/admin'}/></Route>
         <Route path="/register"><Redirect to={isSuperAdmin ? '/super-admin/restaurants/new' : '/admin'}/></Route>
         <Route path="/super-admin/restaurants/new"><AdminLayout><Register/></AdminLayout></Route>

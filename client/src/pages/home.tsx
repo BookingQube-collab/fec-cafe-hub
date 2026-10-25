@@ -3,13 +3,13 @@ import { useQuery } from '@tanstack/react-query';
 import { Link } from 'wouter';
 import { Coffee, ArrowUpRight } from 'lucide-react';
 import { cafeThemeStyle } from '@/lib/cafeTheme';
-import { PUBLIC_MENU_ORIGIN } from '@shared/menuIdentity';
+import { isDedicatedPublicMenuHost } from '@shared/menuIdentity';
 import './home.css';
 
 type Cafe = { id: string; name: string; theme: string; cuisineType: string | null; logoUrl: string | null };
 
 export default function Home() {
-  const publicOnly = Boolean(PUBLIC_MENU_ORIGIN && window.location.origin === PUBLIC_MENU_ORIGIN);
+  const publicOnly = isDedicatedPublicMenuHost();
   const { data: cafes, isLoading, isError } = useQuery<Cafe[]>({ queryKey: ['/api/cafes'] });
 
   return (
