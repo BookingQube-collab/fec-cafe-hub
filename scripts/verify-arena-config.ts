@@ -1,7 +1,8 @@
 // Run: npx tsx scripts/verify-arena-config.ts   (add to "npm test")
 // Checks the payload -> Arena config mapping with an API-shaped fixture. Uses stub helpers, so it needs no server or DB.
 import assert from 'node:assert/strict';
-import { buildArenaConfig, type PublicMenu } from '../client/src/menu-arena/buildArenaConfig';
+import { blendFloaters, buildArenaConfig, type PublicMenu } from '../client/src/menu-arena/buildArenaConfig';
+import designDefaults from '../client/src/menu-arena/arena-default-design.json';
 
 const cat = (id: string, title: string, order: number) => ({ id, title, order });
 const item = (id: string, categoryId: string, name: string, price: string, order: number, extra: Partial<PublicMenu['items'][number]> = {}) =>
@@ -54,6 +55,35 @@ assert.equal(cfg.groups[0].floaters[0], '/objects/margherita', 'food floaters pr
 assert.equal(cfg.groups[0].card.imageUrl, '/objects/margherita', 'food card prefers first live photo');
 assert.equal(cfg.groups[1].floaters[0], '/objects/espresso', 'drinks floaters prefer live item photos');
 assert.ok(cfg.groups[0].floaters[3]?.startsWith('/assets/arena/'), 'remaining floater slots keep decorative defaults');
+
+// Per-slot helper: explicit saved URL wins; null/unset yields live then decorative.
+assert.deepEqual(
+  blendFloaters(
+    ['/live/a', '/live/b'],
+    ['/d/1', '/d/2', '/d/3', '/d/4', '/d/5', '/d/6', '/d/7', '/d/8', '/d/9'],
+    ['/saved/1', null, '/saved/3', null, null, null, null, null, null],
+  ),
+  ['/saved/1', '/live/a', '/saved/3', '/live/b', '/d/5', '/d/6', '/d/7', '/d/8', '/d/9'],
+  'blendFloaters precedence: saved > live > decorative',
+);
+
+// Manager-saved floater URLs must beat live menu photos; empty slots still auto-fill.
+const foodFloaters = [
+  '/assets/arena/floaters/food-9.webp',
+  null,
+  '/assets/arena/floaters/food-3.webp',
+  null, null, null, null, null, null,
+];
+const floaterOverride = buildArenaConfig(menu, {
+  groups: (designDefaults as any).groups.map((g: any) =>
+    g.key === 'food' ? { ...g, floaters: foodFloaters } : g,
+  ),
+}, helpers);
+assert.equal(floaterOverride.groups[0].floaters[0], '/assets/arena/floaters/food-9.webp', 'saved floater slot wins over live item photo');
+assert.equal(floaterOverride.groups[0].floaters[1], '/objects/margherita', 'empty saved floater slot still takes live photo');
+assert.equal(floaterOverride.groups[0].floaters[2], '/assets/arena/floaters/food-3.webp', 'second saved floater slot wins');
+assert.equal(floaterOverride.groups[0].floaters[3], '/objects/pepperoni', 'later empty slots keep consuming live photos');
+assert.ok(floaterOverride.groups[0].floaters[5]?.startsWith('/assets/arena/'), 'leftover slots keep decorative defaults');
 
 const custom = buildArenaConfig(menu, { hero: { titleLine1: 'Hello' }, categories: { c2: { group: 'drinks', hue: '#123456' } } }, helpers);
 assert.equal(custom.hero.titleLine1, 'Hello', 'saved override applied');

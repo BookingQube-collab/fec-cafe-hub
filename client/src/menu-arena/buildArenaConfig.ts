@@ -75,12 +75,30 @@ function uniqueUrls(urls: Array<string | null | undefined>): string[] {
   return out;
 }
 
-/** Prefer live item photos; pad remaining slots with decorative defaults. */
-export function blendFloaters(live: string[], decorative: Array<string | null>): Array<string | null> {
+/**
+ * Build 9 floater slots with clear precedence per slot:
+ *   1. Explicit non-empty URL from manager settings (always wins)
+ *   2. Else next unused live menu item photo (only when the slot is empty/unset)
+ *   3. Else decorative default from arena-default-design.json
+ */
+export function blendFloaters(
+  live: string[],
+  decorative: Array<string | null>,
+  savedSlots?: Array<string | null> | null,
+): Array<string | null> {
   const out: Array<string | null> = [];
+  let liveIdx = 0;
   for (let i = 0; i < 9; i++) {
-    if (i < live.length) out.push(live[i]);
-    else out.push(decorative[i] ?? null);
+    const saved = savedSlots?.[i];
+    if (typeof saved === 'string' && saved.length > 0) {
+      out.push(saved);
+      continue;
+    }
+    if (liveIdx < live.length) {
+      out.push(live[liveIdx++]);
+      continue;
+    }
+    out.push(decorative[i] ?? null);
   }
   return out;
 }
@@ -170,10 +188,16 @@ export function buildArenaConfig(menu: PublicMenu, saved: DesignSettings | null 
   categories.sort((a, b) => groupRank(a.group) - groupRank(b.group));   // stable: keeps admin order inside a group
 
   const venueTitle = splitVenueTitle(menu.restaurant.name);
+  // Decorative floaters come from the design pack defaults — not from deep-merged
+  // settings — so a partial groups[] save cannot erase the fallback chrome.
+  const defaultFloatersByKey = new Map<string, Array<string | null>>(
+    (Array.isArray(baseDesign.groups) ? baseDesign.groups : []).map((g: any) => [g.key, g.floaters ?? []]),
+  );
   const groups = d.groups.map((g: any) => {
     const sg = savedGroups.get(g.key);
     const live = photosByGroup.get(g.key) ?? [];
-    const floaters = sg?.floaters ? g.floaters : blendFloaters(live, g.floaters ?? []);
+    // Manager-saved floater URLs always win; live photos only fill empty/unset slots.
+    const floaters = blendFloaters(live, defaultFloatersByKey.get(g.key) ?? [], sg?.floaters);
     const cardImage = sg?.card?.imageUrl !== undefined ? g.card.imageUrl : (live[0] || g.card.imageUrl);
     const cardAlt = sg?.card?.imageAlt !== undefined
       ? g.card.imageAlt
